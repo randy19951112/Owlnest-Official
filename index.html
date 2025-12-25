@@ -106,7 +106,7 @@
             gap: 1rem;
         }
         .dot {
-            width: 12px; /* 稍微加大導覽點 */
+            width: 12px;
             height: 12px;
             border: 1px solid rgba(255,255,255,0.5);
             border-radius: 50%;
@@ -128,13 +128,12 @@
         .cursor-pointer { cursor: pointer; }
     </style>
 </head>
-<!-- 修改處：加入 text-base md:text-lg 讓全站預設字體在電腦版變大 -->
 <body class="bg-brand-dark text-white antialiased text-base md:text-lg">
 
     <!-- 導覽列 -->
     <header class="fixed top-0 left-0 w-full z-50 px-8 py-6 flex justify-between items-center mix-blend-difference text-white">
         <div class="flex items-center gap-4">
-             <!-- Logo稍微放大一點 -->
+             <!-- Logo -->
              <img src="logo.png" alt="Owlnest Logo" class="h-12 md:h-14 w-auto brightness-200 contrast-100">
              <span class="font-serif text-xl md:text-3xl tracking-widest font-bold">Owlnest Official</span>
         </div>
@@ -193,23 +192,30 @@
     <!-- 主容器 -->
     <div class="snap-container" id="scroller">
 
-        <!-- Section 1: Hero (深色) -->
+        <!-- Section 1: Hero (改版：品牌形象，非直接產品) -->
         <section id="section-1" class="snap-section bg-brand-dark active">
-            <div class="absolute inset-0 z-0 opacity-60">
-                <img src="lamp-on.jpg" alt="Owlnest Hero" class="w-full h-full object-cover zoom-bg">
+            <div class="absolute inset-0 z-0">
+                <!-- 背景：燈的圖片，但模糊且變暗，營造氛圍而非展示細節 -->
+                <img src="lamp-on.jpg" alt="Atmosphere" class="w-full h-full object-cover opacity-40 blur-sm zoom-bg">
+                <div class="absolute inset-0 bg-black/40"></div> <!-- 額外遮罩 -->
             </div>
-            <!-- 修改處：max-w-5xl 改為 max-w-screen-xl，讓內容更寬 -->
-            <div class="relative z-10 text-center px-4 max-w-screen-xl">
-                <h1 class="text-5xl md:text-7xl lg:text-9xl font-serif font-light mb-8 reveal-text" style="transition-delay: 0.3s;">
-                    Your Best Night’s <br> <span class="italic font-normal">Sleep, Guaranteed.</span>
+            
+            <div class="relative z-10 text-center px-4 max-w-screen-xl flex flex-col items-center">
+                
+                <!-- 主視覺：大 Logo -->
+                <img src="logo.png" alt="Owlnest Logo" class="w-48 md:w-64 mb-10 brightness-200 contrast-100 drop-shadow-2xl reveal-text" style="transition-delay: 0.1s;">
+                
+                <h1 class="text-4xl md:text-6xl font-serif font-light mb-6 reveal-text text-brand-gold tracking-widest" style="transition-delay: 0.3s;">
+                    THE ART OF DEEP SLEEP
                 </h1>
-                <p class="text-gray-200 max-w-2xl mx-auto text-xl md:text-2xl font-light leading-relaxed reveal-text" style="transition-delay: 0.5s;">
-                    Drift off naturally with Owlnest’s warmth. <br>
-                    Experience the ultimate deep sleep.
+                
+                <p class="text-gray-300 max-w-lg mx-auto text-lg font-light leading-relaxed reveal-text mb-16" style="transition-delay: 0.5s;">
+                    Experience the ultimate rest with nature-inspired technology.
                 </p>
-                <div class="mt-16 reveal-text" style="transition-delay: 0.7s;">
-                    <a href="#section-2" class="inline-block border border-white/30 px-10 py-4 hover:bg-brand-cream hover:text-brand-dark transition duration-500 tracking-widest text-sm md:text-base font-bold">
-                        DISCOVER YOUR SOLUTION
+
+                <div class="reveal-text" style="transition-delay: 0.7s;">
+                    <a href="#section-2" class="inline-block border border-white/20 bg-white/5 backdrop-blur-md px-12 py-4 hover:bg-brand-gold hover:text-brand-dark hover:border-brand-gold transition duration-500 tracking-[0.2em] text-sm font-bold uppercase">
+                        ENTER
                     </a>
                 </div>
             </div>
@@ -217,13 +223,11 @@
 
         <!-- Section 2: The Problem (淺色) -->
         <section id="section-2" class="snap-section bg-brand-cream auto-height text-brand-dark">
-            <!-- 修改處：放寬至 max-w-screen-xl 並加入 mx-auto 強制置中 -->
             <div class="relative z-10 max-w-screen-xl px-8 py-24 text-center mx-auto">
                 <p class="text-brand-gold text-sm md:text-base tracking-widest uppercase mb-4 reveal-text">Sleep Troubles?</p>
                 <h2 class="text-4xl md:text-6xl font-serif leading-tight mb-16 reveal-text">
                     Do You Have These <br> <span class="italic text-brand-dark">Sleep Troubles?</span>
                 </h2>
-                <!-- 修改處：grid gap 加大 -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-20 reveal-text">
                     <div class="p-10 bg-white border border-brand-dark/5 rounded shadow-sm hover:border-brand-gold/50 transition">
                         <i class="fas fa-mobile-alt text-5xl text-brand-gold mb-6"></i>
@@ -256,15 +260,12 @@
             </div>
         </section>
 
-        <!-- Section 3: Interactive Experience (深色：bg-brand-dark) -->
+        <!-- Section 3: Interactive Experience (深色) -->
         <section id="section-3" class="snap-section bg-brand-dark">
             <div class="flex flex-col md:flex-row w-full h-full">
-                <!-- Image Half: Left side White Background -->
                 <div class="w-full md:w-1/2 h-1/2 md:h-full relative overflow-hidden bg-white group cursor-pointer" onclick="toggleLamp()">
                     <img id="lamp-sequence-img" src="lamp-off.jpg" alt="Lamp" class="w-full h-full object-cover transition-opacity duration-300 group-hover:scale-105 transition-transform duration-700">
-                    <!-- 深色遮罩改淡，避免白底圖看起來灰灰的 -->
                     <div class="absolute inset-0 bg-brand-dark/0 group-hover:bg-brand-dark/5 transition duration-300"></div>
-                    
                     <div class="absolute bottom-8 left-8 bg-brand-cream/90 backdrop-blur p-4 z-10 pointer-events-none">
                         <span class="block text-xs tracking-widest uppercase mb-1 text-brand-dark">Interactive Demo</span>
                         <span class="block font-serif text-xl font-bold flex items-center gap-2 text-brand-dark" id="lamp-status-text">
@@ -272,16 +273,12 @@
                         </span>
                     </div>
                 </div>
-                
-                <!-- Text Half: Right side Dark Background -->
                 <div class="w-full md:w-1/2 h-1/2 md:h-full flex items-center justify-center p-8 md:p-20 bg-brand-dark relative z-20">
-                    <!-- 修改處：max-w-md 放大至 max-w-xl -->
                     <div class="max-w-xl reveal-text text-white">
                         <div class="mb-6">
                             <span class="text-brand-gold text-sm tracking-widest uppercase mb-2 block">Experience Owlnest</span>
                             <h3 class="text-4xl md:text-5xl font-serif text-white">Owlnest Sleep Aid Lamp</h3>
                         </div>
-                        
                         <p class="text-gray-300 mb-8 leading-relaxed text-lg">
                             Create your own bedtime ritual. <br>
                             Feel the difference of a deep amber glow.
@@ -290,18 +287,15 @@
                                 <i class="fas fa-hand-pointer animate-pulse"></i> Click image to simulate sunset
                             </span>
                         </p>
-                        
                         <ul class="space-y-4 mb-10 text-base text-gray-400">
                             <li class="flex items-center gap-3"><span class="w-1 h-1 bg-brand-gold rounded-full"></span> 100% Sunset Glow</li>
                             <li class="flex items-center gap-3"><span class="w-1 h-1 bg-brand-gold rounded-full"></span> Eye-Protecting Warmth</li>
                             <li class="flex items-center gap-3"><span class="w-1 h-1 bg-brand-gold rounded-full"></span> Easy Bottom Switch</li>
                         </ul>
-
                         <div class="border-t border-white/10 pt-8 mt-8">
                             <div class="mb-6">
                                 <span class="text-5xl font-serif text-brand-gold">USD $89</span>
                             </div>
-                            
                             <button onclick="addToCart('Owlnest Sleep Aid Lamp', 89, 'lamp-on.jpg')" class="bg-brand-gold text-brand-dark px-10 py-4 text-base tracking-widest uppercase hover:bg-white hover:text-brand-dark transition duration-300 w-full font-bold shadow-lg transform hover:-translate-y-1">
                                 Add to Cart
                             </button>
@@ -314,7 +308,6 @@
 
         <!-- Section 4: The Science (淺色) -->
         <section id="section-4" class="snap-section bg-brand-cream text-brand-dark auto-height">
-            <!-- 修改處：max-w-6xl 放寬 -->
             <div class="max-w-screen-xl w-full px-8 py-24 flex flex-col items-center mx-auto">
                 <div class="text-center max-w-5xl reveal-text mb-16">
                     <span class="text-brand-gold text-sm tracking-widest uppercase mb-3 block">The Science of Sleep</span>
@@ -338,7 +331,6 @@
                     </div>
                 </div>
                 <div class="w-full max-w-4xl reveal-text">
-                    <!-- 確認：w-full h-auto 確保圖片不會被切割 -->
                     <img src="spectrum.jpg" alt="Scientific Spectrum Chart" class="w-full h-auto rounded-lg shadow-lg border border-brand-dark/10">
                     <p class="text-center text-sm mt-4 text-brand-dark/50">Owlnest's Custom Amber Spectrum (1500K-2000K)</p>
                 </div>
@@ -347,7 +339,6 @@
 
         <!-- Section 5: Comparison (深色) -->
         <section id="section-5" class="snap-section bg-brand-dark auto-height">
-            <!-- 修改處：max-w-6xl -> max-w-screen-xl -->
             <div class="max-w-screen-xl w-full px-4 py-24 mx-auto">
                 <div class="text-center mb-16 reveal-text">
                     <p class="text-brand-gold text-sm tracking-[0.4em] uppercase mb-4">Why Owlnest is Superior</p>
@@ -388,14 +379,13 @@
             </div>
         </section>
 
-        <!-- Section 6: Features (淺色 - 背景改為奶油米色) -->
+        <!-- Section 6: Features (淺色) -->
         <section id="section-6" class="snap-section bg-brand-cream auto-height text-brand-dark">
             <div class="flex flex-col items-center text-center px-4 py-24 max-w-screen-xl mx-auto reveal-text">
                 <div class="w-56 h-56 md:w-64 md:h-64 mb-10 rounded-full border-4 border-brand-dark/10 overflow-hidden shadow-2xl">
                     <img src="lamp-off.jpg" class="w-full h-full object-cover">
                 </div>
                 
-                <!-- 修改處：Designed for Unwind -->
                 <h2 class="text-4xl md:text-5xl font-serif mb-6">Designed for Unwind</h2>
                 <p class="text-brand-dark/70 text-lg mb-12 font-light max-w-2xl">
                     Crafted with soft silicone and a solid wood base. <br>
@@ -403,20 +393,15 @@
                 </p>
                 
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-base w-full max-w-6xl">
-                    <!-- 格子背景改為半透明白，適合淺色背景 -->
-                    <!-- 修改處：Sleep Temp -->
                     <div class="p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-temperature-low text-brand-gold text-3xl mb-4 block"></i> Sleep Temp</div>
                     <div class="p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-leaf text-brand-gold text-3xl mb-4 block"></i> Safe Silicone & Wood</div>
-                    <!-- 修改處：Button Switch -->
                     <div class="p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-power-off text-brand-gold text-3xl mb-4 block"></i> Button Switch</div>
                     <div class="p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-eye text-brand-gold text-3xl mb-4 block"></i> Eye-Protecting Glow</div>
                     <div class="p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-battery-full text-brand-gold text-3xl mb-4 block"></i> Rechargeable</div>
-                    <!-- 移除 Dimmable -->
                     <div class="p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-expand-arrows-alt text-brand-gold text-3xl mb-4 block"></i> Compact Design</div>
                     <div class="p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-leaf text-brand-gold text-3xl mb-4 block"></i> Energy Efficient</div>
                 </div>
 
-                <!-- 修改處：移除價格顯示 USD $89，只保留按鈕並置中 -->
                 <div class="mt-12 pt-10 border-t border-brand-dark/10 flex justify-center items-center reveal-text w-full max-w-4xl">
                     <button onclick="addToCart('Owlnest Sleep Aid Lamp', 89, 'lamp-on.jpg')" class="bg-brand-dark text-white px-12 py-4 text-base tracking-widest uppercase hover:bg-brand-gold hover:text-brand-dark transition duration-300 shadow-lg">
                         Add to Cart
@@ -480,21 +465,19 @@
 
     </div>
 
-    <!-- JavaScript (Cart & Scroll Logic) -->
+    <!-- JavaScript -->
     <script>
-        // [修改] 互動開關燈邏輯 (預設關閉)
-        let isLampOn = false; // 預設為關閉
+        // 互動開關燈邏輯
+        let isLampOn = false;
         const lampImg = document.getElementById('lamp-sequence-img');
         const lampStatus = document.getElementById('lamp-status-text');
 
         function toggleLamp() {
             if (isLampOn) {
-                // 目前是開的 -> 關燈
                 lampImg.src = 'lamp-off.jpg';
                 lampStatus.innerHTML = '<i class="fas fa-toggle-off text-brand-dark/50"></i> Click to Turn On';
                 isLampOn = false;
             } else {
-                // 目前是關的 -> 開燈
                 lampImg.src = 'lamp-on.jpg';
                 lampStatus.innerHTML = '<i class="fas fa-toggle-on text-brand-gold"></i> Click to Turn Off';
                 isLampOn = true;
