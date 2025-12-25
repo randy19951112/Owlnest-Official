@@ -42,8 +42,12 @@
         }
     </script>
     <style>
-        html { scroll-behavior: smooth; }
-        body { overflow-y: hidden; }
+        /* [優化] 捲動偏移與平滑 */
+        html { 
+            scroll-behavior: smooth; 
+            scroll-padding-top: 100px;
+        }
+        body { overflow-x: hidden; } 
         
         /* 滾動容器 */
         .snap-container {
@@ -53,25 +57,43 @@
             scroll-snap-type: y mandatory;
             scroll-behavior: smooth;
         }
+
+        /* [關鍵修正] 平板(iPad Portrait) 與手機：取消強制吸附，改為自然捲動 */
+        /* Tailwind lg breakpoint is 1024px. Below that (including iPad Portrait 768px), use native scroll */
+        @media (max-width: 1023px) {
+            .snap-container {
+                height: auto;
+                overflow-y: visible;
+                scroll-snap-type: none;
+            }
+            .snap-section {
+                height: auto;
+                min-height: auto;
+                padding-top: 60px; 
+                padding-bottom: 60px;
+            }
+            html { scroll-padding-top: 80px; }
+        }
         
-        /* 區塊設定 */
-        .snap-section {
-            height: 100vh;
-            height: 100dvh;
-            width: 100%;
-            scroll-snap-align: start;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        /* [關鍵修正] 大螢幕 (iPad Landscape / Desktop)：啟用沈浸式吸附 */
+        @media (min-width: 1024px) {
+            .snap-section {
+                height: 100vh;
+                height: 100dvh;
+                width: 100%;
+                scroll-snap-align: start;
+                position: relative;
+                overflow: hidden;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .snap-section.auto-height {
+                display: block;
+                overflow-y: auto;
+            }
         }
 
-        /* 自動高度 (給內容較多的區塊) */
-        .snap-section.auto-height {
-            display: block;
-            overflow-y: auto;
-        }
         .snap-section.auto-height::-webkit-scrollbar { width: 0px; }
 
         /* 動畫效果 */
@@ -84,6 +106,10 @@
             opacity: 1;
             transform: translateY(0);
         }
+        /* 平板/手機直接顯示動畫，避免滾動觸發延遲 */
+        @media (max-width: 1023px) {
+            .reveal-text { opacity: 1; transform: translateY(0); }
+        }
         
         .zoom-bg {
             transition: transform 10s ease;
@@ -94,17 +120,21 @@
 
         .snap-container::-webkit-scrollbar { width: 0px; background: transparent; }
         
-        /* 導覽點 */
+        /* 導覽點 (小螢幕隱藏) */
         .nav-dots {
             position: fixed;
             right: 2rem;
             top: 50%;
             transform: translateY(-50%);
             z-index: 50;
-            display: flex;
+            display: none;
             flex-direction: column;
             gap: 1rem;
         }
+        @media (min-width: 1024px) {
+            .nav-dots { display: flex; }
+        }
+
         .dot {
             width: 12px;
             height: 12px;
@@ -124,6 +154,10 @@
         #cart-sidebar.open { transform: translateX(0); }
         #cart-overlay { opacity: 0; pointer-events: none; transition: opacity 0.3s ease-in-out; }
         #cart-overlay.open { opacity: 1; pointer-events: auto; }
+
+        /* 手機版選單動畫 */
+        #mobile-menu { transform: translateY(-100%); transition: transform 0.3s ease-in-out; }
+        #mobile-menu.open { transform: translateY(0); }
         
         .cursor-pointer { cursor: pointer; }
     </style>
@@ -131,30 +165,52 @@
 <body class="bg-brand-dark text-white antialiased text-base md:text-lg">
 
     <!-- 導覽列 -->
-    <header class="fixed top-0 left-0 w-full z-50 px-8 py-6 flex justify-between items-center mix-blend-difference text-white">
-        <div class="flex items-center gap-4">
-             <!-- Logo -->
-             <img src="logo.png" alt="Owlnest Logo" class="h-12 md:h-14 w-auto brightness-200 contrast-100">
-             <span class="font-serif text-xl md:text-3xl tracking-widest font-bold">Owlnest Official</span>
+    <header class="fixed top-0 left-0 w-full z-50 px-4 md:px-8 py-4 md:py-6 flex justify-between items-center bg-brand-dark/95 backdrop-blur-md lg:bg-transparent lg:backdrop-blur-none transition-all duration-300 shadow-lg lg:shadow-none">
+        <div class="flex items-center gap-2 md:gap-4 relative z-50">
+             <img src="logo.png" alt="Owlnest Logo" class="h-10 md:h-14 w-auto brightness-200 contrast-100">
+             <span class="font-serif text-lg md:text-3xl tracking-widest font-bold">Owlnest Official</span>
         </div>
-        <div class="flex items-center gap-8">
-            <nav class="hidden md:flex gap-8 text-sm md:text-base tracking-widest uppercase font-semibold">
-                <a href="#section-1" class="border-b-2 border-transparent hover:text-brand-gold hover:border-brand-gold transition pb-1">Home</a>
-                <a href="#section-3" class="border-b-2 border-transparent hover:text-brand-gold hover:border-brand-gold transition pb-1">Products</a>
-                <a href="#section-6" class="border-b-2 border-transparent hover:text-brand-gold hover:border-brand-gold transition pb-1">Features</a>
-                <a href="#section-7" class="border-b-2 border-transparent hover:text-brand-gold hover:border-brand-gold transition pb-1">Specs</a>
-                <a href="#section-8" class="border-b-2 border-transparent hover:text-brand-gold hover:border-brand-gold transition pb-1">Contact</a>
+        
+        <!-- 電腦版選單 (lg:flex, 1024px以上顯示) -->
+        <div class="hidden lg:flex items-center gap-8">
+            <nav class="flex gap-8 text-sm tracking-widest uppercase font-semibold">
+                <a href="#section-1" class="hover:text-brand-gold transition pb-1">Home</a>
+                <a href="#section-3" class="hover:text-brand-gold transition pb-1">Products</a>
+                <a href="#section-6" class="hover:text-brand-gold transition pb-1">Features</a>
+                <a href="#section-7" class="hover:text-brand-gold transition pb-1">Specs</a>
+                <a href="#section-8" class="hover:text-brand-gold transition pb-1">Contact</a>
             </nav>
             <button onclick="toggleCart()" class="relative group">
                 <i class="fas fa-shopping-bag text-2xl md:text-3xl hover:text-brand-gold transition"></i>
-                <span id="cart-count" class="absolute -top-1 -right-2 bg-brand-gold text-brand-dark text-[10px] md:text-xs font-bold px-1.5 rounded-full hidden">0</span>
+                <span id="cart-count-desktop" class="absolute -top-1 -right-2 bg-brand-gold text-brand-dark text-[10px] md:text-xs font-bold px-1.5 rounded-full hidden">0</span>
             </button>
-            <button class="md:hidden text-2xl ml-4"><i class="fas fa-bars"></i></button>
+        </div>
+
+        <!-- 平板/手機版控制區 (lg:hidden, 1024px以下顯示) -->
+        <div class="flex lg:hidden items-center gap-4 relative z-50">
+            <button onclick="toggleCart()" class="relative active:scale-95 transition">
+                <i class="fas fa-shopping-bag text-2xl text-white"></i>
+                <span id="cart-count-mobile" class="absolute -top-1 -right-2 bg-brand-gold text-brand-dark text-[10px] font-bold px-1.5 rounded-full hidden">0</span>
+            </button>
+            <button onclick="toggleMobileMenu()" class="text-2xl text-white focus:outline-none active:scale-95 transition">
+                <i class="fas fa-bars" id="mobile-menu-icon"></i>
+            </button>
         </div>
     </header>
 
-    <!-- 導覽點 -->
-    <div class="nav-dots hidden md:flex">
+    <!-- 手機/平板全螢幕選單 -->
+    <div id="mobile-menu" class="fixed inset-0 bg-brand-dark z-40 flex flex-col justify-center items-center pt-20 lg:hidden">
+        <nav class="flex flex-col gap-8 text-xl tracking-widest uppercase font-semibold text-center">
+            <a href="#section-1" onclick="toggleMobileMenu()" class="hover:text-brand-gold transition">Home</a>
+            <a href="#section-3" onclick="toggleMobileMenu()" class="hover:text-brand-gold transition">Products</a>
+            <a href="#section-6" onclick="toggleMobileMenu()" class="hover:text-brand-gold transition">Features</a>
+            <a href="#section-7" onclick="toggleMobileMenu()" class="hover:text-brand-gold transition">Specs</a>
+            <a href="#section-8" onclick="toggleMobileMenu()" class="hover:text-brand-gold transition">Contact</a>
+        </nav>
+    </div>
+
+    <!-- 導覽點 (大螢幕才顯示) -->
+    <div class="nav-dots hidden lg:flex">
         <a href="#section-1" class="dot active" data-index="0"></a>
         <a href="#section-2" class="dot" data-index="1"></a>
         <a href="#section-3" class="dot" data-index="2"></a>
@@ -192,63 +248,64 @@
     <!-- 主容器 -->
     <div class="snap-container" id="scroller">
 
-        <!-- Section 1: Hero (改版：品牌形象，移除所有背景圖，僅保留純色) -->
-        <section id="section-1" class="snap-section bg-brand-dark active">
-            <!-- 移除背景圖片 -->
+        <!-- Section 1: Hero -->
+        <section id="section-1" class="snap-section bg-brand-dark active" style="min-height: 100vh;">
+            <div class="absolute inset-0 z-0">
+                <img src="lamp-on.jpg" alt="Atmosphere" class="w-full h-full object-cover opacity-40 blur-sm zoom-bg" loading="eager">
+                <div class="absolute inset-0 bg-black/30"></div>
+            </div>
             
             <div class="relative z-10 text-center px-4 max-w-screen-xl flex flex-col items-center">
+                <img src="logo.png" alt="Owlnest Logo" class="w-32 md:w-48 lg:w-64 mb-8 md:mb-10 brightness-200 contrast-100 drop-shadow-2xl reveal-text" style="transition-delay: 0.1s;">
                 
-                <!-- 主視覺：大 Logo -->
-                <img src="logo.png" alt="Owlnest Logo" class="w-48 md:w-64 mb-10 brightness-200 contrast-100 drop-shadow-2xl reveal-text" style="transition-delay: 0.1s;">
-                
-                <h1 class="text-4xl md:text-6xl font-serif font-light mb-6 reveal-text text-brand-gold tracking-widest" style="transition-delay: 0.3s;">
+                <h1 class="text-3xl md:text-5xl lg:text-6xl font-serif font-light mb-6 reveal-text text-brand-gold tracking-widest" style="transition-delay: 0.3s;">
                     THE ART OF DEEP SLEEP
                 </h1>
                 
-                <p class="text-gray-300 max-w-lg mx-auto text-lg font-light leading-relaxed reveal-text mb-16" style="transition-delay: 0.5s;">
+                <p class="text-gray-300 max-w-lg mx-auto text-base md:text-lg font-light leading-relaxed reveal-text mb-12" style="transition-delay: 0.5s;">
                     Experience the ultimate rest with nature-inspired technology.
                 </p>
 
                 <div class="reveal-text" style="transition-delay: 0.7s;">
-                    <a href="#section-2" class="inline-block border border-white/20 bg-white/5 backdrop-blur-md px-12 py-4 hover:bg-brand-gold hover:text-brand-dark hover:border-brand-gold transition duration-500 tracking-[0.2em] text-sm font-bold uppercase">
+                    <a href="#section-2" class="inline-block border border-white/20 bg-white/5 backdrop-blur-md px-10 py-3 md:px-12 md:py-4 hover:bg-brand-gold hover:text-brand-dark hover:border-brand-gold transition duration-500 tracking-[0.2em] text-xs md:text-sm font-bold uppercase active:scale-95">
                         ENTER
                     </a>
                 </div>
             </div>
         </section>
 
-        <!-- Section 2: The Problem (淺色) -->
+        <!-- Section 2: The Problem -->
         <section id="section-2" class="snap-section bg-brand-cream auto-height text-brand-dark">
-            <div class="relative z-10 max-w-screen-xl px-8 py-24 text-center mx-auto">
-                <p class="text-brand-gold text-sm md:text-base tracking-widest uppercase mb-4 reveal-text">Sleep Troubles?</p>
-                <h2 class="text-4xl md:text-6xl font-serif leading-tight mb-16 reveal-text">
+            <div class="relative z-10 max-w-screen-xl px-4 md:px-8 py-16 lg:py-24 text-center mx-auto">
+                <p class="text-brand-gold text-xs md:text-sm tracking-widest uppercase mb-4 reveal-text">Sleep Troubles?</p>
+                <h2 class="text-3xl md:text-5xl lg:text-6xl font-serif leading-tight mb-12 lg:mb-16 reveal-text">
                     Do You Have These <br> <span class="italic text-brand-dark">Sleep Troubles?</span>
                 </h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-20 reveal-text">
-                    <div class="p-10 bg-white border border-brand-dark/5 rounded shadow-sm hover:border-brand-gold/50 transition">
-                        <i class="fas fa-mobile-alt text-5xl text-brand-gold mb-6"></i>
-                        <h3 class="text-2xl font-bold mb-3">Blue Light</h3>
-                        <p class="text-brand-dark/70 text-base">Blue light from screens disrupts sleep rhythm.</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-10 mb-12 lg:mb-20 reveal-text">
+                    <div class="p-6 lg:p-10 bg-white border border-brand-dark/5 rounded shadow-sm hover:border-brand-gold/50 transition">
+                        <i class="fas fa-mobile-alt text-4xl lg:text-5xl text-brand-gold mb-4 lg:mb-6"></i>
+                        <h3 class="text-xl lg:text-2xl font-bold mb-2 lg:mb-3">Blue Light</h3>
+                        <p class="text-brand-dark/70 text-sm lg:text-base">Blue light from screens disrupts sleep rhythm.</p>
                     </div>
-                    <div class="p-10 bg-white border border-brand-dark/5 rounded shadow-sm hover:border-brand-gold/50 transition">
-                        <i class="fas fa-bed text-5xl text-brand-gold mb-6"></i>
-                        <h3 class="text-2xl font-bold mb-3">Tossing & Turning</h3>
-                        <p class="text-brand-dark/70 text-base">Tossing and turning, can't shut off your mind.</p>
+                    <div class="p-6 lg:p-10 bg-white border border-brand-dark/5 rounded shadow-sm hover:border-brand-gold/50 transition">
+                        <i class="fas fa-bed text-4xl lg:text-5xl text-brand-gold mb-4 lg:mb-6"></i>
+                        <h3 class="text-xl lg:text-2xl font-bold mb-2 lg:mb-3">Tossing & Turning</h3>
+                        <p class="text-brand-dark/70 text-sm lg:text-base">Tossing and turning, can't shut off your mind.</p>
                     </div>
-                    <div class="p-10 bg-white border border-brand-dark/5 rounded shadow-sm hover:border-brand-gold/50 transition">
-                        <i class="fas fa-battery-quarter text-5xl text-brand-gold mb-6"></i>
-                        <h3 class="text-2xl font-bold mb-3">Waking Up Tired</h3>
-                        <p class="text-brand-dark/70 text-base">Poor sleep quality, waking up groggy and exhausted.</p>
+                    <div class="p-6 lg:p-10 bg-white border border-brand-dark/5 rounded shadow-sm hover:border-brand-gold/50 transition">
+                        <i class="fas fa-battery-quarter text-4xl lg:text-5xl text-brand-gold mb-4 lg:mb-6"></i>
+                        <h3 class="text-xl lg:text-2xl font-bold mb-2 lg:mb-3">Waking Up Tired</h3>
+                        <p class="text-brand-dark/70 text-sm lg:text-base">Poor sleep quality, waking up groggy and exhausted.</p>
                     </div>
                 </div>
                 
-                <div class="max-w-4xl mx-auto reveal-text border-t border-brand-dark/10 pt-12">
-                    <p class="text-2xl md:text-4xl font-serif text-brand-gold mb-8 italic leading-relaxed">
+                <div class="max-w-4xl mx-auto reveal-text border-t border-brand-dark/10 pt-10">
+                    <p class="text-xl md:text-2xl lg:text-3xl font-serif text-brand-gold mb-6 italic leading-relaxed">
                         "Wish you could sleep like nature intended?"
                     </p>
                     
-                    <div class="mt-12">
-                        <a href="#section-3" class="inline-block border border-brand-gold text-brand-gold px-10 py-4 hover:bg-brand-gold hover:text-white transition duration-300 tracking-widest text-sm font-bold">
+                    <div class="mt-8">
+                        <a href="#section-3" class="inline-block border border-brand-gold text-brand-gold px-8 py-3 lg:px-10 lg:py-4 hover:bg-brand-gold hover:text-white transition duration-300 tracking-widest text-xs lg:text-sm font-bold active:scale-95">
                             FIND YOUR SOLUTION
                         </a>
                     </div>
@@ -256,26 +313,31 @@
             </div>
         </section>
 
-        <!-- Section 3: Interactive Experience (深色) -->
-        <section id="section-3" class="snap-section bg-brand-dark">
-            <div class="flex flex-col md:flex-row w-full h-full">
-                <div class="w-full md:w-1/2 h-1/2 md:h-full relative overflow-hidden bg-white group cursor-pointer" onclick="toggleLamp()">
-                    <img id="lamp-sequence-img" src="lamp-off.jpg" alt="Lamp" class="w-full h-full object-cover transition-opacity duration-300 group-hover:scale-105 transition-transform duration-700">
+        <!-- Section 3: Interactive Experience -->
+        <section id="section-3" class="snap-section bg-brand-dark auto-height">
+            <div class="flex flex-col lg:flex-row w-full h-full">
+                <!-- Image Half -->
+                <div class="w-full lg:w-1/2 h-[45vh] lg:h-full relative overflow-hidden bg-white group cursor-pointer" onclick="toggleLamp()">
+                    <img id="lamp-sequence-img" src="lamp-off.jpg" alt="Lamp" class="w-full h-full object-cover transition-opacity duration-300 md:group-hover:scale-105 transition-transform duration-700" loading="eager">
                     <div class="absolute inset-0 bg-brand-dark/0 group-hover:bg-brand-dark/5 transition duration-300"></div>
-                    <div class="absolute bottom-8 left-8 bg-brand-cream/90 backdrop-blur p-4 z-10 pointer-events-none">
-                        <span class="block text-xs tracking-widest uppercase mb-1 text-brand-dark">Interactive Demo</span>
-                        <span class="block font-serif text-xl font-bold flex items-center gap-2 text-brand-dark" id="lamp-status-text">
+                    
+                    <div class="absolute bottom-4 left-4 lg:bottom-8 lg:left-8 bg-brand-cream/90 backdrop-blur p-3 lg:p-4 z-10 pointer-events-none rounded md:rounded-none">
+                        <span class="block text-[10px] lg:text-xs tracking-widest uppercase mb-1 text-brand-dark">Interactive Demo</span>
+                        <span class="block font-serif text-lg lg:text-xl font-bold flex items-center gap-2 text-brand-dark" id="lamp-status-text">
                             <i class="fas fa-toggle-off text-brand-dark/50"></i> Click to Turn On
                         </span>
                     </div>
                 </div>
-                <div class="w-full md:w-1/2 h-1/2 md:h-full flex items-center justify-center p-8 md:p-20 bg-brand-dark relative z-20">
+                
+                <!-- Text Half -->
+                <div class="w-full lg:w-1/2 h-auto lg:h-full flex items-center justify-center p-8 lg:p-20 bg-brand-dark relative z-20">
                     <div class="max-w-xl reveal-text text-white">
-                        <div class="mb-6">
-                            <span class="text-brand-gold text-sm tracking-widest uppercase mb-2 block">Experience Owlnest</span>
-                            <h3 class="text-4xl md:text-5xl font-serif text-white">Owlnest Sleep Aid Lamp</h3>
+                        <div class="mb-4">
+                            <span class="text-brand-gold text-xs tracking-widest uppercase mb-1 block">Experience Owlnest</span>
+                            <h3 class="text-3xl md:text-4xl lg:text-5xl font-serif text-white">Owlnest Sleep Aid Lamp</h3>
                         </div>
-                        <p class="text-gray-300 mb-8 leading-relaxed text-lg">
+                        
+                        <p class="text-gray-300 mb-6 leading-relaxed text-base lg:text-lg">
                             Create your own bedtime ritual. <br>
                             Feel the difference of a deep amber glow.
                             <br><br>
@@ -283,39 +345,42 @@
                                 <i class="fas fa-hand-pointer animate-pulse"></i> Click image to simulate sunset
                             </span>
                         </p>
-                        <ul class="space-y-4 mb-10 text-base text-gray-400">
+                        
+                        <ul class="space-y-3 mb-8 text-sm md:text-base text-gray-400">
                             <li class="flex items-center gap-3"><span class="w-1 h-1 bg-brand-gold rounded-full"></span> 100% Sunset Glow</li>
                             <li class="flex items-center gap-3"><span class="w-1 h-1 bg-brand-gold rounded-full"></span> Eye-Protecting Warmth</li>
                             <li class="flex items-center gap-3"><span class="w-1 h-1 bg-brand-gold rounded-full"></span> Easy Bottom Switch</li>
                         </ul>
-                        <div class="border-t border-white/10 pt-8 mt-8">
-                            <div class="mb-6">
-                                <span class="text-5xl font-serif text-brand-gold">USD $89</span>
+
+                        <div class="border-t border-white/10 pt-6 mt-6">
+                            <div class="mb-4">
+                                <span class="text-4xl lg:text-5xl font-serif text-brand-gold">USD $89</span>
                             </div>
-                            <button onclick="addToCart('Owlnest Sleep Aid Lamp', 89, 'lamp-on.jpg')" class="bg-brand-gold text-brand-dark px-10 py-4 text-base tracking-widest uppercase hover:bg-white hover:text-brand-dark transition duration-300 w-full font-bold shadow-lg transform hover:-translate-y-1">
+                            
+                            <button onclick="addToCart('Owlnest Sleep Aid Lamp', 89, 'lamp-on.jpg')" class="bg-brand-gold text-brand-dark px-10 py-4 text-sm md:text-base tracking-widest uppercase hover:bg-white hover:text-brand-dark transition duration-300 w-full font-bold shadow-lg transform active:scale-95">
                                 Add to Cart
                             </button>
-                            <p class="text-center text-sm text-gray-500 mt-4"><i class="fas fa-lock"></i> Secure Checkout Guaranteed</p>
+                            <p class="text-center text-xs text-gray-500 mt-3"><i class="fas fa-lock"></i> Secure Checkout Guaranteed</p>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Section 4: The Science (淺色) -->
+        <!-- Section 4: The Science -->
         <section id="section-4" class="snap-section bg-brand-cream text-brand-dark auto-height">
-            <div class="max-w-screen-xl w-full px-8 py-24 flex flex-col items-center mx-auto">
-                <div class="text-center max-w-5xl reveal-text mb-16">
-                    <span class="text-brand-gold text-sm tracking-widest uppercase mb-3 block">The Science of Sleep</span>
-                    <h2 class="text-4xl md:text-6xl font-serif mb-8 uppercase leading-tight">
+            <div class="max-w-screen-xl w-full px-4 lg:px-8 py-16 lg:py-24 flex flex-col items-center mx-auto">
+                <div class="text-center max-w-5xl reveal-text mb-12">
+                    <span class="text-brand-gold text-xs tracking-widest uppercase mb-2 block">The Science of Sleep</span>
+                    <h2 class="text-3xl md:text-4xl lg:text-6xl font-serif mb-6 uppercase leading-tight">
                         AMBER LIGHT SPECTRUM <br>
-                        <span class="text-brand-dark/50 text-2xl md:text-4xl normal-case font-light block mt-3">vs Blue Light Spectrum</span>
+                        <span class="text-brand-dark/50 text-xl lg:text-4xl normal-case font-light block mt-2">vs Blue Light Spectrum</span>
                     </h2>
-                    <p class="text-xl leading-relaxed mb-10 text-brand-dark/80">
-                        Owlnest mimics nature by filtering harmful blue light <br>
+                    <p class="text-base lg:text-xl leading-relaxed mb-8 text-brand-dark/80">
+                        Owlnest mimics nature by filtering harmful blue light <br class="hidden lg:block">
                         and boosting natural melatonin production.
                     </p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-10 text-left max-w-3xl mx-auto bg-white/50 p-10 rounded-lg shadow-sm">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-10 text-left max-w-3xl mx-auto bg-white/50 p-6 lg:p-10 rounded-lg shadow-sm">
                         <div>
                             <strong class="text-brand-dark block mb-2 text-lg">Problem:</strong>
                             <span class="opacity-70 text-base">Disrupts Melatonin, <br>Causes Insomnia.</span>
@@ -327,134 +392,134 @@
                     </div>
                 </div>
                 <div class="w-full max-w-4xl reveal-text">
-                    <img src="spectrum.jpg" alt="Scientific Spectrum Chart" class="w-full h-auto rounded-lg shadow-lg border border-brand-dark/10">
-                    <p class="text-center text-sm mt-4 text-brand-dark/50">Owlnest's Custom Amber Spectrum (1500K-2000K)</p>
+                    <img src="spectrum.jpg" alt="Scientific Spectrum Chart" class="w-full h-auto rounded-lg shadow-lg border border-brand-dark/10" loading="lazy">
+                    <p class="text-center text-xs lg:text-sm mt-4 text-brand-dark/50">Owlnest's Custom Amber Spectrum (1500K-2000K)</p>
                 </div>
             </div>
         </section>
 
-        <!-- Section 5: Comparison (深色) -->
+        <!-- Section 5: Comparison -->
         <section id="section-5" class="snap-section bg-brand-dark auto-height">
-            <div class="max-w-screen-xl w-full px-4 py-24 mx-auto">
-                <div class="text-center mb-16 reveal-text">
-                    <p class="text-brand-gold text-sm tracking-[0.4em] uppercase mb-4">Why Owlnest is Superior</p>
-                    <h2 class="text-4xl md:text-6xl font-serif text-white">The Natural Choice</h2>
+            <div class="max-w-screen-xl w-full px-4 py-16 lg:py-24 mx-auto">
+                <div class="text-center mb-10 lg:mb-16 reveal-text">
+                    <p class="text-brand-gold text-xs tracking-[0.4em] uppercase mb-4">Why Owlnest is Superior</p>
+                    <h2 class="text-3xl md:text-4xl lg:text-6xl font-serif text-white">The Natural Choice</h2>
                 </div>
-                <div class="overflow-x-auto reveal-text">
-                    <table class="w-full text-left border-collapse min-w-[800px] text-base md:text-lg">
+                <div class="overflow-x-auto reveal-text pb-4">
+                    <table class="w-full text-left border-collapse min-w-[600px] text-sm lg:text-lg">
                         <thead>
-                            <tr class="border-b border-white/20 text-gray-400 uppercase tracking-wider text-sm">
-                                <th class="py-6 pr-8 font-normal w-1/4">Feature</th>
-                                <th class="py-6 px-6 text-brand-gold font-bold text-xl w-1/3">Owlnest Sleep Lamp</th>
-                                <th class="py-6 px-6 font-normal w-1/5">White Noise / Masks</th>
-                                <th class="py-6 px-6 font-normal w-1/5">Melatonin / Pills</th>
+                            <tr class="border-b border-white/20 text-gray-400 uppercase tracking-wider text-xs lg:text-sm">
+                                <th class="py-4 lg:py-6 pr-4 font-normal w-1/4">Feature</th>
+                                <th class="py-4 lg:py-6 px-4 text-brand-gold font-bold text-base lg:text-xl w-1/3">Owlnest Sleep Lamp</th>
+                                <th class="py-4 lg:py-6 px-4 font-normal w-1/5">White Noise / Masks</th>
+                                <th class="py-4 lg:py-6 px-4 font-normal w-1/5">Melatonin / Pills</th>
                             </tr>
                         </thead>
                         <tbody class="text-gray-300">
                             <tr class="border-b border-white/10 hover:bg-white/5 transition">
-                                <td class="py-8 pr-8 font-bold text-white">Mechanism</td>
-                                <td class="py-8 px-6 text-white">Promotes <span class="text-brand-gold">NATURAL</span> Melatonin</td>
-                                <td class="py-8 px-6">Masks sounds or blocks light physically</td>
-                                <td class="py-8 px-6">External chemical sedation</td>
+                                <td class="py-6 lg:py-8 pr-4 font-bold text-white">Mechanism</td>
+                                <td class="py-6 lg:py-8 px-4 text-white">Promotes <span class="text-brand-gold">NATURAL</span> Melatonin</td>
+                                <td class="py-6 lg:py-8 px-4">Masks sounds or blocks light physically</td>
+                                <td class="py-6 lg:py-8 px-4">External chemical sedation</td>
                             </tr>
                             <tr class="border-b border-white/10 hover:bg-white/5 transition">
-                                <td class="py-8 pr-8 font-bold text-white">Non-Invasive?</td>
-                                <td class="py-8 px-6 text-white"><i class="fas fa-check text-brand-gold mr-2"></i> Yes. Ambient light.</td>
-                                <td class="py-8 px-6">No. On face.</td>
-                                <td class="py-8 px-6">No. Ingested.</td>
+                                <td class="py-6 lg:py-8 pr-4 font-bold text-white">Non-Invasive?</td>
+                                <td class="py-6 lg:py-8 px-4 text-white"><i class="fas fa-check text-brand-gold mr-2"></i> Yes. Ambient light.</td>
+                                <td class="py-6 lg:py-8 px-4">No. On face.</td>
+                                <td class="py-6 lg:py-8 px-4">No. Ingested.</td>
                             </tr>
                             <tr class="hover:bg-white/5 transition">
-                                <td class="py-8 pr-8 font-bold text-white">Safety</td>
-                                <td class="py-8 px-6 text-white"><span class="text-brand-gold">100% Safe</span>. No grogginess.</td>
-                                <td class="py-8 px-6">Uncomfortable</td>
-                                <td class="py-8 px-6">Risk of dependency</td>
+                                <td class="py-6 lg:py-8 pr-4 font-bold text-white">Safety</td>
+                                <td class="py-6 lg:py-8 px-4 text-white"><span class="text-brand-gold">100% Safe</span>. No grogginess.</td>
+                                <td class="py-6 lg:py-8 px-4">Uncomfortable</td>
+                                <td class="py-6 lg:py-8 px-4">Risk of dependency</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
+                <p class="text-center text-xs text-gray-500 lg:hidden mt-2">← Swipe to see comparison →</p>
             </div>
         </section>
 
-        <!-- Section 6: Features (淺色 - 背景改為奶油米色) -->
+        <!-- Section 6: Features -->
         <section id="section-6" class="snap-section bg-brand-cream auto-height text-brand-dark">
-            <div class="flex flex-col items-center text-center px-4 py-24 max-w-screen-xl mx-auto reveal-text">
-                <div class="w-56 h-56 md:w-64 md:h-64 mb-10 rounded-full border-4 border-brand-dark/10 overflow-hidden shadow-2xl">
-                    <img src="lamp-off.jpg" class="w-full h-full object-cover">
+            <div class="flex flex-col items-center text-center px-4 py-16 lg:py-24 max-w-screen-xl mx-auto reveal-text">
+                <div class="w-40 h-40 md:w-56 md:h-56 lg:w-64 lg:h-64 mb-8 lg:mb-10 rounded-full border-4 border-brand-dark/10 overflow-hidden shadow-2xl">
+                    <img src="lamp-off.jpg" alt="Owlnest Lamp Detail" class="w-full h-full object-cover" loading="lazy">
                 </div>
                 
-                <h2 class="text-4xl md:text-5xl font-serif mb-6">Designed for Unwind</h2>
-                <p class="text-brand-dark/70 text-lg mb-12 font-light max-w-2xl">
+                <h2 class="text-3xl md:text-4xl lg:text-5xl font-serif mb-6">Designed for Unwind</h2>
+                <p class="text-brand-dark/70 text-base lg:text-lg mb-10 lg:mb-12 font-light max-w-2xl">
                     Crafted with soft silicone and a solid wood base. <br>
                     Completely wireless and rechargeable.
                 </p>
                 
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-base w-full max-w-6xl">
-                    <div class="p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-temperature-low text-brand-gold text-3xl mb-4 block"></i> Sleep Temp</div>
-                    <div class="p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-leaf text-brand-gold text-3xl mb-4 block"></i> Safe Silicone & Wood</div>
-                    <div class="p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-power-off text-brand-gold text-3xl mb-4 block"></i> Button Switch</div>
-                    <div class="p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-eye text-brand-gold text-3xl mb-4 block"></i> Eye-Protecting Glow</div>
-                    <div class="p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-battery-full text-brand-gold text-3xl mb-4 block"></i> Rechargeable</div>
-                    <!-- 移除 Dimmable -->
-                    <div class="p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-expand-arrows-alt text-brand-gold text-3xl mb-4 block"></i> Compact Design</div>
-                    <div class="p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-leaf text-brand-gold text-3xl mb-4 block"></i> Energy Efficient</div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 text-sm md:text-base w-full max-w-6xl">
+                    <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-temperature-low text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Sleep Temp</div>
+                    <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-leaf text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Safe Silicone & Wood</div>
+                    <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-power-off text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Button Switch</div>
+                    <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-eye text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Eye-Protecting Glow</div>
+                    <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-battery-full text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Rechargeable</div>
+                    <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-expand-arrows-alt text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Compact Design</div>
+                    <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-leaf text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Energy Efficient</div>
                 </div>
 
-                <div class="mt-12 pt-10 border-t border-brand-dark/10 flex justify-center items-center reveal-text w-full max-w-4xl">
-                    <button onclick="addToCart('Owlnest Sleep Aid Lamp', 89, 'lamp-on.jpg')" class="bg-brand-dark text-white px-12 py-4 text-base tracking-widest uppercase hover:bg-brand-gold hover:text-brand-dark transition duration-300 shadow-lg">
+                <div class="mt-10 lg:mt-12 pt-10 border-t border-brand-dark/10 flex justify-center items-center reveal-text w-full max-w-4xl">
+                    <button onclick="addToCart('Owlnest Sleep Aid Lamp', 89, 'lamp-on.jpg')" class="bg-brand-dark text-white px-10 py-3 md:px-12 md:py-4 text-sm md:text-base tracking-widest uppercase hover:bg-brand-gold hover:text-brand-dark transition duration-300 shadow-lg active:scale-95">
                         Add to Cart
                     </button>
                 </div>
             </div>
         </section>
 
-        <!-- Section 7: Trust & Specifications (深色) -->
+        <!-- Section 7: Specs -->
         <section id="section-7" class="snap-section bg-brand-dark auto-height text-white">
-            <div class="max-w-5xl w-full px-8 py-24 reveal-text mx-auto">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-20 text-center">
-                    <div class="p-8 border border-white/20 rounded hover:bg-white/5 transition"><i class="fas fa-sun text-5xl text-brand-gold mb-6"></i><h4 class="font-bold mb-2 text-xl">Mimics Sunset</h4></div>
-                    <div class="p-8 border border-white/20 rounded hover:bg-white/5 transition"><i class="fas fa-globe text-5xl text-brand-gold mb-6"></i><h4 class="font-bold mb-2 text-xl">Internationally Proven</h4></div>
-                    <div class="p-8 border border-white/20 rounded hover:bg-white/5 transition"><i class="fas fa-check-circle text-5xl text-brand-gold mb-6"></i><h4 class="font-bold mb-2 text-xl">ITRI Certified</h4></div>
+            <div class="max-w-5xl w-full px-4 md:px-8 py-16 lg:py-24 reveal-text mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-10 mb-12 lg:mb-20 text-center">
+                    <div class="p-6 lg:p-8 border border-white/20 rounded hover:bg-white/5 transition"><i class="fas fa-sun text-4xl lg:text-5xl text-brand-gold mb-4 lg:mb-6"></i><h4 class="font-bold mb-2 text-lg lg:text-xl">Mimics Sunset</h4></div>
+                    <div class="p-6 lg:p-8 border border-white/20 rounded hover:bg-white/5 transition"><i class="fas fa-globe text-4xl lg:text-5xl text-brand-gold mb-4 lg:mb-6"></i><h4 class="font-bold mb-2 text-lg lg:text-xl">Internationally Proven</h4></div>
+                    <div class="p-6 lg:p-8 border border-white/20 rounded hover:bg-white/5 transition"><i class="fas fa-check-circle text-4xl lg:text-5xl text-brand-gold mb-4 lg:mb-6"></i><h4 class="font-bold mb-2 text-lg lg:text-xl">ITRI Certified</h4></div>
                 </div>
-                <div class="text-center mb-12"><h2 class="text-4xl font-serif mb-4">Technical Specifications</h2></div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-10 border-t border-white/20 pt-10 text-base md:text-lg">
-                    <div class="space-y-6">
-                        <div class="flex justify-between border-b border-white/10 pb-3"><span class="text-gray-400">Material</span><span>Silicone</span></div>
-                        <div class="flex justify-between border-b border-white/10 pb-3"><span class="text-gray-400">Light Color</span><span class="text-brand-gold">1500K - 2000K</span></div>
-                        <div class="flex justify-between border-b border-white/10 pb-3"><span class="text-gray-400">Power</span><span>0.03 - 0.1W</span></div>
-                        <div class="flex justify-between border-b border-white/10 pb-3"><span class="text-gray-400">LEDs</span><span>6 Beads</span></div>
+                <div class="text-center mb-8 lg:mb-12"><h2 class="text-3xl lg:text-4xl font-serif mb-4">Technical Specifications</h2></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-10 border-t border-white/20 pt-8 lg:pt-10 text-sm lg:text-lg">
+                    <div class="space-y-4 lg:space-y-6">
+                        <div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">Material</span><span>Silicone</span></div>
+                        <div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">Light Color</span><span class="text-brand-gold">1500K - 2000K</span></div>
+                        <div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">Power</span><span>0.03 - 0.1W</span></div>
+                        <div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">LEDs</span><span>6 Beads</span></div>
                     </div>
-                    <div class="space-y-6">
-                        <div class="flex justify-between border-b border-white/10 pb-3"><span class="text-gray-400">LED Lifespan</span><span>Approx. 3000 Hours</span></div>
-                        <div class="flex justify-between border-b border-white/10 pb-3"><span class="text-gray-400">Battery</span><span>1200 mAh Lithium</span></div>
-                        <div class="flex justify-between border-b border-white/10 pb-3"><span class="text-gray-400">Charging</span><span>Type-C (Included)</span></div>
-                        <div class="flex justify-between border-b border-white/10 pb-3"><span class="text-gray-400">Control</span><span>Button Switch</span></div>
+                    <div class="space-y-4 lg:space-y-6">
+                        <div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">LED Lifespan</span><span>Approx. 3000 Hours</span></div>
+                        <div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">Battery</span><span>1200 mAh Lithium</span></div>
+                        <div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">Charging</span><span>Type-C (Included)</span></div>
+                        <div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">Control</span><span>Button Switch</span></div>
                     </div>
                 </div>
-                <div class="mt-16 text-center"><a href="#section-8" class="inline-block bg-brand-gold text-brand-dark px-12 py-5 font-bold hover:bg-white transition duration-300 tracking-widest text-base shadow-lg">ORDER NOW</a></div>
+                <div class="mt-12 lg:mt-16 text-center"><a href="#section-8" class="inline-block bg-brand-gold text-brand-dark px-10 py-4 lg:px-12 lg:py-5 font-bold hover:bg-white transition duration-300 tracking-widest text-sm lg:text-base shadow-lg active:scale-95">ORDER NOW</a></div>
             </div>
         </section>
 
-        <!-- Section 8: Contact / Checkout (淺色) -->
+        <!-- Section 8: Contact -->
         <section id="section-8" class="snap-section bg-brand-cream text-brand-dark auto-height">
-            <div class="max-w-7xl w-full px-8 py-24 grid grid-cols-1 md:grid-cols-2 gap-20 items-start mx-auto">
+            <div class="max-w-7xl w-full px-4 md:px-8 py-16 lg:py-24 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-start mx-auto">
                 <div class="reveal-text">
-                    <h2 class="text-4xl md:text-5xl font-serif mb-10">Checkout / Contact</h2>
-                    <div class="space-y-8 text-brand-dark/70 font-light mb-10 text-lg">
-                        <p class="leading-relaxed mb-8">To complete your order, please verify your details in the form. Our team will send you a secure payment link or invoice via email within 24 hours.</p>
-                        <p class="flex items-center gap-6"><i class="fas fa-map-marker-alt text-brand-gold text-2xl"></i> 114 Lý Thường Kiệt, Phú Quốc, Vietnam</p>
-                        <p class="flex items-center gap-6"><i class="fas fa-envelope text-brand-gold text-2xl"></i> owlnestpq2025@gmail.com</p>
+                    <h2 class="text-3xl md:text-5xl font-serif mb-6 lg:mb-10">Checkout / Contact</h2>
+                    <div class="space-y-6 lg:space-y-8 text-brand-dark/70 font-light mb-8 lg:mb-10 text-base lg:text-lg">
+                        <p class="leading-relaxed mb-6">To complete your order, please verify your details in the form. Our team will send you a secure payment link or invoice via email within 24 hours.</p>
+                        <p class="flex items-center gap-4 lg:gap-6"><i class="fas fa-map-marker-alt text-brand-gold text-xl lg:text-2xl"></i> 114 Lý Thường Kiệt, Phú Quốc, Vietnam</p>
+                        <p class="flex items-center gap-4 lg:gap-6"><i class="fas fa-envelope text-brand-gold text-xl lg:text-2xl"></i> owlnestpq2025@gmail.com</p>
                     </div>
-                    <div class="w-full h-80 rounded-lg overflow-hidden border border-brand-dark/10 shadow-lg mb-10">
+                    <div class="w-full h-64 lg:h-80 rounded-lg overflow-hidden border border-brand-dark/10 shadow-lg mb-8 lg:mb-10">
                         <iframe width="100%" height="100%" frameborder="0" style="border:0;" src="https://maps.google.com/maps?q=114%20L%C3%BD%20Th%C6%B0%E1%BB%9Dng%20Ki%E1%BB%87t%2C%20Ph%C3%BA%20Qu%E1%BB%91c%2C%20Vietnam&t=&z=15&ie=UTF8&iwloc=&output=embed" allowfullscreen></iframe>
                     </div>
-                    <div class="flex items-center gap-6"><img src="logo.png" alt="Owlnest Logo" class="h-10 w-auto opacity-50"><p class="text-sm text-brand-dark/50 uppercase tracking-widest">&copy; <span id="copyright-year"></span> Owlnest Official.</p></div>
+                    <div class="flex items-center gap-4 lg:gap-6"><img src="logo.png" alt="Owlnest Logo" class="h-8 lg:h-10 w-auto opacity-50"><p class="text-xs lg:text-sm text-brand-dark/50 uppercase tracking-widest">&copy; <span id="copyright-year"></span> Owlnest Official.</p></div>
                 </div>
-                <div class="bg-white p-10 md:p-16 shadow-xl rounded-lg reveal-text" style="transition-delay: 0.2s;">
+                <div class="bg-white p-6 lg:p-16 shadow-xl rounded-lg reveal-text">
                     <form id="contact-form" onsubmit="submitOrder(event)">
-                        <div class="mb-8"><input id="form-name" type="text" placeholder="YOUR NAME" class="w-full bg-transparent border-b border-brand-dark/20 py-4 text-brand-dark text-lg focus:outline-none focus:border-brand-gold transition" required></div>
-                        <div class="mb-8"><input id="form-email" type="email" placeholder="YOUR EMAIL" class="w-full bg-transparent border-b border-brand-dark/20 py-4 text-brand-dark text-lg focus:outline-none focus:border-brand-gold transition" required></div>
-                        <div class="mb-10"><label class="text-sm text-brand-gold tracking-widest uppercase mb-3 block font-bold">Order Details</label><textarea id="form-message" rows="5" placeholder="Your cart items will appear here..." class="w-full bg-brand-cream border border-brand-dark/10 p-4 text-brand-dark text-lg focus:outline-none focus:border-brand-gold transition font-mono"></textarea></div>
-                        <button class="w-full bg-brand-dark text-white font-bold py-5 hover:bg-brand-gold hover:text-brand-dark transition duration-300 tracking-widest text-lg shadow-md">SUBMIT ORDER REQUEST</button>
+                        <div class="mb-6 lg:mb-8"><input id="form-name" type="text" placeholder="YOUR NAME" class="w-full bg-transparent border-b border-brand-dark/20 py-3 lg:py-4 text-brand-dark text-base lg:text-lg focus:outline-none focus:border-brand-gold transition" required></div>
+                        <div class="mb-6 lg:mb-8"><input id="form-email" type="email" placeholder="YOUR EMAIL" class="w-full bg-transparent border-b border-brand-dark/20 py-3 lg:py-4 text-brand-dark text-base lg:text-lg focus:outline-none focus:border-brand-gold transition" required></div>
+                        <div class="mb-8 lg:mb-10"><label class="text-xs lg:text-sm text-brand-gold tracking-widest uppercase mb-2 lg:mb-3 block font-bold">Order Details</label><textarea id="form-message" rows="5" placeholder="Your cart items will appear here..." class="w-full bg-brand-cream border border-brand-dark/10 p-3 lg:p-4 text-brand-dark text-base lg:text-lg focus:outline-none focus:border-brand-gold transition font-mono"></textarea></div>
+                        <button class="w-full bg-brand-dark text-white font-bold py-4 lg:py-5 hover:bg-brand-gold hover:text-brand-dark transition duration-300 tracking-widest text-base lg:text-lg shadow-md active:scale-95">SUBMIT ORDER REQUEST</button>
                     </form>
                 </div>
             </div>
@@ -464,26 +529,37 @@
 
     <!-- JavaScript (Cart & Scroll Logic) -->
     <script>
-        // [修改] 互動開關燈邏輯 (預設關閉)
-        let isLampOn = false; // 預設為關閉
+        // 手機版選單切換
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const icon = document.getElementById('mobile-menu-icon');
+            menu.classList.toggle('open');
+            if (menu.classList.contains('open')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        }
+
+        // 開關燈
+        let isLampOn = false;
         const lampImg = document.getElementById('lamp-sequence-img');
         const lampStatus = document.getElementById('lamp-status-text');
-
         function toggleLamp() {
             if (isLampOn) {
-                // 目前是開的 -> 關燈
                 lampImg.src = 'lamp-off.jpg';
                 lampStatus.innerHTML = '<i class="fas fa-toggle-off text-brand-dark/50"></i> Click to Turn On';
                 isLampOn = false;
             } else {
-                // 目前是關的 -> 開燈
                 lampImg.src = 'lamp-on.jpg';
                 lampStatus.innerHTML = '<i class="fas fa-toggle-on text-brand-gold"></i> Click to Turn Off';
                 isLampOn = true;
             }
         }
 
-        // 購物車邏輯
+        // 購物車
         let cart = JSON.parse(localStorage.getItem('owlnest_cart')) || [];
         function toggleCart() {
             document.getElementById('cart-sidebar').classList.toggle('open');
@@ -504,10 +580,13 @@
         function saveCart() { localStorage.setItem('owlnest_cart', JSON.stringify(cart)); }
         function updateCartCount() {
             const count = cart.reduce((sum, item) => sum + item.quantity, 0);
-            const badge = document.getElementById('cart-count');
-            badge.innerText = count;
-            badge.classList.remove('hidden');
-            if(count === 0) badge.classList.add('hidden');
+            const deskBadge = document.getElementById('cart-count-desktop');
+            const mobileBadge = document.getElementById('cart-count-mobile');
+            [deskBadge, mobileBadge].forEach(badge => {
+                badge.innerText = count;
+                badge.classList.remove('hidden');
+                if(count === 0) badge.classList.add('hidden');
+            });
         }
         function renderCart() {
             const container = document.getElementById('cart-items');
@@ -536,7 +615,7 @@
             orderSummary += `\nTotal Estimated: USD $${total.toFixed(2)}`;
             document.getElementById('form-message').value = orderSummary;
             toggleCart();
-            window.location.href = "#section-8"; // Update to Section 8
+            window.location.href = "#section-8";
             setTimeout(() => { alert("Please fill in your name and email to finalize the order inquiry."); }, 500);
         }
         function submitOrder(e) {
@@ -551,18 +630,25 @@
         const container = document.getElementById('scroller');
         const sections = document.querySelectorAll('.snap-section');
         const dots = document.querySelectorAll('.dot');
+        let isScrolling = false;
         container.addEventListener('scroll', () => {
-            sections.forEach(s => {
-                const rect = s.getBoundingClientRect();
-                if (rect.top >= -window.innerHeight / 2 && rect.top < window.innerHeight / 2) {
-                    sections.forEach(sec => sec.classList.remove('active'));
-                    s.classList.add('active');
-                    dots.forEach(d => d.classList.remove('active'));
-                    const id = s.id;
-                    const activeDot = document.querySelector(`.dot[href="#${id}"]`);
-                    if(activeDot) activeDot.classList.add('active');
-                }
-            });
+            if (!isScrolling) {
+                window.requestAnimationFrame(() => {
+                    sections.forEach(s => {
+                        const rect = s.getBoundingClientRect();
+                        if (rect.top >= -window.innerHeight / 2 && rect.top < window.innerHeight / 2) {
+                            sections.forEach(sec => sec.classList.remove('active'));
+                            s.classList.add('active');
+                            dots.forEach(d => d.classList.remove('active'));
+                            const id = s.id;
+                            const activeDot = document.querySelector(`.dot[href="#${id}"]`);
+                            if(activeDot) activeDot.classList.add('active');
+                        }
+                    });
+                    isScrolling = false;
+                });
+                isScrolling = true;
+            }
         });
     </script>
 </body>
