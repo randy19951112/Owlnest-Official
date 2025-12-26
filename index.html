@@ -53,6 +53,7 @@
             height: 100vh;
             height: 100dvh;
             overflow-y: scroll;
+            /* 平板優化：使用 proximity 減少卡頓 */
             scroll-snap-type: y proximity; 
             scroll-behavior: smooth;
         }
@@ -88,7 +89,7 @@
                 align-items: center;
                 justify-content: center;
             }
-            /* Section 1 視差捲動區：電腦版開啟長高度 (400vh) */
+            /* Section 1 視差捲動區：電腦版開啟長高度 (400vh) 以供滑動播放 */
             #section-1.desktop-scroll {
                 display: block; 
                 height: 400vh; 
@@ -112,7 +113,7 @@
             opacity: 1;
             transform: translateY(0);
         }
-        @media (max-width: 767px) {
+        @media (max-width: 1023px) {
             .reveal-text { opacity: 1; transform: translateY(0); }
         }
         
@@ -207,7 +208,6 @@
              <span class="font-serif text-lg md:text-3xl tracking-widest font-bold">Owlnest Official</span>
         </div>
         
-        <!-- 電腦版選單 (lg 顯示) -->
         <div class="hidden lg:flex items-center gap-8">
             <nav class="flex gap-8 text-sm tracking-widest uppercase font-semibold">
                 <a href="#section-1" class="border-b-2 border-transparent hover:border-brand-gold hover:text-brand-gold transition-all duration-300 pb-1">Home</a>
@@ -222,7 +222,6 @@
             </button>
         </div>
 
-        <!-- 平板/手機版控制區 (lg 隱藏) -->
         <div class="flex lg:hidden items-center gap-4 relative z-50">
             <button onclick="toggleCart()" class="relative active:scale-95 transition">
                 <i class="fas fa-shopping-bag text-2xl"></i>
@@ -288,8 +287,8 @@
         <section id="section-1" class="snap-section bg-brand-dark active">
             <!-- 黏性容器 -->
             <div class="sticky top-0 h-[100vh] w-full overflow-hidden">
-                <!-- Canvas 播放圖片序列 -->
-                <canvas id="hero-canvas" class="absolute inset-0 w-full h-full object-cover"></canvas>
+                <!-- Canvas 播放圖片序列 (預設給深色背景避免閃爍) -->
+                <canvas id="hero-canvas" class="absolute inset-0 w-full h-full object-cover bg-brand-dark"></canvas>
                 <div class="absolute inset-0 bg-black/30"></div>
                 
                 <div class="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 max-w-screen-xl mx-auto">
@@ -573,9 +572,8 @@
         const section1 = document.getElementById('section-1');
         
         // **設定區**
-        const frameCount = 80; // [修正] 設定為 80 張
-        // [修正] 檔名改為 001.jpg 格式
-        const currentFrame = index => `${index.toString().padStart(3, '0')}.jpg`; 
+        const frameCount = 80; 
+        const currentFrame = index => `${index.toString().padStart(3, '0')}.jpg`; // 001.jpg
         
         const images = [];
         const skySequence = { frame: 0 };
@@ -587,7 +585,7 @@
             img.src = currentFrame(i);
             img.onload = () => {
                 imagesLoaded++;
-                if (imagesLoaded === 1) { // 載入第一張就先畫出來，避免空白
+                if (imagesLoaded === 1) { // 載入第一張就先畫出來
                     render();
                 }
             };
@@ -798,76 +796,6 @@
         
         updateCartCount();
         document.getElementById('copyright-year').textContent = new Date().getFullYear();
-
-        const container = document.getElementById('scroller');
-        const sections = document.querySelectorAll('.snap-section');
-        const dots = document.querySelectorAll('.dot');
-        const header = document.getElementById('main-header');
-        
-        let isScrolling = false;
-        container.addEventListener('scroll', () => {
-            if (!isScrolling) {
-                window.requestAnimationFrame(() => {
-                    sections.forEach(s => {
-                        const rect = s.getBoundingClientRect();
-                        if (rect.top >= -window.innerHeight / 2 && rect.top < window.innerHeight / 2) {
-                            
-                            sections.forEach(sec => sec.classList.remove('active'));
-                            s.classList.add('active');
-                            dots.forEach(d => d.classList.remove('active'));
-                            const id = s.id;
-                            const activeDot = document.querySelector(`.dot[href="#${id}"]`);
-                            if(activeDot) activeDot.classList.add('active');
-
-                            // 導覽列變色
-                            header.classList.remove('nav-dark', 'nav-split');
-                            if (s.id === 'section-3') {
-                                header.classList.add('nav-split'); 
-                            } else if (s.classList.contains('bg-brand-cream') || s.classList.contains('bg-white')) {
-                                header.classList.add('nav-dark'); 
-                            }
-                            
-                            // [關鍵] 僅電腦版啟用 Scroll Scrubbing (Section 1)
-                            if (isDesktop() && s.id === 'section-1') {
-                                section1.classList.add('desktop-scroll');
-                            } else {
-                                section1.classList.remove('desktop-scroll');
-                            }
-                        }
-                    });
-                    
-                    // 電腦版 Scroll Scrubbing 計算
-                    if (isDesktop()) {
-                        const rect = section1.getBoundingClientRect();
-                        const sectionHeight = section1.offsetHeight;
-                        const windowHeight = window.innerHeight;
-                        
-                        // 當 Section 1 在視窗範圍內
-                        if (rect.top <= 0 && rect.bottom >= 0) {
-                             const scrollTop = Math.abs(rect.top);
-                             const maxScroll = sectionHeight - windowHeight;
-                             const scrollFraction = scrollTop / maxScroll;
-                             
-                             const frameIndex = Math.min(
-                                 frameCount - 1,
-                                 Math.ceil(scrollFraction * frameCount)
-                             );
-                             
-                             if (frameIndex >= 0 && frameIndex < frameCount) {
-                                 skySequence.frame = frameIndex;
-                                 render();
-                             }
-                        }
-                    }
-
-                    isScrolling = false;
-                });
-                isScrolling = true;
-            }
-        });
-        
-        // 視窗大小改變時重繪
-        window.addEventListener('resize', render);
     </script>
 </body>
 </html>
