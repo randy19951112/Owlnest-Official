@@ -18,7 +18,7 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Snipcart CSS (升級到 v3.7.1 以確保金流介面相容性) -->
+    <!-- Snipcart CSS -->
     <link rel="stylesheet" href="https://cdn.snipcart.com/themes/v3.7.1/default/snipcart.css" />
 
     <script>
@@ -186,18 +186,16 @@
             transition: color 0.2s ease; 
             text-shadow: 0 1px 3px rgba(0,0,0,0.3); 
         }
+        /* [修改] 移除 Logo 的 filter，改用 JS 換圖 */
         #main-header .logo-area img {
-            transition: filter 0.2s ease;
-            filter: drop-shadow(0 1px 3px rgba(0,0,0,0.3)); 
+            transition: opacity 0.2s ease; /* 改為透明度轉場，讓換圖更柔和 */
         }
         
         header.nav-dark {
             color: #455169 !important; 
             text-shadow: none; 
         }
-        header.nav-dark .logo-area img {
-            filter: brightness(0.2); 
-        }
+        /* [修改] 移除 filter brightness */
         header.nav-dark button i, header.nav-dark i {
             color: #455169 !important;
         }
@@ -205,12 +203,11 @@
         @media (min-width: 1024px) {
             header.nav-split nav a { color: #faefcf !important; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
             header.nav-split button i { color: #faefcf !important; }
+            /* [修改] Logo 區域顏色控制交給 JS 換圖 */
             header.nav-split .logo-area { color: #455169 !important; text-shadow: none; }
-            header.nav-split .logo-area img { filter: brightness(0.2); }
         }
         @media (max-width: 1023px) {
             header.nav-split { color: #455169 !important; text-shadow: none; }
-            header.nav-split .logo-area img { filter: brightness(0.2); }
             header.nav-split button i { color: #455169 !important; }
         }
 
@@ -279,8 +276,8 @@
     <!-- 導覽列 -->
     <header id="main-header" class="fixed top-0 left-0 w-full z-50 px-4 md:px-8 py-4 md:py-6 flex justify-between items-center bg-transparent transition-all duration-300">
         <div class="logo-area flex items-center gap-2 md:gap-4 relative z-50">
-             <!-- [確認] Logo 為 logo2.png -->
-             <img src="logo2.png" alt="Owlnest Logo" class="h-10 md:h-14 w-auto brightness-200 contrast-100">
+             <!-- [修改] 加入 id="nav-logo" 並預設使用 logo2.png (淺色線條，適合首頁深底) -->
+             <img id="nav-logo" src="logo2.png" alt="Owlnest Logo" class="h-10 md:h-14 w-auto contrast-100">
              <span class="font-serif text-lg md:text-3xl tracking-widest font-bold">Owlnest Official</span>
         </div>
         
@@ -336,10 +333,6 @@
         <a href="#section-8" class="dot" data-index="7"></a>
     </div>
 
-    <!-- 購物車側邊欄 (此處主要由 Snipcart 接管，保留基本的 HTML 結構以免 JS 報錯，但主要依賴 Snipcart 彈窗) -->
-    <!-- 為了避免混淆，我們可以移除舊的 #cart-sidebar 和 #cart-overlay 相關代碼，完全依賴 Snipcart -->
-    <!-- 但為了保險起見，保留 JS 邏輯中的 toggleCart() 並讓它觸發 Snipcart -->
-
     <!-- 主容器 -->
     <div class="snap-container" id="scroller">
 
@@ -352,7 +345,7 @@
                 <div class="absolute inset-0 bg-black/30"></div>
                 
                 <div class="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 max-w-screen-xl mx-auto">
-                    <!-- [確認] 使用 logo2.png -->
+                    <!-- [確認] 使用 logo2.png (淺色線條) -->
                     <img src="logo2.png" alt="Owlnest Logo" class="w-32 md:w-48 lg:w-64 mb-8 md:mb-10 brightness-200 contrast-100 drop-shadow-2xl reveal-text" style="transition-delay: 0.1s;">
                     
                     <h1 class="text-3xl md:text-5xl lg:text-6xl font-serif font-light mb-6 reveal-text text-brand-gold tracking-widest" style="transition-delay: 0.3s;">
@@ -608,6 +601,7 @@
                         <div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">LED Lifespan</span><span>Approx. 3000 Hours</span></div>
                         <div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">Battery</span><span>1200 mAh Lithium</span></div>
                         <div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">Charging</span><span>Type-C (Included)</span></div>
+                        <!-- [確認] Control 方式統一 -->
                         <div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">Control</span><span>Button Switch</span></div>
                     </div>
                 </div>
@@ -640,7 +634,7 @@
                     </div>
                     <div class="flex items-center gap-4 lg:gap-6"><img src="logo.png" alt="Owlnest Logo" class="h-8 lg:h-10 w-auto opacity-50"><p class="text-xs lg:text-sm text-brand-dark/50 uppercase tracking-widest">&copy; <span id="copyright-year"></span> Owlnest Official.</p><a href="disclaimer.html" class="text-xs lg:text-sm text-brand-dark/50 hover:text-brand-gold ml-4">Disclaimer</a></div>
                 </div>
-                <!-- Contact Form (with Netlify Forms support) -->
+                <!-- Contact Form -->
                 <div class="bg-white p-6 lg:p-16 shadow-xl rounded-lg reveal-text">
                     <form name="contact" method="POST" data-netlify="true" onsubmit="alert('Message Sent! We will contact you soon.');">
                         <input type="hidden" name="form-name" value="contact" />
@@ -714,6 +708,7 @@
         const sections = document.querySelectorAll('.snap-section');
         const dots = document.querySelectorAll('.dot');
         const header = document.getElementById('main-header');
+        const navLogo = document.getElementById('nav-logo'); // [新增] 獲取 Logo 元素
         
         let isScrolling = false;
 
@@ -731,11 +726,18 @@
                             const activeDot = document.querySelector(`.dot[href="#${id}"]`);
                             if(activeDot) activeDot.classList.add('active');
 
+                            // 導覽列變色邏輯 (包含 Logo 換圖)
                             header.classList.remove('nav-dark', 'nav-split');
+                            
                             if (s.id === 'section-3') {
-                                header.classList.add('nav-split'); 
+                                header.classList.add('nav-split');
+                                if (navLogo) navLogo.src = 'logo.png'; // 深色線條 Logo
                             } else if (s.classList.contains('bg-brand-cream') || s.classList.contains('bg-white')) {
-                                header.classList.add('nav-dark'); 
+                                header.classList.add('nav-dark');
+                                if (navLogo) navLogo.src = 'logo.png'; // 深色線條 Logo
+                            } else {
+                                // 深色背景 (首頁等)
+                                if (navLogo) navLogo.src = 'logo2.png'; // 淺色線條 Logo
                             }
                             
                             // [關鍵] 全裝置都啟用 Scroll Scrubbing (Section 1)
