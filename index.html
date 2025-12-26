@@ -53,7 +53,6 @@
             height: 100vh;
             height: 100dvh;
             overflow-y: scroll;
-            /* [修正] 改用 proximity (接近吸附)，比 mandatory (強制吸附) 更順暢，減少平板卡頓 */
             scroll-snap-type: y proximity; 
             scroll-behavior: smooth;
         }
@@ -61,7 +60,7 @@
         /* 手機版 (小於 768px) */
         @media (max-width: 767px) {
             .snap-container {
-                scroll-snap-type: none; /* 手機版建議關閉吸附，完全自由滑動體驗最好 */
+                scroll-snap-type: none; 
             }
             .snap-section {
                 height: auto;
@@ -69,7 +68,6 @@
                 padding-top: 60px; 
                 padding-bottom: 60px;
             }
-            /* 手機版首頁不需長捲動，自動播放即可 */
             #section-1 {
                 height: 100vh !important; 
                 padding: 0 !important;
@@ -83,26 +81,25 @@
                 height: 100vh;
                 height: 100dvh;
                 width: 100%;
-                scroll-snap-align: start; /* 這裡設定吸附點 */
+                scroll-snap-align: start; 
                 position: relative;
                 overflow: hidden;
                 display: flex;
                 align-items: center;
                 justify-content: center;
             }
-            /* Section 1 視差捲動區：開啟長高度 */
-            #section-1 {
+            /* Section 1 視差捲動區：電腦版開啟長高度 (400vh) */
+            #section-1.desktop-scroll {
                 display: block; 
-                height: 400vh; /* 4倍高度供滑動 */
+                height: 400vh; 
                 overflow: visible;
-                scroll-snap-align: start; /* 只吸附開頭，中間讓用戶自由滑 */
-            }
-            .snap-section.auto-height {
-                display: block;
-                overflow-y: auto;
             }
         }
 
+        .snap-section.auto-height {
+            display: block;
+            overflow-y: auto;
+        }
         .snap-section.auto-height::-webkit-scrollbar { width: 0px; }
 
         /* 動畫效果 */
@@ -225,7 +222,7 @@
             </button>
         </div>
 
-        <!-- 平板/手機版控制區 -->
+        <!-- 平板/手機版控制區 (lg 隱藏) -->
         <div class="flex lg:hidden items-center gap-4 relative z-50">
             <button onclick="toggleCart()" class="relative active:scale-95 transition">
                 <i class="fas fa-shopping-bag text-2xl"></i>
@@ -287,13 +284,12 @@
     <!-- 主容器 -->
     <div class="snap-container" id="scroller">
 
-        <!-- Section 1: Hero (影片區) -->
-        <!-- 平板(md, >768px) 也開啟 400vh 高度 -->
+        <!-- Section 1: Hero (序列幀畫布區) -->
         <section id="section-1" class="snap-section bg-brand-dark active">
+            <!-- 黏性容器 -->
             <div class="sticky top-0 h-[100vh] w-full overflow-hidden">
-                <video id="hero-video" class="absolute inset-0 w-full h-full object-cover" muted playsinline loop preload="auto">
-                    <source src="視覺滾動影片.mp4" type="video/mp4">
-                </video>
+                <!-- Canvas 播放圖片序列 -->
+                <canvas id="hero-canvas" class="absolute inset-0 w-full h-full object-cover"></canvas>
                 <div class="absolute inset-0 bg-black/30"></div>
                 
                 <div class="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 max-w-screen-xl mx-auto">
@@ -308,14 +304,14 @@
                     </p>
 
                     <!-- Scroll Down 提示 -->
-                    <div class="absolute bottom-10 animate-bounce text-brand-gold/70 text-sm tracking-widest uppercase">
+                    <div class="absolute bottom-10 animate-bounce text-brand-gold/70 text-sm tracking-widest uppercase hidden xl:block">
                         Scroll to Experience
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Section 2: The Problem (淺色) -->
+        <!-- Section 2: The Problem -->
         <section id="section-2" class="snap-section bg-brand-cream auto-height text-brand-dark">
             <div class="relative z-10 max-w-screen-xl px-4 md:px-8 py-16 lg:py-24 text-center mx-auto">
                 <p class="text-brand-gold text-xs md:text-sm tracking-widest uppercase mb-4 reveal-text">Sleep Troubles?</p>
@@ -354,7 +350,7 @@
             </div>
         </section>
 
-        <!-- Section 3: Interactive Experience (深色) -->
+        <!-- Section 3: Interactive Experience -->
         <section id="section-3" class="snap-section bg-brand-dark auto-height">
             <div class="flex flex-col lg:flex-row w-full h-full">
                 <!-- Image Half -->
@@ -408,7 +404,7 @@
             </div>
         </section>
 
-        <!-- Section 4: The Science (淺色) -->
+        <!-- Section 4: The Science -->
         <section id="section-4" class="snap-section bg-brand-cream text-brand-dark auto-height">
             <div class="max-w-screen-xl w-full px-4 lg:px-8 py-16 lg:py-24 flex flex-col items-center mx-auto">
                 <div class="text-center max-w-5xl reveal-text mb-12">
@@ -439,7 +435,7 @@
             </div>
         </section>
 
-        <!-- Section 5: Comparison (深色) -->
+        <!-- Section 5: Comparison -->
         <section id="section-5" class="snap-section bg-brand-dark auto-height">
             <div class="max-w-screen-xl w-full px-4 py-16 lg:py-24 mx-auto">
                 <div class="text-center mb-10 lg:mb-16 reveal-text">
@@ -482,7 +478,7 @@
             </div>
         </section>
 
-        <!-- Section 6: Features (淺色) -->
+        <!-- Section 6: Features -->
         <section id="section-6" class="snap-section bg-brand-cream auto-height text-brand-dark">
             <div class="flex flex-col items-center text-center px-4 py-16 lg:py-24 max-w-screen-xl mx-auto reveal-text">
                 <div class="w-40 h-40 md:w-56 md:h-56 lg:w-64 lg:h-64 mb-8 lg:mb-10 rounded-full border-4 border-brand-dark/10 overflow-hidden shadow-2xl">
@@ -513,7 +509,7 @@
             </div>
         </section>
 
-        <!-- Section 7: Specs (深色) -->
+        <!-- Section 7: Specs -->
         <section id="section-7" class="snap-section bg-brand-dark auto-height text-white">
             <div class="max-w-5xl w-full px-4 md:px-8 py-16 lg:py-24 reveal-text mx-auto">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-10 mb-12 lg:mb-20 text-center">
@@ -568,8 +564,143 @@
 
     </div>
 
-    <!-- JavaScript -->
+    <!-- JavaScript (Canvas Animation Logic) -->
     <script>
+        /* ----- 核心：序列幀動畫 (Canvas Sequence) ----- */
+        
+        const canvas = document.getElementById('hero-canvas');
+        const context = canvas.getContext('2d');
+        const section1 = document.getElementById('section-1');
+        
+        // **設定區**
+        const frameCount = 80; // [修正] 設定為 80 張
+        // [修正] 檔名改為 001.jpg 格式
+        const currentFrame = index => `${index.toString().padStart(3, '0')}.jpg`; 
+        
+        const images = [];
+        const skySequence = { frame: 0 };
+        let imagesLoaded = 0;
+
+        // 預先載入圖片
+        for (let i = 1; i <= frameCount; i++) {
+            const img = new Image();
+            img.src = currentFrame(i);
+            img.onload = () => {
+                imagesLoaded++;
+                if (imagesLoaded === 1) { // 載入第一張就先畫出來，避免空白
+                    render();
+                }
+            };
+            images.push(img);
+        }
+
+        // 畫布渲染函數 (Cover 模式)
+        function render() {
+            const img = images[skySequence.frame];
+            if (!img) return;
+
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            // 模擬 object-fit: cover
+            const scale = Math.max(canvas.width / img.width, canvas.height / img.height);
+            const x = (canvas.width / 2) - (img.width / 2) * scale;
+            const y = (canvas.height / 2) - (img.height / 2) * scale;
+            
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.drawImage(img, x, y, img.width * scale, img.height * scale);
+        }
+
+        // 判斷裝置
+        function isDesktop() {
+            return window.innerWidth >= 1280; // 與 CSS breakpoint 一致
+        }
+
+        /* 滾動監聽與動畫控制 */
+        const container = document.getElementById('scroller');
+        const sections = document.querySelectorAll('.snap-section');
+        const dots = document.querySelectorAll('.dot');
+        const header = document.getElementById('main-header');
+        
+        let isScrolling = false;
+
+        // 手機/平板自動播放 Loop (20fps)
+        function startMobileLoop() {
+            setInterval(() => {
+                if (!isDesktop()) {
+                    skySequence.frame = (skySequence.frame + 1) % frameCount;
+                    render();
+                }
+            }, 50); 
+        }
+        startMobileLoop();
+
+        // 滾動事件
+        container.addEventListener('scroll', () => {
+            if (!isScrolling) {
+                window.requestAnimationFrame(() => {
+                    sections.forEach(s => {
+                        const rect = s.getBoundingClientRect();
+                        if (rect.top >= -window.innerHeight / 2 && rect.top < window.innerHeight / 2) {
+                            
+                            sections.forEach(sec => sec.classList.remove('active'));
+                            s.classList.add('active');
+                            dots.forEach(d => d.classList.remove('active'));
+                            const id = s.id;
+                            const activeDot = document.querySelector(`.dot[href="#${id}"]`);
+                            if(activeDot) activeDot.classList.add('active');
+
+                            // 導覽列變色
+                            header.classList.remove('nav-dark', 'nav-split');
+                            if (s.id === 'section-3') {
+                                header.classList.add('nav-split'); 
+                            } else if (s.classList.contains('bg-brand-cream') || s.classList.contains('bg-white')) {
+                                header.classList.add('nav-dark'); 
+                            }
+                            
+                            // [關鍵] 僅電腦版啟用 Scroll Scrubbing (Section 1)
+                            if (isDesktop() && s.id === 'section-1') {
+                                section1.classList.add('desktop-scroll');
+                            } else {
+                                section1.classList.remove('desktop-scroll');
+                            }
+                        }
+                    });
+                    
+                    // 電腦版 Scroll Scrubbing 計算
+                    if (isDesktop()) {
+                        const rect = section1.getBoundingClientRect();
+                        const sectionHeight = section1.offsetHeight;
+                        const windowHeight = window.innerHeight;
+                        
+                        // 當 Section 1 在視窗範圍內
+                        if (rect.top <= 0 && rect.bottom >= 0) {
+                             const scrollTop = Math.abs(rect.top);
+                             const maxScroll = sectionHeight - windowHeight;
+                             const scrollFraction = scrollTop / maxScroll;
+                             
+                             const frameIndex = Math.min(
+                                 frameCount - 1,
+                                 Math.ceil(scrollFraction * frameCount)
+                             );
+                             
+                             if (frameIndex >= 0 && frameIndex < frameCount) {
+                                 skySequence.frame = frameIndex;
+                                 render();
+                             }
+                        }
+                    }
+
+                    isScrolling = false;
+                });
+                isScrolling = true;
+            }
+        });
+        
+        // 視窗大小改變時重繪
+        window.addEventListener('resize', render);
+
+        // 手機版選單切換
         function toggleMobileMenu() {
             const menu = document.getElementById('mobile-menu');
             const icon = document.getElementById('mobile-menu-icon');
@@ -583,6 +714,7 @@
             }
         }
 
+        // 開關燈
         let isLampOn = false;
         const lampImg = document.getElementById('lamp-sequence-img');
         const lampStatus = document.getElementById('lamp-status-text');
@@ -599,6 +731,7 @@
             }
         }
 
+        // 購物車邏輯
         let cart = JSON.parse(localStorage.getItem('owlnest_cart')) || [];
         function toggleCart() {
             document.getElementById('cart-sidebar').classList.toggle('open');
@@ -672,13 +805,6 @@
         const header = document.getElementById('main-header');
         
         let isScrolling = false;
-        
-        // 判斷裝置類型是否為 Desktop (寬度 >= 768px, 但保留 scroll snap 的判斷在CSS中為 1280px)
-        // 這裡的 JS 邏輯只需要知道是否寬於 mobile
-        function isDesktop() {
-            return window.innerWidth >= 768; // 平板以上
-        }
-
         container.addEventListener('scroll', () => {
             if (!isScrolling) {
                 window.requestAnimationFrame(() => {
@@ -692,49 +818,45 @@
                             const id = s.id;
                             const activeDot = document.querySelector(`.dot[href="#${id}"]`);
                             if(activeDot) activeDot.classList.add('active');
-                            
-                            // [關鍵] 平板以上才執行影片播放邏輯
-                            if (isDesktop() && s.id === 'section-1') {
-                                const video = document.getElementById('hero-video');
-                                if (video && video.paused) {
-                                    video.play();
-                                }
-                            }
 
                             // 導覽列變色
                             header.classList.remove('nav-dark', 'nav-split');
-                            
                             if (s.id === 'section-3') {
                                 header.classList.add('nav-split'); 
                             } else if (s.classList.contains('bg-brand-cream') || s.classList.contains('bg-white')) {
                                 header.classList.add('nav-dark'); 
-                            } 
+                            }
+                            
+                            // [關鍵] 僅電腦版啟用 Scroll Scrubbing (Section 1)
+                            if (isDesktop() && s.id === 'section-1') {
+                                section1.classList.add('desktop-scroll');
+                            } else {
+                                section1.classList.remove('desktop-scroll');
+                            }
                         }
                     });
                     
-                    // [關鍵] 只有桌面版 (>=1280px) 才執行 scroll-scrubbing
-                    if (window.innerWidth >= 1280) {
-                        const videoSection = document.getElementById('section-1');
-                        const video = document.getElementById('hero-video');
-                        const rect = videoSection.getBoundingClientRect();
-                        const sectionHeight = videoSection.offsetHeight;
+                    // 電腦版 Scroll Scrubbing 計算
+                    if (isDesktop()) {
+                        const rect = section1.getBoundingClientRect();
+                        const sectionHeight = section1.offsetHeight;
                         const windowHeight = window.innerHeight;
                         
+                        // 當 Section 1 在視窗範圍內
                         if (rect.top <= 0 && rect.bottom >= 0) {
-                             let progress = Math.abs(rect.top) / (sectionHeight - windowHeight);
-                             if (progress < 0) progress = 0;
-                             if (progress > 1) progress = 1;
+                             const scrollTop = Math.abs(rect.top);
+                             const maxScroll = sectionHeight - windowHeight;
+                             const scrollFraction = scrollTop / maxScroll;
                              
-                             if (video && video.duration) {
-                                 video.currentTime = video.duration * progress;
-                                 video.pause(); 
+                             const frameIndex = Math.min(
+                                 frameCount - 1,
+                                 Math.ceil(scrollFraction * frameCount)
+                             );
+                             
+                             if (frameIndex >= 0 && frameIndex < frameCount) {
+                                 skySequence.frame = frameIndex;
+                                 render();
                              }
-                        }
-                    } else {
-                        // 平板/手機版：確保影片自動循環播放
-                        const video = document.getElementById('hero-video');
-                        if (video && video.paused) {
-                            video.play().catch(e => console.log("Auto-play prevented"));
                         }
                     }
 
@@ -743,6 +865,9 @@
                 isScrolling = true;
             }
         });
+        
+        // 視窗大小改變時重繪
+        window.addEventListener('resize', render);
     </script>
 </body>
 </html>
