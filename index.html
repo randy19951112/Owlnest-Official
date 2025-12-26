@@ -18,7 +18,7 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- [新增] Snipcart CSS -->
+    <!-- Snipcart CSS -->
     <link rel="stylesheet" href="https://cdn.snipcart.com/themes/v3.4.1/default/snipcart.css" />
 
     <script>
@@ -168,12 +168,6 @@
             transform: scale(1.3);
         }
 
-        /* 購物車動畫 */
-        #cart-sidebar { transform: translateX(100%); transition: transform 0.3s ease-in-out; }
-        #cart-sidebar.open { transform: translateX(0); }
-        #cart-overlay { opacity: 0; pointer-events: none; transition: opacity 0.3s ease-in-out; }
-        #cart-overlay.open { opacity: 1; pointer-events: auto; }
-
         /* 手機版選單動畫 */
         #mobile-menu { transform: translateY(-100%); transition: transform 0.3s ease-in-out; }
         #mobile-menu.open { transform: translateY(0); }
@@ -212,6 +206,45 @@
             header.nav-split { color: #455169 !important; }
             header.nav-split .logo-area img { filter: brightness(0.2); }
             header.nav-split button i { color: #455169 !important; }
+        }
+
+        /* --- [新增] Snipcart 客製化美學設定 --- */
+        #snipcart {
+            /* 背景與文字基礎色 */
+            --color-modal-bg: #faefcf; /* 奶油米色背景 */
+            --color-library-background: #faefcf;
+            --color-library-border: #e0d0b0;
+            --color-library-text: #455169; /* 深岩灰藍文字 */
+            
+            /* 按鈕顏色 (Primary - 結帳按鈕) */
+            --color-button-primary-bg: #D4AF37; /* 金色按鈕 */
+            --color-button-primary-text: #455169; /* 深藍文字 */
+            --color-button-primary-hover-bg: #c5a02f;
+            
+            /* 按鈕顏色 (Secondary - 移除/返回) */
+            --color-button-secondary-bg: transparent;
+            --color-button-secondary-border: #455169;
+            --color-button-secondary-text: #455169;
+            --color-button-secondary-hover-bg: #455169;
+            --color-button-secondary-hover-text: #faefcf;
+
+            /* 輸入框 */
+            --color-input-bg: #ffffff;
+            --color-input-text: #455169;
+            --color-input-border: #d0c0a0;
+            
+            /* 連結與強調色 */
+            --color-link: #D4AF37;
+            --color-badge-bg: #D4AF37;
+            --color-badge-text: #455169;
+
+            /* 字體 */
+            --font-family: 'Manrope', sans-serif;
+        }
+        
+        /* 隱藏 Snipcart 預設的陰影，改用扁平化設計 */
+        .snipcart-modal__container {
+            box-shadow: 0 20px 50px rgba(69, 81, 105, 0.3) !important;
         }
     </style>
 </head>
