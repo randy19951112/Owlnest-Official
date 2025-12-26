@@ -18,6 +18,9 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <!-- [新增] Snipcart CSS -->
+    <link rel="stylesheet" href="https://cdn.snipcart.com/themes/v3.4.1/default/snipcart.css" />
+
     <script>
         tailwind.config = {
             theme: {
@@ -206,7 +209,6 @@
             header.nav-split .logo-area img { filter: brightness(0.2); }
         }
         @media (max-width: 1023px) {
-            /* 平板以下，Section 3 圖片在頂部，導覽列壓在白底上 -> 變深色 */
             header.nav-split { color: #455169 !important; }
             header.nav-split .logo-area img { filter: brightness(0.2); }
             header.nav-split button i { color: #455169 !important; }
@@ -233,16 +235,17 @@
                 <a href="#section-7" class="border-b-2 border-transparent hover:border-brand-gold hover:text-brand-gold transition-all duration-300 pb-1">Specs</a>
                 <a href="#section-8" class="border-b-2 border-transparent hover:border-brand-gold hover:text-brand-gold transition-all duration-300 pb-1">Contact</a>
             </nav>
-            <button onclick="toggleCart()" class="relative group">
+            <!-- [修改] 購物車按鈕綁定 Snipcart -->
+            <button class="relative group snipcart-checkout">
                 <i class="fas fa-shopping-bag text-2xl md:text-3xl hover:text-brand-gold transition"></i>
-                <span id="cart-count-desktop" class="absolute -top-1 -right-2 bg-brand-gold text-brand-dark text-[10px] md:text-xs font-bold px-1.5 rounded-full hidden">0</span>
+                <span class="snipcart-items-count absolute -top-1 -right-2 bg-brand-gold text-brand-dark text-[10px] md:text-xs font-bold px-1.5 rounded-full">0</span>
             </button>
         </div>
 
         <div class="flex lg:hidden items-center gap-4 relative z-50">
-            <button onclick="toggleCart()" class="relative active:scale-95 transition">
+            <button class="relative active:scale-95 transition snipcart-checkout">
                 <i class="fas fa-shopping-bag text-2xl"></i>
-                <span id="cart-count-mobile" class="absolute -top-1 -right-2 bg-brand-gold text-brand-dark text-[10px] font-bold px-1.5 rounded-full hidden">0</span>
+                <span class="snipcart-items-count absolute -top-1 -right-2 bg-brand-gold text-brand-dark text-[10px] font-bold px-1.5 rounded-full">0</span>
             </button>
             <button onclick="toggleMobileMenu()" class="text-2xl focus:outline-none active:scale-95 transition">
                 <i class="fas fa-bars" id="mobile-menu-icon"></i>
@@ -275,30 +278,6 @@
         <a href="#section-8" class="dot" data-index="7"></a>
     </div>
 
-    <!-- 購物車側邊欄 -->
-    <div id="cart-overlay" class="fixed inset-0 bg-brand-dark/60 z-[60] backdrop-blur-sm" onclick="toggleCart()"></div>
-    <div id="cart-sidebar" class="fixed top-0 right-0 w-full sm:w-[450px] h-full bg-brand-cream z-[70] text-brand-dark shadow-2xl flex flex-col">
-        <div class="p-6 border-b border-brand-dark/10 flex justify-between items-center">
-            <h2 class="font-serif text-2xl">Your Cart</h2>
-            <button onclick="toggleCart()" class="text-gray-400 hover:text-red-500 transition"><i class="fas fa-times text-xl"></i></button>
-        </div>
-        <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-6">
-            <div class="text-center text-gray-400 mt-10">
-                <i class="fas fa-shopping-basket text-4xl mb-4 opacity-30"></i>
-                <p>Your cart is empty.</p>
-            </div>
-        </div>
-        <div class="p-6 bg-white/50 border-t border-brand-dark/10">
-            <div class="flex justify-between items-center mb-4 text-lg font-bold">
-                <span>Total</span>
-                <span id="cart-total">USD $0.00</span>
-            </div>
-            <button onclick="checkout()" class="w-full bg-brand-dark text-white py-4 font-bold tracking-widest uppercase hover:bg-brand-gold hover:text-brand-dark transition duration-300">
-                SUBMIT ORDER REQUEST
-            </button>
-        </div>
-    </div>
-
     <!-- 主容器 -->
     <div class="snap-container" id="scroller">
 
@@ -306,7 +285,7 @@
         <section id="section-1" class="snap-section bg-brand-dark active">
             <!-- 黏性容器：高度與畫布 -->
             <div class="sticky top-0 h-[100vh] w-full overflow-hidden">
-                <!-- Canvas 播放圖片序列 001-080 -->
+                <!-- Canvas 播放圖片序列 -->
                 <canvas id="hero-canvas" class="absolute inset-0 w-full h-full object-cover bg-brand-dark"></canvas>
                 <div class="absolute inset-0 bg-black/30"></div>
                 
@@ -372,7 +351,7 @@
         <!-- Section 3: Interactive Experience (深色) -->
         <section id="section-3" class="snap-section bg-brand-dark auto-height">
             <div class="flex flex-col lg:flex-row w-full h-full">
-                <!-- Image Half: Left side White Background -->
+                <!-- Image Half -->
                 <div class="w-full lg:w-1/2 h-[45vh] lg:h-full relative overflow-hidden bg-white group cursor-pointer" onclick="toggleLamp()">
                     <!-- [確認] 預設為 lamp-off.jpg -->
                     <img id="lamp-sequence-img" src="lamp-off.jpg" alt="Lamp" class="w-full h-full object-cover transition-opacity duration-300 md:group-hover:scale-105 transition-transform duration-700" loading="eager">
@@ -387,12 +366,11 @@
                     </div>
                 </div>
                 
-                <!-- Text Half: Right side Dark Background -->
+                <!-- Text Half -->
                 <div class="w-full lg:w-1/2 h-auto lg:h-full flex items-center justify-center p-8 lg:p-20 bg-brand-dark relative z-20">
                     <div class="max-w-xl reveal-text text-white">
                         <div class="mb-4">
                             <span class="text-brand-gold text-xs tracking-widest uppercase mb-1 block">Experience Owlnest</span>
-                            <!-- [確認] 標題 Owlnest Sleep Aid Lamp -->
                             <h3 class="text-3xl md:text-4xl lg:text-5xl font-serif text-white">Owlnest Sleep Aid Lamp</h3>
                         </div>
                         
@@ -412,12 +390,18 @@
                         </ul>
 
                         <div class="border-t border-white/10 pt-6 mt-6">
-                            <!-- [確認] 價格 USD $89 -->
                             <div class="mb-4">
                                 <span class="text-4xl lg:text-5xl font-serif text-brand-gold">USD $89</span>
                             </div>
                             
-                            <button onclick="addToCart('Owlnest Sleep Aid Lamp', 89, 'lamp-on.jpg')" class="bg-brand-gold text-brand-dark px-10 py-4 text-sm md:text-base tracking-widest uppercase hover:bg-white hover:text-brand-dark transition duration-300 w-full font-bold shadow-lg transform active:scale-95">
+                            <!-- [修改] Snipcart 購買按鈕 -->
+                            <button class="snipcart-add-item bg-brand-gold text-brand-dark px-10 py-4 text-sm md:text-base tracking-widest uppercase hover:bg-white hover:text-brand-dark transition duration-300 w-full font-bold shadow-lg transform active:scale-95"
+                                data-item-id="owlnest-lamp-001"
+                                data-item-price="89.00"
+                                data-item-url="/"
+                                data-item-description="Sleep Aid Lamp with Amber Spectrum"
+                                data-item-image="lamp-on.jpg"
+                                data-item-name="Owlnest Sleep Aid Lamp">
                                 Add to Cart
                             </button>
                             <p class="text-center text-xs text-gray-500 mt-3"><i class="fas fa-lock"></i> Secure Checkout Guaranteed</p>
@@ -505,8 +489,8 @@
         <!-- Section 6: Features (淺色) -->
         <section id="section-6" class="snap-section bg-brand-cream auto-height text-brand-dark">
             <div class="flex flex-col items-center text-center px-4 py-16 lg:py-24 max-w-screen-xl mx-auto reveal-text">
-                <!-- [確認] 圓形圖片保留 lamp-off.jpg -->
                 <div class="w-40 h-40 md:w-56 md:h-56 lg:w-64 lg:h-64 mb-8 lg:mb-10 rounded-full border-4 border-brand-dark/10 overflow-hidden shadow-2xl">
+                    <!-- [確認] 圓形圖片保留 lamp-off.jpg -->
                     <img src="lamp-off.jpg" alt="Owlnest Lamp Detail" class="w-full h-full object-cover" loading="lazy">
                 </div>
                 
@@ -517,7 +501,7 @@
                 </p>
                 
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 text-sm md:text-base w-full max-w-6xl">
-                    <!-- [確認] 移除 Dimmable, 修正 Control -->
+                    <!-- [確認] 移除 Dimmable, 更新文字, 7 個項目 -->
                     <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-temperature-low text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Sleep Temp</div>
                     <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-leaf text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Safe Silicone & Wood</div>
                     <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-power-off text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Button Switch</div>
@@ -529,7 +513,13 @@
 
                 <!-- [確認] 移除價格，保留按鈕置中 -->
                 <div class="mt-10 lg:mt-12 pt-10 border-t border-brand-dark/10 flex justify-center items-center reveal-text w-full max-w-4xl">
-                    <button onclick="addToCart('Owlnest Sleep Aid Lamp', 89, 'lamp-on.jpg')" class="bg-brand-dark text-white px-10 py-3 md:px-12 md:py-4 text-sm md:text-base tracking-widest uppercase hover:bg-brand-gold hover:text-brand-dark transition duration-300 shadow-lg active:scale-95">
+                    <button class="snipcart-add-item bg-brand-dark text-white px-10 py-3 md:px-12 md:py-4 text-sm md:text-base tracking-widest uppercase hover:bg-brand-gold hover:text-brand-dark transition duration-300 shadow-lg active:scale-95"
+                        data-item-id="owlnest-lamp-001"
+                        data-item-price="89.00"
+                        data-item-url="/"
+                        data-item-description="Sleep Aid Lamp with Amber Spectrum"
+                        data-item-image="lamp-on.jpg"
+                        data-item-name="Owlnest Sleep Aid Lamp">
                         Add to Cart
                     </button>
                 </div>
@@ -556,11 +546,20 @@
                         <div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">LED Lifespan</span><span>Approx. 3000 Hours</span></div>
                         <div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">Battery</span><span>1200 mAh Lithium</span></div>
                         <div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">Charging</span><span>Type-C (Included)</span></div>
-                        <!-- [確認] Button Switch -->
                         <div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">Control</span><span>Button Switch</span></div>
                     </div>
                 </div>
-                <div class="mt-12 lg:mt-16 text-center"><a href="#section-8" class="inline-block bg-brand-gold text-brand-dark px-10 py-4 lg:px-12 lg:py-5 font-bold hover:bg-white transition duration-300 tracking-widest text-sm lg:text-base shadow-lg active:scale-95">ORDER NOW</a></div>
+                <div class="mt-12 lg:mt-16 text-center">
+                     <button class="snipcart-add-item inline-block bg-brand-gold text-brand-dark px-10 py-4 lg:px-12 lg:py-5 font-bold hover:bg-white transition duration-300 tracking-widest text-sm lg:text-base shadow-lg active:scale-95"
+                        data-item-id="owlnest-lamp-001"
+                        data-item-price="89.00"
+                        data-item-url="/"
+                        data-item-description="Sleep Aid Lamp with Amber Spectrum"
+                        data-item-image="lamp-on.jpg"
+                        data-item-name="Owlnest Sleep Aid Lamp">
+                        ORDER NOW
+                    </button>
+                </div>
             </div>
         </section>
 
@@ -568,30 +567,34 @@
         <section id="section-8" class="snap-section bg-brand-cream text-brand-dark auto-height">
             <div class="max-w-7xl w-full px-4 md:px-8 py-16 lg:py-24 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-start mx-auto">
                 <div class="reveal-text">
-                    <h2 class="text-3xl md:text-5xl font-serif mb-6 lg:mb-10">Checkout / Contact</h2>
+                    <h2 class="text-3xl md:text-5xl font-serif mb-6 lg:mb-10">Contact Us</h2>
                     <div class="space-y-6 lg:space-y-8 text-brand-dark/70 font-light mb-8 lg:mb-10 text-base lg:text-lg">
-                        <p class="leading-relaxed mb-6">To complete your order, please verify your details in the form. Our team will send you a secure payment link or invoice via email within 24 hours.</p>
+                        <p class="leading-relaxed mb-6">Have questions? We are here to help. Contact our team for support or business inquiries.</p>
                         <p class="flex items-center gap-4 lg:gap-6"><i class="fas fa-map-marker-alt text-brand-gold text-xl lg:text-2xl"></i> 114 Lý Thường Kiệt, Phú Quốc, Vietnam</p>
                         <p class="flex items-center gap-4 lg:gap-6"><i class="fas fa-envelope text-brand-gold text-xl lg:text-2xl"></i> owlnestpq2025@gmail.com</p>
                     </div>
                     <div class="w-full h-64 lg:h-80 rounded-lg overflow-hidden border border-brand-dark/10 shadow-lg mb-8 lg:mb-10">
                         <iframe width="100%" height="100%" frameborder="0" style="border:0;" src="https://maps.google.com/maps?q=114%20L%C3%BD%20Th%C6%B0%E1%BB%9Dng%20Ki%E1%BB%87t%2C%20Ph%C3%BA%20Qu%E1%BB%91c%2C%20Vietnam&t=&z=15&ie=UTF8&iwloc=&output=embed" allowfullscreen></iframe>
                     </div>
-                    <!-- [確認] 新增 Disclaimer 連結 -->
                     <div class="flex items-center gap-4 lg:gap-6"><img src="logo.png" alt="Owlnest Logo" class="h-8 lg:h-10 w-auto opacity-50"><p class="text-xs lg:text-sm text-brand-dark/50 uppercase tracking-widest">&copy; <span id="copyright-year"></span> Owlnest Official.</p><a href="disclaimer.html" class="text-xs lg:text-sm text-brand-dark/50 hover:text-brand-gold ml-4">Disclaimer</a></div>
                 </div>
                 <div class="bg-white p-6 lg:p-16 shadow-xl rounded-lg reveal-text">
-                    <form id="contact-form" onsubmit="submitOrder(event)">
-                        <div class="mb-6 lg:mb-8"><input id="form-name" type="text" placeholder="YOUR NAME" class="w-full bg-transparent border-b border-brand-dark/20 py-3 lg:py-4 text-brand-dark text-base lg:text-lg focus:outline-none focus:border-brand-gold transition" required></div>
-                        <div class="mb-6 lg:mb-8"><input id="form-email" type="email" placeholder="YOUR EMAIL" class="w-full bg-transparent border-b border-brand-dark/20 py-3 lg:py-4 text-brand-dark text-base lg:text-lg focus:outline-none focus:border-brand-gold transition" required></div>
-                        <div class="mb-8 lg:mb-10"><label class="text-xs lg:text-sm text-brand-gold tracking-widest uppercase mb-2 lg:mb-3 block font-bold">Order Details</label><textarea id="form-message" rows="5" placeholder="Your cart items will appear here..." class="w-full bg-brand-cream border border-brand-dark/10 p-3 lg:p-4 text-brand-dark text-base lg:text-lg focus:outline-none focus:border-brand-gold transition font-mono"></textarea></div>
-                        <button class="w-full bg-brand-dark text-white font-bold py-4 lg:py-5 hover:bg-brand-gold hover:text-brand-dark transition duration-300 tracking-widest text-base lg:text-lg shadow-md active:scale-95">SUBMIT ORDER REQUEST</button>
+                    <form onsubmit="event.preventDefault(); alert('Message Sent! We will contact you soon.');">
+                        <div class="mb-6 lg:mb-8"><input type="text" placeholder="YOUR NAME" class="w-full bg-transparent border-b border-brand-dark/20 py-3 lg:py-4 text-brand-dark text-base lg:text-lg focus:outline-none focus:border-brand-gold transition" required></div>
+                        <div class="mb-6 lg:mb-8"><input type="email" placeholder="YOUR EMAIL" class="w-full bg-transparent border-b border-brand-dark/20 py-3 lg:py-4 text-brand-dark text-base lg:text-lg focus:outline-none focus:border-brand-gold transition" required></div>
+                        <div class="mb-8 lg:mb-10"><label class="text-xs lg:text-sm text-brand-gold tracking-widest uppercase mb-2 lg:mb-3 block font-bold">Message</label><textarea rows="5" placeholder="How can we help you?" class="w-full bg-brand-cream border border-brand-dark/10 p-3 lg:p-4 text-brand-dark text-base lg:text-lg focus:outline-none focus:border-brand-gold transition font-mono"></textarea></div>
+                        <button class="w-full bg-brand-dark text-white font-bold py-4 lg:py-5 hover:bg-brand-gold hover:text-brand-dark transition duration-300 tracking-widest text-base lg:text-lg shadow-md active:scale-95">SEND MESSAGE</button>
                     </form>
                 </div>
             </div>
         </section>
 
     </div>
+
+    <!-- [關鍵] Snipcart Script (放置於 body 底部) -->
+    <script async src="https://cdn.snipcart.com/themes/v3.4.1/default/snipcart.js"></script>
+    <!-- [確認] 您的 Public API Key -->
+    <div hidden id="snipcart" data-api-key="MmY2MWUwYjMtODI0Mi00NDQ1LTk4YWUtNTQ0NDgwODY5OGM0NjM5MDIzNDE2ODU0NDczMzQz"></div>
 
     <!-- JavaScript (Canvas Animation Logic) -->
     <script>
@@ -616,7 +619,7 @@
             img.src = currentFrame(i);
             img.onload = () => {
                 imagesLoaded++;
-                if (imagesLoaded === 1) { // 載入第一張就先畫出來，避免空白
+                if (imagesLoaded === 1) { // 載入第一張就先畫出來
                     render();
                 }
             };
@@ -640,10 +643,8 @@
             context.drawImage(img, x, y, img.width * scale, img.height * scale);
         }
 
-        // 判斷裝置
         function isDesktop() {
-            // [確認] 全裝置都用 Scrollytelling，所以這個判斷其實可以統一了
-            return true; 
+            return window.innerWidth >= 1280; 
         }
 
         /* 滾動監聽與動畫控制 */
@@ -653,8 +654,6 @@
         const header = document.getElementById('main-header');
         
         let isScrolling = false;
-
-        // [確認] 無自動播放，全部手動控制
 
         // 滾動事件
         container.addEventListener('scroll', () => {
@@ -678,30 +677,36 @@
                             } else if (s.classList.contains('bg-brand-cream') || s.classList.contains('bg-white')) {
                                 header.classList.add('nav-dark'); 
                             }
+                            
+                            if (isDesktop() && s.id === 'section-1') {
+                                section1.classList.add('desktop-scroll');
+                            } else {
+                                section1.classList.remove('desktop-scroll');
+                            }
                         }
                     });
                     
-                    // 全裝置啟用 Scroll Scrubbing 計算
-                    const videoSection = document.getElementById('section-1');
-                    const rect = videoSection.getBoundingClientRect();
-                    const sectionHeight = videoSection.offsetHeight;
-                    const windowHeight = window.innerHeight;
-                    
-                    // 當 Section 1 在視窗範圍內
-                    if (rect.top <= 0 && rect.bottom >= 0) {
-                         const scrollTop = Math.abs(rect.top);
-                         const maxScroll = sectionHeight - windowHeight;
-                         const scrollFraction = scrollTop / maxScroll;
-                         
-                         const frameIndex = Math.min(
-                             frameCount - 1,
-                             Math.ceil(scrollFraction * frameCount)
-                         );
-                         
-                         if (frameIndex >= 0 && frameIndex < frameCount) {
-                             skySequence.frame = frameIndex;
-                             render();
-                         }
+                    if (isDesktop()) {
+                        const videoSection = document.getElementById('section-1');
+                        const rect = videoSection.getBoundingClientRect();
+                        const sectionHeight = videoSection.offsetHeight;
+                        const windowHeight = window.innerHeight;
+                        
+                        if (rect.top <= 0 && rect.bottom >= 0) {
+                             const scrollTop = Math.abs(rect.top);
+                             const maxScroll = sectionHeight - windowHeight;
+                             const scrollFraction = scrollTop / maxScroll;
+                             
+                             const frameIndex = Math.min(
+                                 frameCount - 1,
+                                 Math.ceil(scrollFraction * frameCount)
+                             );
+                             
+                             if (frameIndex >= 0 && frameIndex < frameCount) {
+                                 skySequence.frame = frameIndex;
+                                 render();
+                             }
+                        }
                     }
 
                     isScrolling = false;
@@ -710,10 +715,8 @@
             }
         });
         
-        // 視窗大小改變時重繪
         window.addEventListener('resize', render);
 
-        // 手機版選單切換
         function toggleMobileMenu() {
             const menu = document.getElementById('mobile-menu');
             const icon = document.getElementById('mobile-menu-icon');
@@ -727,7 +730,6 @@
             }
         }
 
-        // 開關燈
         let isLampOn = false;
         const lampImg = document.getElementById('lamp-sequence-img');
         const lampStatus = document.getElementById('lamp-status-text');
@@ -743,77 +745,8 @@
                 isLampOn = true;
             }
         }
-
-        // 購物車邏輯
-        let cart = JSON.parse(localStorage.getItem('owlnest_cart')) || [];
-        function toggleCart() {
-            document.getElementById('cart-sidebar').classList.toggle('open');
-            document.getElementById('cart-overlay').classList.toggle('open');
-            renderCart();
-        }
-        function addToCart(name, price, image) {
-            const existingItem = cart.find(item => item.name === name);
-            if (existingItem) { existingItem.quantity += 1; } else { cart.push({ name, price, image, quantity: 1 }); }
-            saveCart(); updateCartCount();
-            if (!document.getElementById('cart-sidebar').classList.contains('open')) toggleCart();
-        }
-        function updateQuantity(index, change) {
-            cart[index].quantity += change;
-            if (cart[index].quantity <= 0) cart.splice(index, 1);
-            saveCart(); renderCart(); updateCartCount();
-        }
-        function saveCart() { localStorage.setItem('owlnest_cart', JSON.stringify(cart)); }
-        function updateCartCount() {
-            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
-            const deskBadge = document.getElementById('cart-count-desktop');
-            const mobileBadge = document.getElementById('cart-count-mobile');
-            [deskBadge, mobileBadge].forEach(badge => {
-                badge.innerText = count;
-                badge.classList.remove('hidden');
-                if(count === 0) badge.classList.add('hidden');
-            });
-        }
-        function renderCart() {
-            const container = document.getElementById('cart-items');
-            const totalEl = document.getElementById('cart-total');
-            if (cart.length === 0) {
-                container.innerHTML = `<div class="text-center text-gray-400 mt-10"><i class="fas fa-shopping-basket text-4xl mb-4 opacity-30"></i><p>Your cart is empty.</p><button onclick="toggleCart()" class="mt-4 text-brand-dark underline text-sm">Continue Shopping</button></div>`;
-                totalEl.innerText = "USD $0.00";
-                return;
-            }
-            let html = ''; let total = 0;
-            cart.forEach((item, index) => {
-                total += item.price * item.quantity;
-                html += `<div class="flex gap-4 items-center"><div class="w-16 h-16 bg-gray-100 rounded overflow-hidden flex-shrink-0"><img src="${item.image}" class="w-full h-full object-cover"></div><div class="flex-1"><h4 class="font-bold text-sm">${item.name}</h4><p class="text-gray-500 text-xs">USD $${item.price}</p></div><div class="flex items-center gap-2"><button onclick="updateQuantity(${index}, -1)" class="w-6 h-6 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center text-xs">-</button><span class="text-sm w-4 text-center">${item.quantity}</span><button onclick="updateQuantity(${index}, 1)" class="w-6 h-6 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center text-xs">+</button></div></div>`;
-            });
-            container.innerHTML = html;
-            totalEl.innerText = "USD $" + total.toFixed(2);
-        }
-        function checkout() {
-            if(cart.length === 0) return;
-            let orderSummary = "I would like to place an order for:\n\n";
-            let total = 0;
-            cart.forEach(item => {
-                orderSummary += `- ${item.name} x ${item.quantity} (USD $${item.price * item.quantity})\n`;
-                total += item.price * item.quantity;
-            });
-            orderSummary += `\nTotal Estimated: USD $${total.toFixed(2)}`;
-            document.getElementById('form-message').value = orderSummary;
-            toggleCart();
-            window.location.href = "#section-8"; 
-            setTimeout(() => { alert("Please fill in your name and email to finalize the order inquiry."); }, 500);
-        }
-        function submitOrder(e) {
-            e.preventDefault();
-            alert("Thank you! Your order inquiry has been sent.");
-            cart = []; saveCart(); updateCartCount(); document.getElementById('contact-form').reset();
-        }
         
-        updateCartCount();
         document.getElementById('copyright-year').textContent = new Date().getFullYear();
-        
-        // 視窗大小改變時重繪
-        window.addEventListener('resize', render);
     </script>
 </body>
 </html>
