@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disclaimer | Owlnest Official</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Manrope"', 'sans-serif'],
+                        serif: ['"Playfair Display"', 'serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#455169',
+                            cream: '#faefcf',
+                            gold: '#D4AF37'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-brand-cream text-brand-dark antialiased min-h-screen flex flex-col">
+
+    <header class="py-6 px-8 border-b border-brand-dark/10">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                 <img src="logo.png" alt="Owlnest Logo" class="h-8 w-auto brightness-0"> <!-- Logo變黑 -->
+                 <span class="font-serif text-xl font-bold">Owlnest</span>
+            </div>
+            <a href="index.html" class="text-sm font-bold border-b border-brand-dark hover:text-brand-gold hover:border-brand-gold transition">Back to Home</a>
+        </div>
+    </header>
+
+    <main class="flex-grow py-20 px-4">
+        <div class="max-w-3xl mx-auto bg-white p-10 md:p-16 shadow-lg rounded-sm">
+            <h1 class="text-3xl md:text-4xl font-serif mb-10 text-center border-b-2 border-brand-gold inline-block pb-2">Disclaimer</h1>
+            
+            <div class="prose prose-lg text-brand-dark/80 font-light leading-relaxed text-justify">
+                <p class="mb-6">
+                    The sleep-aid lamps and related products provided by <strong>Owlnest</strong> are intended to assist in improving the user's sleep environment and comfort.
+                </p>
+                <p class="mb-6">
+                    Product effects may vary depending on individual experience, and the Company makes no medical guarantees or promises regarding individual health conditions.
+                </p>
+                <p class="mb-6">
+                    Please follow relevant instructions when using this product. If you have specific health conditions, please consult a medical professional.
+                </p>
+                <p>
+                    Owlnest shall not be held liable for any damages resulting from improper use or unauthorized modifications.
+                </p>
+            </div>
+            
+            <div class="mt-12 text-center">
+                <p class="text-xs text-gray-400 uppercase tracking-widest">Owlnest Official Legal Statement</p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-brand-dark text-white py-8 text-center text-xs">
+        <p>&copy; 2025 Owlnest Official. All Rights Reserved.</p>
+    </footer>
+
+</body>
+</html>

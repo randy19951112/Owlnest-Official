@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us | Owlnest Official</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="logo.png">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Manrope"', 'sans-serif'],
+                        serif: ['"Playfair Display"', 'serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#455169',
+                            cream: '#faefcf',
+                            gold: '#D4AF37',
+                            wood: '#4A403A'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-brand-dark text-white antialiased text-base md:text-lg">
+
+    <!-- Nav -->
+    <header class="fixed top-0 left-0 w-full z-50 px-4 md:px-8 py-4 md:py-6 flex justify-between items-center bg-brand-dark/95 backdrop-blur-md shadow-lg">
+        <div class="flex items-center gap-2 md:gap-4">
+             <img src="logo.png" alt="Owlnest Logo" class="h-10 md:h-14 w-auto brightness-200 contrast-100">
+             <a href="index.html" class="font-serif text-lg md:text-3xl tracking-widest font-bold text-white hover:text-brand-gold transition">Owlnest Official</a>
+        </div>
+        <div class="flex items-center gap-8">
+            <a href="index.html" class="text-sm tracking-widest uppercase font-semibold text-brand-gold hover:text-white transition border-b border-brand-gold">Back to Home</a>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="pt-40 pb-20 px-4 text-center bg-brand-dark">
+        <h1 class="text-4xl md:text-6xl font-serif text-brand-gold mb-6">About Us</h1>
+        <p class="max-w-2xl mx-auto text-gray-300 font-light">
+            Harmonizing body, mind, and spirit through the union of technology and nature.
+        </p>
+    </section>
+
+    <!-- 1. Brand Philosophy -->
+    <section class="py-20 px-4 bg-brand-dark relative overflow-hidden">
+        <!-- Abstract Background Decoration -->
+        <div class="absolute top-0 right-0 w-1/2 h-full bg-brand-gold/5 rounded-l-full blur-3xl"></div>
+        
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-16 relative z-10">
+            <div class="w-full md:w-1/2 text-center">
+                <!-- Using Logo2 as a subtle element -->
+                <img src="logo2.png" alt="Owlnest Emblem" class="w-48 mx-auto opacity-80 brightness-150 contrast-125">
+            </div>
+            <div class="w-full md:w-1/2">
+                <span class="text-brand-gold text-xs tracking-[0.3em] uppercase mb-4 block">Our Belief</span>
+                <h2 class="text-3xl md:text-4xl font-serif mb-6">Brand Philosophy</h2>
+                <div class="space-y-6 text-gray-300 font-light leading-relaxed">
+                    <p>
+                        At Owlnest, we believe that every beautiful day begins with a peaceful and comfortable night. Sleep is not merely rest; it is a critical moment for harmonizing the body, mind, and spirit.
+                    </p>
+                    <p>
+                        Driven by this belief, we embrace <strong>"Comfort × Technology"</strong> as our core value, dedicating ourselves to creating products that accompany and guard you through every night.
+                    </p>
+                    <p>
+                        We hope that through professional and exquisite design, light becomes more than just illumination—it becomes a gentle force that helps you achieve deep relaxation, preparing you to welcome a more energetic tomorrow.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. Core Technology -->
+    <section class="py-20 px-4 bg-brand-cream text-brand-dark">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <span class="text-brand-gold text-xs tracking-[0.3em] uppercase mb-4 block">Innovation</span>
+                <h2 class="text-3xl md:text-4xl font-serif mb-6">Core Technology</h2>
+                <p class="max-w-3xl mx-auto text-brand-dark/70">
+                    Owlnest’s R&D team brings together experts in optics, health science, and lifestyle aesthetics, focusing on translating scientific research into tangible benefits for daily life.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <!-- Feature 1 -->
+                <div class="p-8 bg-white rounded-lg shadow-sm border border-brand-dark/5 text-center">
+                    <div class="w-16 h-16 mx-auto bg-brand-dark text-brand-gold rounded-full flex items-center justify-center text-3xl mb-6">
+                        <i class="fas fa-wave-square"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Spectral Regulation</h3>
+                    <p class="text-sm text-brand-dark/70">
+                        Precisely simulates natural twilight, guiding the body to naturally secrete melatonin and helping to regulate the circadian rhythm.
+                    </p>
+                </div>
+                <!-- Feature 2 -->
+                <div class="p-8 bg-white rounded-lg shadow-sm border border-brand-dark/5 text-center">
+                    <div class="w-16 h-16 mx-auto bg-brand-dark text-brand-gold rounded-full flex items-center justify-center text-3xl mb-6">
+                        <i class="fas fa-flask"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Scientific Verification</h3>
+                    <p class="text-sm text-brand-dark/70">
+                        The application of this technology elevates our products beyond simple tools into scientifically verified sleep-aid solutions.
+                    </p>
+                </div>
+                <!-- Feature 3 -->
+                <div class="p-8 bg-white rounded-lg shadow-sm border border-brand-dark/5 text-center">
+                    <div class="w-16 h-16 mx-auto bg-brand-dark text-brand-gold rounded-full flex items-center justify-center text-3xl mb-6">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Holistic Solution</h3>
+                    <p class="text-sm text-brand-dark/70">
+                        Expanding to incorporate agarwood, fragrances, and essential oils, creating a comprehensive "calming and sleep-soothing" solution.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Future & Statement -->
+    <section class="py-20 px-4 bg-brand-dark text-white relative">
+        <div class="absolute inset-0 bg-black/20"></div>
+        <div class="max-w-4xl mx-auto relative z-10 text-center">
+            
+            <div class="mb-20">
+                <h2 class="text-3xl md:text-4xl font-serif mb-8 text-brand-gold">Future Outlook</h2>
+                <p class="text-gray-300 font-light leading-relaxed mb-6">
+                    At Owlnest, we continuously explore the possibilities between light and health. Beyond our current sleep-aid products, we will continue to deepen our research in spectral applications and expand into more innovative designs, aiming to create all-encompassing nighttime care solutions.
+                </p>
+                <p class="text-xl font-serif italic text-white">
+                    "Our goal is for Owlnest to be more than just a brand, but a lifestyle."
+                </p>
+            </div>
+
+            <div class="border-t border-white/10 pt-20">
+                <h2 class="text-2xl md:text-3xl font-serif mb-8">Company Statement</h2>
+                <p class="text-gray-400 font-light leading-relaxed text-sm md:text-base text-justify">
+                    At Owlnest, our mission is to guard the happiness and comfort of every family through the light of technology. We firmly believe that every beam of light should be filled with warmth and care. Therefore, we constantly pursue innovation and design every product with human-centric values. We promise that in the days to come, we will continue to deepen our work in the field of light spectrums, bringing the latest research results into thousands of homes to add a sense of peace and beauty to your life. Choosing Owlnest is choosing a persistence in quality of life and a relentless pursuit of the future.
+                </p>
+                
+                <div class="mt-12 opacity-50">
+                    <img src="logo.png" alt="Signature" class="h-12 mx-auto filter grayscale brightness-200">
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black py-10 text-center text-gray-500 text-xs">
+        <p>&copy; 2025 Owlnest Official. All Rights Reserved.</p>
+        <div class="mt-4 space-x-4">
+            <a href="index.html" class="hover:text-white">Home</a>
+            <a href="disclaimer.html" class="hover:text-white">Disclaimer</a>
+        </div>
+    </footer>
+
+</body>
+</html>
