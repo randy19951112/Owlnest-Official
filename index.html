@@ -56,7 +56,7 @@
             height: 100vh;
             height: 100dvh;
             overflow-y: scroll;
-            /* 全裝置使用 proximity，避免手機平板卡頓，同時保留一定吸附感 */
+            /* 全裝置使用 proximity，避免手機平板卡頓 */
             scroll-snap-type: y proximity; 
             scroll-behavior: smooth;
         }
@@ -168,6 +168,12 @@
             transform: scale(1.3);
         }
 
+        /* 購物車動畫 */
+        #cart-sidebar { transform: translateX(100%); transition: transform 0.3s ease-in-out; }
+        #cart-sidebar.open { transform: translateX(0); }
+        #cart-overlay { opacity: 0; pointer-events: none; transition: opacity 0.3s ease-in-out; }
+        #cart-overlay.open { opacity: 1; pointer-events: auto; }
+
         /* 手機版選單動畫 */
         #mobile-menu { transform: translateY(-100%); transition: transform 0.3s ease-in-out; }
         #mobile-menu.open { transform: translateY(0); }
@@ -177,16 +183,17 @@
         /* 導覽列變色邏輯 */
         #main-header {
             color: #faefcf; 
-            transition: color 0.3s ease;
+            transition: color 0.2s ease; 
+            text-shadow: 0 1px 3px rgba(0,0,0,0.3); 
         }
         #main-header .logo-area img {
-            transition: filter 0.3s ease;
-            filter: none;
+            transition: filter 0.2s ease;
+            filter: drop-shadow(0 1px 3px rgba(0,0,0,0.3)); 
         }
         
-        /* 淺色背景模式 (nav-dark) */
         header.nav-dark {
             color: #455169 !important; 
+            text-shadow: none; 
         }
         header.nav-dark .logo-area img {
             filter: brightness(0.2); 
@@ -195,56 +202,56 @@
             color: #455169 !important;
         }
         
-        /* 特殊分割模式 (Section 3): 左白右深 */
         @media (min-width: 1024px) {
-            header.nav-split nav a { color: #faefcf !important; }
+            header.nav-split nav a { color: #faefcf !important; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
             header.nav-split button i { color: #faefcf !important; }
-            header.nav-split .logo-area { color: #455169 !important; }
+            header.nav-split .logo-area { color: #455169 !important; text-shadow: none; }
             header.nav-split .logo-area img { filter: brightness(0.2); }
         }
         @media (max-width: 1023px) {
-            header.nav-split { color: #455169 !important; }
+            header.nav-split { color: #455169 !important; text-shadow: none; }
             header.nav-split .logo-area img { filter: brightness(0.2); }
             header.nav-split button i { color: #455169 !important; }
         }
 
-        /* --- [新增] Snipcart 客製化美學設定 --- */
+        /* --- Snipcart 外觀強制覆寫 --- */
         #snipcart {
-            /* 背景與文字基礎色 */
-            --color-modal-bg: #faefcf; /* 奶油米色背景 */
+            --color-modal-bg: #faefcf; 
             --color-library-background: #faefcf;
             --color-library-border: #e0d0b0;
-            --color-library-text: #455169; /* 深岩灰藍文字 */
-            
-            /* 按鈕顏色 (Primary - 結帳按鈕) */
-            --color-button-primary-bg: #D4AF37; /* 金色按鈕 */
-            --color-button-primary-text: #455169; /* 深藍文字 */
-            --color-button-primary-hover-bg: #c5a02f;
-            
-            /* 按鈕顏色 (Secondary - 移除/返回) */
-            --color-button-secondary-bg: transparent;
-            --color-button-secondary-border: #455169;
-            --color-button-secondary-text: #455169;
-            --color-button-secondary-hover-bg: #455169;
-            --color-button-secondary-hover-text: #faefcf;
-
-            /* 輸入框 */
+            --color-library-text: #455169;
             --color-input-bg: #ffffff;
             --color-input-text: #455169;
-            --color-input-border: #d0c0a0;
-            
-            /* 連結與強調色 */
+            --color-input-border: #455169;
+            --color-input-placeholder: #455169aa;
             --color-link: #D4AF37;
-            --color-badge-bg: #D4AF37;
+            --color-link-hover: #455169;
+            --color-button-primary: #D4AF37; 
+            --color-button-primary-hover: #c5a02f; 
+            --color-button-primary-active: #b59020;
+            --color-button-primary-text: #455169; 
+            --color-button-secondary: transparent;
+            --color-button-secondary-border: #455169;
+            --color-button-secondary-text: #455169;
+            --color-button-secondary-hover: #455169;
+            --color-button-secondary-hover-text: #faefcf;
+            --color-badge: #D4AF37;
             --color-badge-text: #455169;
-
-            /* 字體 */
+            --color-badge-active: #455169;
+            --color-badge-active-text: #faefcf;
+            --color-icon: #455169; 
             --font-family: 'Manrope', sans-serif;
+            --shadow-modal: 0 10px 40px rgba(69, 81, 105, 0.4);
         }
-        
-        /* 隱藏 Snipcart 預設的陰影，改用扁平化設計 */
         .snipcart-modal__container {
-            box-shadow: 0 20px 50px rgba(69, 81, 105, 0.3) !important;
+            background-color: #faefcf !important;
+        }
+        .snipcart-cart-header {
+            background-color: #faefcf !important;
+            border-bottom: 1px solid #45516922;
+        }
+        .snipcart-item-line__product-name, .snipcart-summary-fees__amount {
+            color: #455169 !important;
         }
     </style>
 </head>
@@ -253,14 +260,12 @@
     <!-- 導覽列 -->
     <header id="main-header" class="fixed top-0 left-0 w-full z-50 px-4 md:px-8 py-4 md:py-6 flex justify-between items-center bg-transparent transition-all duration-300">
         <div class="logo-area flex items-center gap-2 md:gap-4 relative z-50">
-             <!-- [確認] Logo 為 logo2.png -->
              <img src="logo2.png" alt="Owlnest Logo" class="h-10 md:h-14 w-auto brightness-200 contrast-100">
              <span class="font-serif text-lg md:text-3xl tracking-widest font-bold">Owlnest Official</span>
         </div>
         
         <div class="hidden lg:flex items-center gap-8">
             <nav class="flex gap-8 text-sm tracking-widest uppercase font-semibold">
-                <!-- [確認] 新增 About Us -->
                 <a href="about.html" class="border-b-2 border-transparent hover:border-brand-gold hover:text-brand-gold transition-all duration-300 pb-1">About Us</a>
                 <a href="#section-1" class="border-b-2 border-transparent hover:border-brand-gold hover:text-brand-gold transition-all duration-300 pb-1">Home</a>
                 <a href="#section-3" class="border-b-2 border-transparent hover:border-brand-gold hover:text-brand-gold transition-all duration-300 pb-1">Products</a>
@@ -268,7 +273,6 @@
                 <a href="#section-7" class="border-b-2 border-transparent hover:border-brand-gold hover:text-brand-gold transition-all duration-300 pb-1">Specs</a>
                 <a href="#section-8" class="border-b-2 border-transparent hover:border-brand-gold hover:text-brand-gold transition-all duration-300 pb-1">Contact</a>
             </nav>
-            <!-- [修改] 購物車按鈕綁定 Snipcart -->
             <button class="relative group snipcart-checkout">
                 <i class="fas fa-shopping-bag text-2xl md:text-3xl hover:text-brand-gold transition"></i>
                 <span class="snipcart-items-count absolute -top-1 -right-2 bg-brand-gold text-brand-dark text-[10px] md:text-xs font-bold px-1.5 rounded-full">0</span>
@@ -289,7 +293,6 @@
     <!-- 手機/平板全螢幕選單 -->
     <div id="mobile-menu" class="fixed inset-0 bg-brand-dark z-40 flex flex-col justify-center items-center pt-20 lg:hidden text-white">
         <nav class="flex flex-col gap-8 text-xl tracking-widest uppercase font-semibold text-center">
-            <!-- [確認] 手機版也有 About Us -->
             <a href="about.html" class="hover:text-brand-gold transition">About Us</a>
             <a href="#section-1" onclick="toggleMobileMenu()" class="hover:text-brand-gold transition">Home</a>
             <a href="#section-3" onclick="toggleMobileMenu()" class="hover:text-brand-gold transition">Products</a>
@@ -316,33 +319,25 @@
 
         <!-- Section 1: Hero (序列幀畫布區) -->
         <section id="section-1" class="snap-section bg-brand-dark active">
-            <!-- 黏性容器：高度與畫布 -->
             <div class="sticky top-0 h-[100vh] w-full overflow-hidden">
-                <!-- Canvas 播放圖片序列 -->
                 <canvas id="hero-canvas" class="absolute inset-0 w-full h-full object-cover bg-brand-dark"></canvas>
                 <div class="absolute inset-0 bg-black/30"></div>
-                
                 <div class="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 max-w-screen-xl mx-auto">
-                    <!-- [確認] 使用 logo2.png -->
                     <img src="logo2.png" alt="Owlnest Logo" class="w-32 md:w-48 lg:w-64 mb-8 md:mb-10 brightness-200 contrast-100 drop-shadow-2xl reveal-text" style="transition-delay: 0.1s;">
-                    
                     <h1 class="text-3xl md:text-5xl lg:text-6xl font-serif font-light mb-6 reveal-text text-brand-gold tracking-widest" style="transition-delay: 0.3s;">
                         THE ART OF DEEP SLEEP
                     </h1>
-                    
                     <p class="text-gray-300 max-w-lg mx-auto text-base md:text-lg font-light leading-relaxed reveal-text mb-12" style="transition-delay: 0.5s;">
                         Experience the ultimate rest with nature-inspired technology.
                     </p>
-
-                    <!-- Scroll Down 提示 -->
-                    <div class="absolute bottom-10 animate-bounce text-brand-gold/70 text-sm tracking-widest uppercase">
+                    <div class="absolute bottom-10 animate-bounce text-brand-gold/70 text-sm tracking-widest uppercase hidden xl:block">
                         Scroll to Experience
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Section 2: The Problem (淺色) -->
+        <!-- Section 2: The Problem -->
         <section id="section-2" class="snap-section bg-brand-cream auto-height text-brand-dark">
             <div class="relative z-10 max-w-screen-xl px-4 md:px-8 py-16 lg:py-24 text-center mx-auto">
                 <p class="text-brand-gold text-xs md:text-sm tracking-widest uppercase mb-4 reveal-text">Sleep Troubles?</p>
@@ -366,12 +361,10 @@
                         <p class="text-brand-dark/70 text-sm lg:text-base">Poor sleep quality, waking up groggy and exhausted.</p>
                     </div>
                 </div>
-                
                 <div class="max-w-4xl mx-auto reveal-text border-t border-brand-dark/10 pt-10">
                     <p class="text-xl md:text-2xl lg:text-3xl font-serif text-brand-gold mb-6 italic leading-relaxed">
                         "Wish you could sleep like nature intended?"
                     </p>
-                    
                     <div class="mt-8">
                         <a href="#section-3" class="inline-block border border-brand-gold text-brand-gold px-8 py-3 lg:px-10 lg:py-4 hover:bg-brand-gold hover:text-white transition duration-300 tracking-widest text-xs lg:text-sm font-bold active:scale-95">
                             FIND YOUR SOLUTION
@@ -381,32 +374,26 @@
             </div>
         </section>
 
-        <!-- Section 3: Interactive Experience (深色) -->
+        <!-- Section 3: Interactive Experience -->
         <section id="section-3" class="snap-section bg-brand-dark auto-height">
             <div class="flex flex-col lg:flex-row w-full h-full">
                 <!-- Image Half -->
                 <div class="w-full lg:w-1/2 h-[45vh] lg:h-full relative overflow-hidden bg-white group cursor-pointer" onclick="toggleLamp()">
-                    <!-- [確認] 預設為 lamp-off.jpg -->
                     <img id="lamp-sequence-img" src="lamp-off.jpg" alt="Lamp" class="w-full h-full object-cover transition-opacity duration-300 md:group-hover:scale-105 transition-transform duration-700" loading="eager">
                     <div class="absolute inset-0 bg-brand-dark/0 group-hover:bg-brand-dark/5 transition duration-300"></div>
-                    
                     <div class="absolute bottom-4 left-4 lg:bottom-8 lg:left-8 bg-brand-cream/90 backdrop-blur p-3 lg:p-4 z-10 pointer-events-none rounded md:rounded-none">
                         <span class="block text-[10px] lg:text-xs tracking-widest uppercase mb-1 text-brand-dark">Interactive Demo</span>
                         <span class="block font-serif text-lg lg:text-xl font-bold flex items-center gap-2 text-brand-dark" id="lamp-status-text">
-                            <!-- [確認] 預設為 Click to Turn On -->
                             <i class="fas fa-toggle-off text-brand-dark/50"></i> Click to Turn On
                         </span>
                     </div>
                 </div>
-                
-                <!-- Text Half -->
                 <div class="w-full lg:w-1/2 h-auto lg:h-full flex items-center justify-center p-8 lg:p-20 bg-brand-dark relative z-20">
                     <div class="max-w-xl reveal-text text-white">
                         <div class="mb-4">
                             <span class="text-brand-gold text-xs tracking-widest uppercase mb-1 block">Experience Owlnest</span>
                             <h3 class="text-3xl md:text-4xl lg:text-5xl font-serif text-white">Owlnest Sleep Aid Lamp</h3>
                         </div>
-                        
                         <p class="text-gray-300 mb-6 leading-relaxed text-base lg:text-lg">
                             Create your own bedtime ritual. <br>
                             Feel the difference of a deep amber glow.
@@ -415,19 +402,15 @@
                                 <i class="fas fa-hand-pointer animate-pulse"></i> Click image to simulate sunset
                             </span>
                         </p>
-                        
                         <ul class="space-y-3 mb-8 text-sm md:text-base text-gray-400">
                             <li class="flex items-center gap-3"><span class="w-1 h-1 bg-brand-gold rounded-full"></span> 100% Sunset Glow</li>
                             <li class="flex items-center gap-3"><span class="w-1 h-1 bg-brand-gold rounded-full"></span> Eye-Protecting Warmth</li>
                             <li class="flex items-center gap-3"><span class="w-1 h-1 bg-brand-gold rounded-full"></span> Easy Bottom Switch</li>
                         </ul>
-
                         <div class="border-t border-white/10 pt-6 mt-6">
                             <div class="mb-4">
                                 <span class="text-4xl lg:text-5xl font-serif text-brand-gold">USD $89</span>
                             </div>
-                            
-                            <!-- [修改] Snipcart 購買按鈕 -->
                             <button class="snipcart-add-item bg-brand-gold text-brand-dark px-10 py-4 text-sm md:text-base tracking-widest uppercase hover:bg-white hover:text-brand-dark transition duration-300 w-full font-bold shadow-lg transform active:scale-95"
                                 data-item-id="owlnest-lamp-001"
                                 data-item-price="89.00"
@@ -444,7 +427,7 @@
             </div>
         </section>
 
-        <!-- Section 4: The Science (淺色) -->
+        <!-- Section 4: The Science -->
         <section id="section-4" class="snap-section bg-brand-cream text-brand-dark auto-height">
             <div class="max-w-screen-xl w-full px-4 lg:px-8 py-16 lg:py-24 flex flex-col items-center mx-auto">
                 <div class="text-center max-w-5xl reveal-text mb-12">
@@ -469,14 +452,13 @@
                     </div>
                 </div>
                 <div class="w-full max-w-4xl reveal-text">
-                    <!-- [確認] 完整顯示不切割 -->
                     <img src="spectrum.jpg" alt="Scientific Spectrum Chart" class="w-full h-auto rounded-lg shadow-lg border border-brand-dark/10" loading="lazy">
                     <p class="text-center text-xs lg:text-sm mt-4 text-brand-dark/50">Owlnest's Custom Amber Spectrum (1500K-2000K)</p>
                 </div>
             </div>
         </section>
 
-        <!-- Section 5: Comparison (深色) -->
+        <!-- Section 5: Comparison -->
         <section id="section-5" class="snap-section bg-brand-dark auto-height">
             <div class="max-w-screen-xl w-full px-4 py-16 lg:py-24 mx-auto">
                 <div class="text-center mb-10 lg:mb-16 reveal-text">
@@ -519,22 +501,18 @@
             </div>
         </section>
 
-        <!-- Section 6: Features (淺色) -->
+        <!-- Section 6: Features -->
         <section id="section-6" class="snap-section bg-brand-cream auto-height text-brand-dark">
             <div class="flex flex-col items-center text-center px-4 py-16 lg:py-24 max-w-screen-xl mx-auto reveal-text">
                 <div class="w-40 h-40 md:w-56 md:h-56 lg:w-64 lg:h-64 mb-8 lg:mb-10 rounded-full border-4 border-brand-dark/10 overflow-hidden shadow-2xl">
-                    <!-- [確認] 圓形圖片保留 lamp-off.jpg -->
                     <img src="lamp-off.jpg" alt="Owlnest Lamp Detail" class="w-full h-full object-cover" loading="lazy">
                 </div>
-                
                 <h2 class="text-3xl md:text-4xl lg:text-5xl font-serif mb-6">Designed for Unwind</h2>
                 <p class="text-brand-dark/70 text-base lg:text-lg mb-10 lg:mb-12 font-light max-w-2xl">
                     Crafted with soft silicone and a solid wood base. <br>
                     Completely wireless and rechargeable.
                 </p>
-                
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 text-sm md:text-base w-full max-w-6xl">
-                    <!-- [確認] 移除 Dimmable, 更新文字, 7 個項目 -->
                     <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-temperature-low text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Sleep Temp</div>
                     <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-leaf text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Safe Silicone & Wood</div>
                     <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-power-off text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Button Switch</div>
@@ -543,8 +521,6 @@
                     <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-expand-arrows-alt text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Compact Design</div>
                     <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-leaf text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Energy Efficient</div>
                 </div>
-
-                <!-- [確認] 移除價格，保留按鈕置中 -->
                 <div class="mt-10 lg:mt-12 pt-10 border-t border-brand-dark/10 flex justify-center items-center reveal-text w-full max-w-4xl">
                     <button class="snipcart-add-item bg-brand-dark text-white px-10 py-3 md:px-12 md:py-4 text-sm md:text-base tracking-widest uppercase hover:bg-brand-gold hover:text-brand-dark transition duration-300 shadow-lg active:scale-95"
                         data-item-id="owlnest-lamp-001"
@@ -559,7 +535,7 @@
             </div>
         </section>
 
-        <!-- Section 7: Specs (深色) -->
+        <!-- Section 7: Specs -->
         <section id="section-7" class="snap-section bg-brand-dark auto-height text-white">
             <div class="max-w-5xl w-full px-4 md:px-8 py-16 lg:py-24 reveal-text mx-auto">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-10 mb-12 lg:mb-20 text-center">
@@ -583,7 +559,7 @@
                     </div>
                 </div>
                 <div class="mt-12 lg:mt-16 text-center">
-                     <button class="snipcart-add-item inline-block bg-brand-gold text-brand-dark px-10 py-4 lg:px-12 lg:py-5 font-bold hover:bg-white transition duration-300 tracking-widest text-sm lg:text-base shadow-lg active:scale-95"
+                    <button class="snipcart-add-item inline-block bg-brand-gold text-brand-dark px-10 py-4 lg:px-12 lg:py-5 font-bold hover:bg-white transition duration-300 tracking-widest text-sm lg:text-base shadow-lg active:scale-95"
                         data-item-id="owlnest-lamp-001"
                         data-item-price="89.00"
                         data-item-url="/"
@@ -596,7 +572,7 @@
             </div>
         </section>
 
-        <!-- Section 8: Contact (淺色) -->
+        <!-- Section 8: Contact -->
         <section id="section-8" class="snap-section bg-brand-cream text-brand-dark auto-height">
             <div class="max-w-7xl w-full px-4 md:px-8 py-16 lg:py-24 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-start mx-auto">
                 <div class="reveal-text">
@@ -624,42 +600,33 @@
 
     </div>
 
-    <!-- [關鍵] Snipcart Script (放置於 body 底部) -->
+    <!-- Snipcart Script -->
     <script async src="https://cdn.snipcart.com/themes/v3.4.1/default/snipcart.js"></script>
-    <!-- [確認] 您的 Public API Key -->
     <div hidden id="snipcart" data-api-key="MmY2MWUwYjMtODI0Mi00NDQ1LTk4YWUtNTQ0NDgwODY5OGM0NjM5MDIzNDE2ODU0NDczMzQz"></div>
 
-    <!-- JavaScript (Canvas Animation Logic) -->
+    <!-- JavaScript -->
     <script>
-        /* ----- 核心：序列幀動畫 (Canvas Sequence) ----- */
-        
         const canvas = document.getElementById('hero-canvas');
         const context = canvas.getContext('2d');
         const section1 = document.getElementById('section-1');
         
-        // **設定區**
         const frameCount = 80; 
-        // [確認] 檔名格式 001.jpg
         const currentFrame = index => `${index.toString().padStart(3, '0')}.jpg`; 
         
         const images = [];
         const skySequence = { frame: 0 };
         let imagesLoaded = 0;
 
-        // 預先載入圖片
         for (let i = 1; i <= frameCount; i++) {
             const img = new Image();
             img.src = currentFrame(i);
             img.onload = () => {
                 imagesLoaded++;
-                if (imagesLoaded === 1) { // 載入第一張就先畫出來
-                    render();
-                }
+                if (imagesLoaded === 1) { render(); }
             };
             images.push(img);
         }
 
-        // 畫布渲染函數 (Cover 模式)
         function render() {
             const img = images[skySequence.frame];
             if (!img) return;
@@ -667,7 +634,6 @@
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             
-            // 模擬 object-fit: cover
             const scale = Math.max(canvas.width / img.width, canvas.height / img.height);
             const x = (canvas.width / 2) - (img.width / 2) * scale;
             const y = (canvas.height / 2) - (img.height / 2) * scale;
@@ -677,10 +643,10 @@
         }
 
         function isDesktop() {
-            return window.innerWidth >= 1280; 
+            // [修正] 全裝置都啟用 Scrollytelling
+            return true; 
         }
 
-        /* 滾動監聽與動畫控制 */
         const container = document.getElementById('scroller');
         const sections = document.querySelectorAll('.snap-section');
         const dots = document.querySelectorAll('.dot');
@@ -688,7 +654,6 @@
         
         let isScrolling = false;
 
-        // 滾動事件
         container.addEventListener('scroll', () => {
             if (!isScrolling) {
                 window.requestAnimationFrame(() => {
@@ -703,7 +668,6 @@
                             const activeDot = document.querySelector(`.dot[href="#${id}"]`);
                             if(activeDot) activeDot.classList.add('active');
 
-                            // 導覽列變色
                             header.classList.remove('nav-dark', 'nav-split');
                             if (s.id === 'section-3') {
                                 header.classList.add('nav-split'); 
@@ -711,6 +675,7 @@
                                 header.classList.add('nav-dark'); 
                             }
                             
+                            // [修正] 全裝置 Section 1 滑動控制
                             if (isDesktop() && s.id === 'section-1') {
                                 section1.classList.add('desktop-scroll');
                             } else {
@@ -719,6 +684,7 @@
                         }
                     });
                     
+                    // [修正] 全裝置 Scroll Scrubbing 計算
                     if (isDesktop()) {
                         const videoSection = document.getElementById('section-1');
                         const rect = videoSection.getBoundingClientRect();
