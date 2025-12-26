@@ -53,7 +53,7 @@
             height: 100vh;
             height: 100dvh;
             overflow-y: scroll;
-            /* 全裝置使用 proximity，避免手機平板卡頓，同時保留一定吸附感 */
+            /* [修改] 全域改用 proximity (接近才吸附)，這是最安全的設定，避免長捲動被強制跳過 */
             scroll-snap-type: y proximity; 
             scroll-behavior: smooth;
         }
@@ -67,6 +67,7 @@
             align-items: center;
             justify-content: center;
             min-height: 100vh;
+            /* 預設都有吸附點 */
             scroll-snap-align: start;
         }
         
@@ -76,6 +77,8 @@
             height: 400vh !important; 
             padding: 0 !important;
             overflow: visible !important;
+            /* [關鍵] 取消強制吸附停止 (scroll-snap-stop)，讓使用者可以順暢滑出 */
+            scroll-snap-stop: normal; 
         }
 
         /* 手機版 (小於 768px) 微調 */
@@ -107,6 +110,12 @@
             .snap-section.auto-height {
                 display: block;
                 overflow-y: auto;
+            }
+            
+            /* [修正] Section 2 這種一般區塊，我們要讓它容易被「接住」 */
+            #section-2, #section-3, #section-4, #section-5, #section-6, #section-7, #section-8 {
+                scroll-snap-align: start;
+                scroll-margin-top: 0px; /* 確保對齊頂部 */
             }
         }
 
@@ -349,7 +358,7 @@
                 </div>
                 
                 <div class="max-w-4xl mx-auto reveal-text border-t border-brand-dark/10 pt-10">
-                    <p class="text-2xl md:text-3xl font-serif text-brand-gold mb-6 italic leading-relaxed">
+                    <p class="text-xl md:text-2xl lg:text-3xl font-serif text-brand-gold mb-6 italic leading-relaxed">
                         "Wish you could sleep like nature intended?"
                     </p>
                     
@@ -403,7 +412,6 @@
 
                         <div class="border-t border-white/10 pt-6 mt-6">
                             <div class="mb-4">
-                                <!-- [確認] USD $89 -->
                                 <span class="text-4xl lg:text-5xl font-serif text-brand-gold">USD $89</span>
                             </div>
                             
@@ -551,7 +559,7 @@
             </div>
         </section>
 
-        <!-- Section 8: Contact (淺色) -->
+        <!-- Section 8: Contact -->
         <section id="section-8" class="snap-section bg-brand-cream text-brand-dark auto-height">
             <div class="max-w-7xl w-full px-4 md:px-8 py-16 lg:py-24 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-start mx-auto">
                 <div class="reveal-text">
@@ -634,7 +642,6 @@
         
         let isScrolling = false;
 
-        // [確認] 取消所有自動播放邏輯，全裝置皆為手動捲動
         // 滾動事件
         container.addEventListener('scroll', () => {
             if (!isScrolling) {
