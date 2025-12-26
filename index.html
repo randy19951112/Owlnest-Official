@@ -18,8 +18,8 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Snipcart CSS -->
-    <link rel="stylesheet" href="https://cdn.snipcart.com/themes/v3.4.1/default/snipcart.css" />
+    <!-- Snipcart CSS (升級到 v3.7.1 以確保金流介面相容性) -->
+    <link rel="stylesheet" href="https://cdn.snipcart.com/themes/v3.7.1/default/snipcart.css" />
 
     <script>
         tailwind.config = {
@@ -314,6 +314,7 @@
     <!-- 手機/平板全螢幕選單 -->
     <div id="mobile-menu" class="fixed inset-0 bg-brand-dark z-40 flex flex-col justify-center items-center pt-20 lg:hidden text-white">
         <nav class="flex flex-col gap-8 text-xl tracking-widest uppercase font-semibold text-center">
+            <!-- [確認] 手機版也有 About Us -->
             <a href="about.html" class="hover:text-brand-gold transition">About Us</a>
             <a href="#section-1" onclick="toggleMobileMenu()" class="hover:text-brand-gold transition">Home</a>
             <a href="#section-3" onclick="toggleMobileMenu()" class="hover:text-brand-gold transition">Products</a>
@@ -335,6 +336,10 @@
         <a href="#section-8" class="dot" data-index="7"></a>
     </div>
 
+    <!-- 購物車側邊欄 (此處主要由 Snipcart 接管，保留基本的 HTML 結構以免 JS 報錯，但主要依賴 Snipcart 彈窗) -->
+    <!-- 為了避免混淆，我們可以移除舊的 #cart-sidebar 和 #cart-overlay 相關代碼，完全依賴 Snipcart -->
+    <!-- 但為了保險起見，保留 JS 邏輯中的 toggleCart() 並讓它觸發 Snipcart -->
+
     <!-- 主容器 -->
     <div class="snap-container" id="scroller">
 
@@ -347,6 +352,7 @@
                 <div class="absolute inset-0 bg-black/30"></div>
                 
                 <div class="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 max-w-screen-xl mx-auto">
+                    <!-- [確認] 使用 logo2.png -->
                     <img src="logo2.png" alt="Owlnest Logo" class="w-32 md:w-48 lg:w-64 mb-8 md:mb-10 brightness-200 contrast-100 drop-shadow-2xl reveal-text" style="transition-delay: 0.1s;">
                     
                     <h1 class="text-3xl md:text-5xl lg:text-6xl font-serif font-light mb-6 reveal-text text-brand-gold tracking-widest" style="transition-delay: 0.3s;">
@@ -358,7 +364,7 @@
                     </p>
 
                     <!-- Scroll Down 提示 -->
-                    <div class="absolute bottom-10 animate-bounce text-brand-gold/70 text-sm tracking-widest uppercase hidden xl:block">
+                    <div class="absolute bottom-10 animate-bounce text-brand-gold/70 text-sm tracking-widest uppercase">
                         Scroll to Experience
                     </div>
                 </div>
@@ -450,7 +456,7 @@
                                 <span class="text-4xl lg:text-5xl font-serif text-brand-gold">USD $89</span>
                             </div>
                             
-                            <!-- Snipcart 購買按鈕 -->
+                            <!-- [修改] Snipcart 購買按鈕 -->
                             <button class="snipcart-add-item bg-brand-gold text-brand-dark px-10 py-4 text-sm md:text-base tracking-widest uppercase hover:bg-white hover:text-brand-dark transition duration-300 w-full font-bold shadow-lg transform active:scale-95"
                                 data-item-id="owlnest-lamp-001"
                                 data-item-price="89.00"
@@ -492,6 +498,7 @@
                     </div>
                 </div>
                 <div class="w-full max-w-4xl reveal-text">
+                    <!-- [確認] 完整顯示不切割 -->
                     <img src="spectrum.jpg" alt="Scientific Spectrum Chart" class="w-full h-auto rounded-lg shadow-lg border border-brand-dark/10" loading="lazy">
                     <p class="text-center text-xs lg:text-sm mt-4 text-brand-dark/50">Owlnest's Custom Amber Spectrum (1500K-2000K)</p>
                 </div>
@@ -545,6 +552,7 @@
         <section id="section-6" class="snap-section bg-brand-cream auto-height text-brand-dark">
             <div class="flex flex-col items-center text-center px-4 py-16 lg:py-24 max-w-screen-xl mx-auto reveal-text">
                 <div class="w-40 h-40 md:w-56 md:h-56 lg:w-64 lg:h-64 mb-8 lg:mb-10 rounded-full border-4 border-brand-dark/10 overflow-hidden shadow-2xl">
+                    <!-- [確認] 圓形圖片保留 lamp-off.jpg -->
                     <img src="lamp-off.jpg" alt="Owlnest Lamp Detail" class="w-full h-full object-cover" loading="lazy">
                 </div>
                 
@@ -647,8 +655,8 @@
 
     </div>
 
-    <!-- Snipcart Script -->
-    <script async src="https://cdn.snipcart.com/themes/v3.4.1/default/snipcart.js"></script>
+    <!-- [關鍵] Snipcart Script (升級至 v3.7.1) -->
+    <script async src="https://cdn.snipcart.com/themes/v3.7.1/default/snipcart.js"></script>
     <div hidden id="snipcart" data-api-key="MmY2MWUwYjMtODI0Mi00NDQ1LTk4YWUtNTQ0NDgwODY5OGM0NjM5MDIzNDE2ODU0NDczMzQz"></div>
 
     <!-- JavaScript (Canvas Animation & Scroll) -->
@@ -659,23 +667,29 @@
         const context = canvas.getContext('2d');
         const section1 = document.getElementById('section-1');
         
+        // **設定區**
         const frameCount = 80; 
+        // [確認] 檔名格式 001.jpg
         const currentFrame = index => `${index.toString().padStart(3, '0')}.jpg`; 
         
         const images = [];
         const skySequence = { frame: 0 };
         let imagesLoaded = 0;
 
+        // 預先載入圖片
         for (let i = 1; i <= frameCount; i++) {
             const img = new Image();
             img.src = currentFrame(i);
             img.onload = () => {
                 imagesLoaded++;
-                if (imagesLoaded === 1) { render(); }
+                if (imagesLoaded === 1) { // 載入第一張就先畫出來
+                    render();
+                }
             };
             images.push(img);
         }
 
+        // 畫布渲染函數 (Cover 模式)
         function render() {
             const img = images[skySequence.frame];
             if (!img) return;
@@ -683,6 +697,7 @@
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             
+            // 模擬 object-fit: cover
             const scale = Math.max(canvas.width / img.width, canvas.height / img.height);
             const x = (canvas.width / 2) - (img.width / 2) * scale;
             const y = (canvas.height / 2) - (img.height / 2) * scale;
