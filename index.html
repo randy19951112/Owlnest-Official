@@ -6,19 +6,19 @@
     <title>Owlnest Official | The Art of Deep Sleep</title>
     <meta name="description" content="Owlnest Sleep Aid Lamp - Simulating natural sunset to help you sleep better. ITRI certified, blue-light free.">
     
-    <!-- 設定瀏覽器分頁的小圖示 -->
+    <!-- Favicon -->
     <link rel="icon" type="image/png" href="logo.png">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Google Fonts -->
+    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Snipcart CSS -->
+    <!-- Snipcart CSS v3.7.1 -->
     <link rel="stylesheet" href="https://cdn.snipcart.com/themes/v3.7.1/default/snipcart.css" />
 
     <script>
@@ -56,7 +56,7 @@
             height: 100vh;
             height: 100dvh;
             overflow-y: scroll;
-            /* 全裝置使用 proximity，避免手機平板卡頓 */
+            /* 使用 proximity 讓滾動更自然，減少卡頓 */
             scroll-snap-type: y proximity; 
             scroll-behavior: smooth;
         }
@@ -73,7 +73,7 @@
             scroll-snap-align: start;
         }
         
-        /* Section 1 視差捲動區：全裝置強制開啟 400vh 高度以供滑動 */
+        /* [關鍵] Section 1 全裝置強制開啟 400vh 高度以供序列幀滑動 */
         #section-1 {
             display: block !important;
             height: 400vh !important; 
@@ -82,18 +82,18 @@
             scroll-snap-stop: normal; /* 允許順暢滑過 */
         }
 
-        /* 手機版 (小於 768px) 微調 */
-        @media (max-width: 767px) {
+        /* 手機版/平板微調 */
+        @media (max-width: 1023px) {
             .snap-container {
-                scroll-snap-type: none; /* 手機完全自由捲動手感最好 */
+                scroll-snap-type: none; /* 手機平板關閉吸附，手感最順 */
             }
             .snap-section {
                 height: auto;
                 min-height: auto;
-                padding-top: 60px; 
-                padding-bottom: 60px;
+                padding-top: 80px; 
+                padding-bottom: 80px;
             }
-            /* Section 1 手機版依然保持長度供滑動 */
+            /* Section 1 依然保持長度 */
             #section-1 {
                 height: 400vh !important; 
                 padding: 0 !important;
@@ -101,8 +101,8 @@
             html { scroll-padding-top: 80px; }
         }
         
-        /* 平板與電腦版 (大於等於 768px) */
-        @media (min-width: 768px) {
+        /* 電腦版 */
+        @media (min-width: 1024px) {
             .snap-section {
                 height: 100vh;
                 height: 100dvh;
@@ -116,7 +116,7 @@
 
         .snap-section.auto-height::-webkit-scrollbar { width: 0px; }
 
-        /* 動畫效果 */
+        /* Animation */
         .reveal-text {
             opacity: 0;
             transform: translateY(30px);
@@ -126,7 +126,7 @@
             opacity: 1;
             transform: translateY(0);
         }
-        @media (max-width: 767px) {
+        @media (max-width: 1023px) {
             .reveal-text { opacity: 1; transform: translateY(0); }
         }
         
@@ -168,53 +168,51 @@
             transform: scale(1.3);
         }
 
-        /* 購物車動畫 */
+        /* Cart Sidebar & Mobile Menu */
         #cart-sidebar { transform: translateX(100%); transition: transform 0.3s ease-in-out; }
         #cart-sidebar.open { transform: translateX(0); }
         #cart-overlay { opacity: 0; pointer-events: none; transition: opacity 0.3s ease-in-out; }
         #cart-overlay.open { opacity: 1; pointer-events: auto; }
-
-        /* 手機版選單動畫 */
         #mobile-menu { transform: translateY(-100%); transition: transform 0.3s ease-in-out; }
         #mobile-menu.open { transform: translateY(0); }
-        
         .cursor-pointer { cursor: pointer; }
 
-        /* 導覽列變色邏輯 */
+        /* --- 導覽列變色邏輯 --- */
         #main-header {
             color: #faefcf; 
             transition: color 0.2s ease; 
             text-shadow: 0 1px 3px rgba(0,0,0,0.3); 
         }
-        #main-header .logo-area img {
-            transition: filter 0.2s ease;
+        /* Logo 圖片預設 */
+        #nav-logo {
+            transition: opacity 0.2s ease;
             filter: drop-shadow(0 1px 3px rgba(0,0,0,0.3)); 
         }
         
+        /* 淺色背景模式 (nav-dark) -> 深藍字 + 深Logo */
         header.nav-dark {
             color: #455169 !important; 
             text-shadow: none; 
-        }
-        header.nav-dark .logo-area img {
-            filter: brightness(0.2); 
         }
         header.nav-dark button i, header.nav-dark i {
             color: #455169 !important;
         }
         
+        /* Section 3 特殊分割模式 (nav-split) */
+        /* 電腦版: 左邊是白底(Logo變深)，右邊是深底(選單變淺) */
         @media (min-width: 1024px) {
             header.nav-split nav a { color: #faefcf !important; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
             header.nav-split button i { color: #faefcf !important; }
-            header.nav-split .logo-area { color: #455169 !important; text-shadow: none; }
-            header.nav-split .logo-area img { filter: brightness(0.2); }
+            /* Logo 在左側白底上，需要是深色 */
+            /* JS 會負責切換 src 為 logo.png (深色線條) */
         }
+        /* 手機/平板版: Section 3 上圖是白底，Header 壓在圖上 -> 全變深 */
         @media (max-width: 1023px) {
             header.nav-split { color: #455169 !important; text-shadow: none; }
-            header.nav-split .logo-area img { filter: brightness(0.2); }
             header.nav-split button i { color: #455169 !important; }
         }
 
-        /* Snipcart 外觀強制覆寫 */
+        /* --- Snipcart 外觀客製化 --- */
         #snipcart {
             --color-modal-bg: #faefcf; 
             --color-library-background: #faefcf;
@@ -260,7 +258,8 @@
     <!-- 導覽列 -->
     <header id="main-header" class="fixed top-0 left-0 w-full z-50 px-4 md:px-8 py-4 md:py-6 flex justify-between items-center bg-transparent transition-all duration-300">
         <div class="logo-area flex items-center gap-2 md:gap-4 relative z-50">
-             <img src="logo2.png" alt="Owlnest Logo" class="h-10 md:h-14 w-auto brightness-200 contrast-100">
+             <!-- [確認] Logo 預設為 logo2.png (淺色)，ID 為 nav-logo -->
+             <img id="nav-logo" src="logo2.png" alt="Owlnest Logo" class="h-10 md:h-14 w-auto contrast-100">
              <span class="font-serif text-lg md:text-3xl tracking-widest font-bold">Owlnest Official</span>
         </div>
         
@@ -343,11 +342,14 @@
 
         <!-- Section 1: Hero (序列幀畫布區) -->
         <section id="section-1" class="snap-section bg-brand-dark active">
+            <!-- 黏性容器：高度與畫布 -->
             <div class="sticky top-0 h-[100vh] w-full overflow-hidden">
+                <!-- Canvas 播放圖片序列 -->
                 <canvas id="hero-canvas" class="absolute inset-0 w-full h-full object-cover bg-brand-dark"></canvas>
                 <div class="absolute inset-0 bg-black/30"></div>
                 
                 <div class="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 max-w-screen-xl mx-auto">
+                    <!-- [確認] 使用 logo2.png -->
                     <img src="logo2.png" alt="Owlnest Logo" class="w-32 md:w-48 lg:w-64 mb-8 md:mb-10 brightness-200 contrast-100 drop-shadow-2xl reveal-text" style="transition-delay: 0.1s;">
                     
                     <h1 class="text-3xl md:text-5xl lg:text-6xl font-serif font-light mb-6 reveal-text text-brand-gold tracking-widest" style="transition-delay: 0.3s;">
@@ -407,25 +409,27 @@
         <!-- Section 3: Interactive Experience (深色) -->
         <section id="section-3" class="snap-section bg-brand-dark auto-height">
             <div class="flex flex-col lg:flex-row w-full h-full">
-                <!-- Image Half -->
+                <!-- Image Half: Left side White Background -->
                 <div class="w-full lg:w-1/2 h-[45vh] lg:h-full relative overflow-hidden bg-white group cursor-pointer" onclick="toggleLamp()">
+                    <!-- [確認] 預設為 lamp-off.jpg -->
                     <img id="lamp-sequence-img" src="lamp-off.jpg" alt="Lamp" class="w-full h-full object-cover transition-opacity duration-300 md:group-hover:scale-105 transition-transform duration-700" loading="eager">
                     <div class="absolute inset-0 bg-brand-dark/0 group-hover:bg-brand-dark/5 transition duration-300"></div>
                     
                     <div class="absolute bottom-4 left-4 lg:bottom-8 lg:left-8 bg-brand-cream/90 backdrop-blur p-3 lg:p-4 z-10 pointer-events-none rounded md:rounded-none">
                         <span class="block text-[10px] lg:text-xs tracking-widest uppercase mb-1 text-brand-dark">Interactive Demo</span>
                         <span class="block font-serif text-lg lg:text-xl font-bold flex items-center gap-2 text-brand-dark" id="lamp-status-text">
+                            <!-- [確認] 預設為 Click to Turn On -->
                             <i class="fas fa-toggle-off text-brand-dark/50"></i> Click to Turn On
                         </span>
                     </div>
                 </div>
                 
-                <!-- Text Half -->
+                <!-- Text Half: Right side Dark Background -->
                 <div class="w-full lg:w-1/2 h-auto lg:h-full flex items-center justify-center p-8 lg:p-20 bg-brand-dark relative z-20">
                     <div class="max-w-xl reveal-text text-white">
                         <div class="mb-4">
                             <span class="text-brand-gold text-xs tracking-widest uppercase mb-1 block">Experience Owlnest</span>
-                            <!-- [確認] 產品名稱已修改 -->
+                            <!-- [確認] 標題 -->
                             <h3 class="text-3xl md:text-4xl lg:text-5xl font-serif text-white">Owlnest Sleep Aid Lamp</h3>
                         </div>
                         
@@ -446,9 +450,11 @@
 
                         <div class="border-t border-white/10 pt-6 mt-6">
                             <div class="mb-4">
+                                <!-- [確認] USD $89 -->
                                 <span class="text-4xl lg:text-5xl font-serif text-brand-gold">USD $89</span>
                             </div>
                             
+                            <!-- [確認] Snipcart Button -->
                             <button class="snipcart-add-item bg-brand-gold text-brand-dark px-10 py-4 text-sm md:text-base tracking-widest uppercase hover:bg-white hover:text-brand-dark transition duration-300 w-full font-bold shadow-lg transform active:scale-95"
                                 data-item-id="owlnest-lamp-001"
                                 data-item-price="89.00"
@@ -470,7 +476,6 @@
             <div class="max-w-screen-xl w-full px-4 lg:px-8 py-16 lg:py-24 flex flex-col items-center mx-auto">
                 <div class="text-center max-w-5xl reveal-text mb-12">
                     <span class="text-brand-gold text-xs tracking-widest uppercase mb-2 block">The Science of Sleep</span>
-                    <!-- [確認] 標題已修改 -->
                     <h2 class="text-3xl md:text-4xl lg:text-6xl font-serif mb-6 uppercase leading-tight">
                         AMBER LIGHT SPECTRUM <br>
                         <span class="text-brand-dark/50 text-xl lg:text-4xl normal-case font-light block mt-2">vs Blue Light Spectrum</span>
@@ -491,6 +496,7 @@
                     </div>
                 </div>
                 <div class="w-full max-w-4xl reveal-text">
+                    <!-- [確認] 完整顯示不切割 -->
                     <img src="spectrum.jpg" alt="Scientific Spectrum Chart" class="w-full h-auto rounded-lg shadow-lg border border-brand-dark/10" loading="lazy">
                     <p class="text-center text-xs lg:text-sm mt-4 text-brand-dark/50">Owlnest's Custom Amber Spectrum (1500K-2000K)</p>
                 </div>
@@ -544,10 +550,10 @@
         <section id="section-6" class="snap-section bg-brand-cream auto-height text-brand-dark">
             <div class="flex flex-col items-center text-center px-4 py-16 lg:py-24 max-w-screen-xl mx-auto reveal-text">
                 <div class="w-40 h-40 md:w-56 md:h-56 lg:w-64 lg:h-64 mb-8 lg:mb-10 rounded-full border-4 border-brand-dark/10 overflow-hidden shadow-2xl">
+                    <!-- [確認] 使用 lamp-off.jpg -->
                     <img src="lamp-off.jpg" alt="Owlnest Lamp Detail" class="w-full h-full object-cover" loading="lazy">
                 </div>
                 
-                <!-- [確認] 標題大小寫修正 -->
                 <h2 class="text-3xl md:text-4xl lg:text-5xl font-serif mb-6">Designed for Unwind</h2>
                 <p class="text-brand-dark/70 text-base lg:text-lg mb-10 lg:mb-12 font-light max-w-2xl">
                     Crafted with soft silicone and a solid wood base. <br>
@@ -555,7 +561,7 @@
                 </p>
                 
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 text-sm md:text-base w-full max-w-6xl">
-                    <!-- [確認] 項目為 7 個，名稱已修正，Dimmable 已移除 -->
+                    <!-- [確認] 移除 Dimmable, 更新文字 -->
                     <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-temperature-low text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Sleep Temp</div>
                     <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-leaf text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Safe Silicone & Wood</div>
                     <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-power-off text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Button Switch</div>
@@ -565,7 +571,7 @@
                     <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-leaf text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Energy Efficient</div>
                 </div>
 
-                <!-- [確認] 底部只有按鈕，無價格 -->
+                <!-- [確認] 移除價格，按鈕置中 -->
                 <div class="mt-10 lg:mt-12 pt-10 border-t border-brand-dark/10 flex justify-center items-center reveal-text w-full max-w-4xl">
                     <button class="snipcart-add-item bg-brand-dark text-white px-10 py-3 md:px-12 md:py-4 text-sm md:text-base tracking-widest uppercase hover:bg-brand-gold hover:text-brand-dark transition duration-300 shadow-lg active:scale-95"
                         data-item-id="owlnest-lamp-001"
@@ -600,10 +606,10 @@
                         <div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">LED Lifespan</span><span>Approx. 3000 Hours</span></div>
                         <div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">Battery</span><span>1200 mAh Lithium</span></div>
                         <div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">Charging</span><span>Type-C (Included)</span></div>
+                        <!-- [確認] Control -> Button Switch -->
                         <div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">Control</span><span>Button Switch</span></div>
                     </div>
                 </div>
-                <!-- [確認] 新增下載說明書連結 -->
                 <div class="text-center mt-8">
                     <a href="manual.pdf" target="_blank" class="inline-flex items-center text-brand-gold hover:text-white transition text-sm tracking-widest uppercase border-b border-brand-gold pb-1">
                         <i class="fas fa-file-pdf mr-2"></i> Download User Manual
@@ -623,7 +629,7 @@
             </div>
         </section>
 
-        <!-- Section 8: Contact (淺色) -->
+        <!-- Section 8: Contact -->
         <section id="section-8" class="snap-section bg-brand-cream text-brand-dark auto-height">
             <div class="max-w-7xl w-full px-4 md:px-8 py-16 lg:py-24 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-start mx-auto">
                 <div class="reveal-text">
@@ -636,7 +642,6 @@
                     <div class="w-full h-64 lg:h-80 rounded-lg overflow-hidden border border-brand-dark/10 shadow-lg mb-8 lg:mb-10">
                         <iframe width="100%" height="100%" frameborder="0" style="border:0;" src="https://maps.google.com/maps?q=114%20L%C3%BD%20Th%C6%B0%E1%BB%9Dng%20Ki%E1%BB%87t%2C%20Ph%C3%BA%20Qu%E1%BB%91c%2C%20Vietnam&t=&z=15&ie=UTF8&iwloc=&output=embed" allowfullscreen></iframe>
                     </div>
-                    <!-- [確認] 新增 Disclaimer 與 User Manual 連結 -->
                     <div class="flex items-center gap-4 lg:gap-6"><img src="logo.png" alt="Owlnest Logo" class="h-8 lg:h-10 w-auto opacity-50"><p class="text-xs lg:text-sm text-brand-dark/50 uppercase tracking-widest">&copy; <span id="copyright-year"></span> Owlnest Official.</p><a href="disclaimer.html" class="text-xs lg:text-sm text-brand-dark/50 hover:text-brand-gold ml-4">Disclaimer</a><a href="manual.pdf" target="_blank" class="text-xs lg:text-sm text-brand-dark/50 hover:text-brand-gold ml-4">User Manual</a></div>
                 </div>
                 <div class="bg-white p-6 lg:p-16 shadow-xl rounded-lg reveal-text">
@@ -655,14 +660,18 @@
 
     <!-- Snipcart Script -->
     <script async src="https://cdn.snipcart.com/themes/v3.7.1/default/snipcart.js"></script>
+    <!-- [確認] API Key -->
     <div hidden id="snipcart" data-api-key="MmY2MWUwYjMtODI0Mi00NDQ1LTk4YWUtNTQ0NDgwODY5OGM0NjM5MDIzNDE2ODU0NDczMzQz"></div>
 
     <!-- JavaScript (Canvas Animation & Scroll) -->
     <script>
+        /* ----- 核心：序列幀動畫 (Canvas Sequence) ----- */
+        
         const canvas = document.getElementById('hero-canvas');
         const context = canvas.getContext('2d');
         const section1 = document.getElementById('section-1');
         
+        // **設定區**
         const frameCount = 80; 
         const currentFrame = index => `${index.toString().padStart(3, '0')}.jpg`; 
         
@@ -680,6 +689,7 @@
             images.push(img);
         }
 
+        // 畫布渲染函數 (Cover 模式)
         function render() {
             const img = images[skySequence.frame];
             if (!img) return;
@@ -695,8 +705,9 @@
             context.drawImage(img, x, y, img.width * scale, img.height * scale);
         }
 
+        // [確認] 全裝置皆為 Scrollytelling
         function isDesktop() {
-            return window.innerWidth >= 1280; 
+            return true; 
         }
 
         const container = document.getElementById('scroller');
@@ -721,6 +732,7 @@
                             const activeDot = document.querySelector(`.dot[href="#${id}"]`);
                             if(activeDot) activeDot.classList.add('active');
 
+                            // 導覽列變色與換圖
                             header.classList.remove('nav-dark', 'nav-split');
                             if (s.id === 'section-3') {
                                 header.classList.add('nav-split');
@@ -732,6 +744,7 @@
                                 if (navLogo) navLogo.src = 'logo2.png'; 
                             }
                             
+                            // [確認] Section 1 啟用 Scroll Scrubbing Class
                             if (isDesktop() && s.id === 'section-1') {
                                 section1.classList.add('desktop-scroll');
                             } else {
@@ -740,6 +753,7 @@
                         }
                     });
                     
+                    // [確認] 全裝置序列幀控制
                     if (isDesktop()) {
                         const videoSection = document.getElementById('section-1');
                         const rect = videoSection.getBoundingClientRect();
@@ -799,14 +813,80 @@
                 isLampOn = true;
             }
         }
+
+        let cart = JSON.parse(localStorage.getItem('owlnest_cart')) || [];
+        function toggleCart() {
+            document.getElementById('cart-sidebar').classList.toggle('open');
+            document.getElementById('cart-overlay').classList.toggle('open');
+            renderCart();
+        }
+        function addToCart(name, price, image) {
+            const existingItem = cart.find(item => item.name === name);
+            if (existingItem) { existingItem.quantity += 1; } else { cart.push({ name, price, image, quantity: 1 }); }
+            saveCart(); updateCartCount();
+            if (!document.getElementById('cart-sidebar').classList.contains('open')) toggleCart();
+        }
+        function updateQuantity(index, change) {
+            cart[index].quantity += change;
+            if (cart[index].quantity <= 0) cart.splice(index, 1);
+            saveCart(); renderCart(); updateCartCount();
+        }
+        function saveCart() { localStorage.setItem('owlnest_cart', JSON.stringify(cart)); }
+        function updateCartCount() {
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const deskBadge = document.getElementById('cart-count-desktop');
+            const mobileBadge = document.getElementById('cart-count-mobile');
+            [deskBadge, mobileBadge].forEach(badge => {
+                badge.innerText = count;
+                badge.classList.remove('hidden');
+                if(count === 0) badge.classList.add('hidden');
+            });
+        }
+        function renderCart() {
+            const container = document.getElementById('cart-items');
+            const totalEl = document.getElementById('cart-total');
+            if (cart.length === 0) {
+                container.innerHTML = `<div class="text-center text-gray-400 mt-10"><i class="fas fa-shopping-basket text-4xl mb-4 opacity-30"></i><p>Your cart is empty.</p><button onclick="toggleCart()" class="mt-4 text-brand-dark underline text-sm">Continue Shopping</button></div>`;
+                totalEl.innerText = "USD $0.00";
+                return;
+            }
+            let html = ''; let total = 0;
+            cart.forEach((item, index) => {
+                total += item.price * item.quantity;
+                html += `<div class="flex gap-4 items-center"><div class="w-16 h-16 bg-gray-100 rounded overflow-hidden flex-shrink-0"><img src="${item.image}" class="w-full h-full object-cover"></div><div class="flex-1"><h4 class="font-bold text-sm">${item.name}</h4><p class="text-gray-500 text-xs">USD $${item.price}</p></div><div class="flex items-center gap-2"><button onclick="updateQuantity(${index}, -1)" class="w-6 h-6 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center text-xs">-</button><span class="text-sm w-4 text-center">${item.quantity}</span><button onclick="updateQuantity(${index}, 1)" class="w-6 h-6 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center text-xs">+</button></div></div>`;
+            });
+            container.innerHTML = html;
+            totalEl.innerText = "USD $" + total.toFixed(2);
+        }
+        function checkout() {
+            if(cart.length === 0) return;
+            let orderSummary = "I would like to place an order for:\n\n";
+            let total = 0;
+            cart.forEach(item => {
+                orderSummary += `- ${item.name} x ${item.quantity} (USD $${item.price * item.quantity})\n`;
+                total += item.price * item.quantity;
+            });
+            orderSummary += `\nTotal Estimated: USD $${total.toFixed(2)}`;
+            document.getElementById('form-message').value = orderSummary;
+            toggleCart();
+            window.location.href = "#section-8"; 
+            setTimeout(() => { alert("Please fill in your name and email to finalize the order inquiry."); }, 500);
+        }
+        function submitOrder(e) {
+            e.preventDefault();
+            alert("Thank you! Your order inquiry has been sent.");
+            cart = []; saveCart(); updateCartCount(); document.getElementById('contact-form').reset();
+        }
         
+        updateCartCount();
+        document.getElementById('copyright-year').textContent = new Date().getFullYear();
+        
+        // 確保 Snipcart 事件掛載正確
         document.addEventListener('snipcart.ready', function() {
             Snipcart.events.on('cart.confirmed', function (cartState) {
                 window.location.href = '/thank-you.html';
             });
         });
-        
-        document.getElementById('copyright-year').textContent = new Date().getFullYear();
     </script>
 </body>
 </html>
