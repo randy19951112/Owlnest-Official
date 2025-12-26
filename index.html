@@ -260,6 +260,7 @@
     <!-- 導覽列 -->
     <header id="main-header" class="fixed top-0 left-0 w-full z-50 px-4 md:px-8 py-4 md:py-6 flex justify-between items-center bg-transparent transition-all duration-300">
         <div class="logo-area flex items-center gap-2 md:gap-4 relative z-50">
+             <!-- Logo -->
              <img src="logo2.png" alt="Owlnest Logo" class="h-10 md:h-14 w-auto brightness-200 contrast-100">
              <span class="font-serif text-lg md:text-3xl tracking-widest font-bold">Owlnest Official</span>
         </div>
@@ -273,6 +274,7 @@
                 <a href="#section-7" class="border-b-2 border-transparent hover:border-brand-gold hover:text-brand-gold transition-all duration-300 pb-1">Specs</a>
                 <a href="#section-8" class="border-b-2 border-transparent hover:border-brand-gold hover:text-brand-gold transition-all duration-300 pb-1">Contact</a>
             </nav>
+            <!-- 購物車按鈕綁定 Snipcart -->
             <button class="relative group snipcart-checkout">
                 <i class="fas fa-shopping-bag text-2xl md:text-3xl hover:text-brand-gold transition"></i>
                 <span class="snipcart-items-count absolute -top-1 -right-2 bg-brand-gold text-brand-dark text-[10px] md:text-xs font-bold px-1.5 rounded-full">0</span>
@@ -354,7 +356,7 @@
                     <p class="text-gray-300 max-w-lg mx-auto text-base md:text-lg font-light leading-relaxed reveal-text mb-12" style="transition-delay: 0.5s;">
                         Experience the ultimate rest with nature-inspired technology.
                     </p>
-                    <div class="absolute bottom-10 animate-bounce text-brand-gold/70 text-sm tracking-widest uppercase hidden xl:block">
+                    <div class="absolute bottom-10 animate-bounce text-brand-gold/70 text-sm tracking-widest uppercase">
                         Scroll to Experience
                     </div>
                 </div>
@@ -556,6 +558,7 @@
                     <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-leaf text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Energy Efficient</div>
                 </div>
 
+                <!-- [修改] 使用 button 並加入 Snipcart 類別 -->
                 <div class="mt-10 lg:mt-12 pt-10 border-t border-brand-dark/10 flex justify-center items-center reveal-text w-full max-w-4xl">
                     <button class="snipcart-add-item bg-brand-dark text-white px-10 py-3 md:px-12 md:py-4 text-sm md:text-base tracking-widest uppercase hover:bg-brand-gold hover:text-brand-dark transition duration-300 shadow-lg active:scale-95"
                         data-item-id="owlnest-lamp-001"
@@ -593,7 +596,6 @@
                         <div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">Control</span><span>Button Switch</span></div>
                     </div>
                 </div>
-                <!-- [新增] 下載說明書連結 -->
                 <div class="text-center mt-8">
                     <a href="manual.pdf" target="_blank" class="inline-flex items-center text-brand-gold hover:text-white transition text-sm tracking-widest uppercase border-b border-brand-gold pb-1">
                         <i class="fas fa-file-pdf mr-2"></i> Download User Manual
@@ -626,19 +628,14 @@
                     <div class="w-full h-64 lg:h-80 rounded-lg overflow-hidden border border-brand-dark/10 shadow-lg mb-8 lg:mb-10">
                         <iframe width="100%" height="100%" frameborder="0" style="border:0;" src="https://maps.google.com/maps?q=114%20L%C3%BD%20Th%C6%B0%E1%BB%9Dng%20Ki%E1%BB%87t%2C%20Ph%C3%BA%20Qu%E1%BB%91c%2C%20Vietnam&t=&z=15&ie=UTF8&iwloc=&output=embed" allowfullscreen></iframe>
                     </div>
-                    <div class="flex items-center gap-4 lg:gap-6">
-                        <img src="logo.png" alt="Owlnest Logo" class="h-8 lg:h-10 w-auto opacity-50">
-                        <p class="text-xs lg:text-sm text-brand-dark/50 uppercase tracking-widest">&copy; <span id="copyright-year"></span> Owlnest Official.</p>
-                        <a href="disclaimer.html" class="text-xs lg:text-sm text-brand-dark/50 hover:text-brand-gold ml-4">Disclaimer</a>
-                        <!-- [新增] Footer User Manual Link -->
-                        <a href="manual.pdf" target="_blank" class="text-xs lg:text-sm text-brand-dark/50 hover:text-brand-gold ml-4">User Manual</a>
-                    </div>
+                    <div class="flex items-center gap-4 lg:gap-6"><img src="logo.png" alt="Owlnest Logo" class="h-8 lg:h-10 w-auto opacity-50"><p class="text-xs lg:text-sm text-brand-dark/50 uppercase tracking-widest">&copy; <span id="copyright-year"></span> Owlnest Official.</p><a href="disclaimer.html" class="text-xs lg:text-sm text-brand-dark/50 hover:text-brand-gold ml-4">Disclaimer</a><a href="manual.pdf" target="_blank" class="text-xs lg:text-sm text-brand-dark/50 hover:text-brand-gold ml-4">User Manual</a></div>
                 </div>
                 <div class="bg-white p-6 lg:p-16 shadow-xl rounded-lg reveal-text">
-                    <form onsubmit="event.preventDefault(); alert('Message Sent! We will contact you soon.');">
-                        <div class="mb-6 lg:mb-8"><input type="text" placeholder="YOUR NAME" class="w-full bg-transparent border-b border-brand-dark/20 py-3 lg:py-4 text-brand-dark text-base lg:text-lg focus:outline-none focus:border-brand-gold transition" required></div>
-                        <div class="mb-6 lg:mb-8"><input type="email" placeholder="YOUR EMAIL" class="w-full bg-transparent border-b border-brand-dark/20 py-3 lg:py-4 text-brand-dark text-base lg:text-lg focus:outline-none focus:border-brand-gold transition" required></div>
-                        <div class="mb-8 lg:mb-10"><label class="text-xs lg:text-sm text-brand-gold tracking-widest uppercase mb-2 lg:mb-3 block font-bold">Message</label><textarea rows="5" placeholder="How can we help you?" class="w-full bg-brand-cream border border-brand-dark/10 p-3 lg:p-4 text-brand-dark text-base lg:text-lg focus:outline-none focus:border-brand-gold transition font-mono"></textarea></div>
+                    <form name="contact" method="POST" data-netlify="true" onsubmit="alert('Message Sent! We will contact you soon.');">
+                        <input type="hidden" name="form-name" value="contact" />
+                        <div class="mb-6 lg:mb-8"><input type="text" name="name" placeholder="YOUR NAME" class="w-full bg-transparent border-b border-brand-dark/20 py-3 lg:py-4 text-brand-dark text-base lg:text-lg focus:outline-none focus:border-brand-gold transition" required></div>
+                        <div class="mb-6 lg:mb-8"><input type="email" name="email" placeholder="YOUR EMAIL" class="w-full bg-transparent border-b border-brand-dark/20 py-3 lg:py-4 text-brand-dark text-base lg:text-lg focus:outline-none focus:border-brand-gold transition" required></div>
+                        <div class="mb-8 lg:mb-10"><label class="text-xs lg:text-sm text-brand-gold tracking-widest uppercase mb-2 lg:mb-3 block font-bold">Message</label><textarea name="message" rows="5" placeholder="How can we help you?" class="w-full bg-brand-cream border border-brand-dark/10 p-3 lg:p-4 text-brand-dark text-base lg:text-lg focus:outline-none focus:border-brand-gold transition font-mono"></textarea></div>
                         <button class="w-full bg-brand-dark text-white font-bold py-4 lg:py-5 hover:bg-brand-gold hover:text-brand-dark transition duration-300 tracking-widest text-base lg:text-lg shadow-md active:scale-95">SEND MESSAGE</button>
                     </form>
                 </div>
@@ -648,40 +645,32 @@
     </div>
 
     <!-- Snipcart Script -->
-    <script async src="https://cdn.snipcart.com/themes/v3.4.1/default/snipcart.js"></script>
+    <script async src="https://cdn.snipcart.com/themes/v3.7.1/default/snipcart.js"></script>
     <div hidden id="snipcart" data-api-key="MmY2MWUwYjMtODI0Mi00NDQ1LTk4YWUtNTQ0NDgwODY5OGM0NjM5MDIzNDE2ODU0NDczMzQz"></div>
 
-    <!-- JavaScript (Canvas Animation & Scroll) -->
+    <!-- JavaScript -->
     <script>
-        /* ----- 核心：序列幀動畫 (Canvas Sequence) ----- */
-        
         const canvas = document.getElementById('hero-canvas');
         const context = canvas.getContext('2d');
         const section1 = document.getElementById('section-1');
         
-        // **設定區**
         const frameCount = 80; 
-        // [確認] 檔名格式 001.jpg
         const currentFrame = index => `${index.toString().padStart(3, '0')}.jpg`; 
         
         const images = [];
         const skySequence = { frame: 0 };
         let imagesLoaded = 0;
 
-        // 預先載入圖片
         for (let i = 1; i <= frameCount; i++) {
             const img = new Image();
             img.src = currentFrame(i);
             img.onload = () => {
                 imagesLoaded++;
-                if (imagesLoaded === 1) { // 載入第一張就先畫出來
-                    render();
-                }
+                if (imagesLoaded === 1) { render(); }
             };
             images.push(img);
         }
 
-        // 畫布渲染函數 (Cover 模式)
         function render() {
             const img = images[skySequence.frame];
             if (!img) return;
@@ -689,7 +678,6 @@
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             
-            // 模擬 object-fit: cover
             const scale = Math.max(canvas.width / img.width, canvas.height / img.height);
             const x = (canvas.width / 2) - (img.width / 2) * scale;
             const y = (canvas.height / 2) - (img.height / 2) * scale;
@@ -706,7 +694,7 @@
         const sections = document.querySelectorAll('.snap-section');
         const dots = document.querySelectorAll('.dot');
         const header = document.getElementById('main-header');
-        const navLogo = document.getElementById('nav-logo'); // [新增] 獲取 Logo 元素
+        const navLogo = document.getElementById('nav-logo');
         
         let isScrolling = false;
 
@@ -724,16 +712,15 @@
                             const activeDot = document.querySelector(`.dot[href="#${id}"]`);
                             if(activeDot) activeDot.classList.add('active');
 
-                            // 導覽列變色
                             header.classList.remove('nav-dark', 'nav-split');
                             if (s.id === 'section-3') {
                                 header.classList.add('nav-split');
-                                if (navLogo) navLogo.src = 'logo.png'; // [修改] 深色線條 Logo
+                                if (navLogo) navLogo.src = 'logo.png'; 
                             } else if (s.classList.contains('bg-brand-cream') || s.classList.contains('bg-white')) {
                                 header.classList.add('nav-dark');
-                                if (navLogo) navLogo.src = 'logo.png'; // [修改] 深色線條 Logo
+                                if (navLogo) navLogo.src = 'logo.png'; 
                             } else {
-                                if (navLogo) navLogo.src = 'logo2.png'; // [修改] 淺色線條 Logo
+                                if (navLogo) navLogo.src = 'logo2.png'; 
                             }
                             
                             if (isDesktop() && s.id === 'section-1') {
