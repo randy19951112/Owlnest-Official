@@ -279,7 +279,7 @@
     <!-- 導覽列 -->
     <header id="main-header" class="fixed top-0 left-0 w-full z-50 px-4 md:px-8 py-4 md:py-6 flex justify-between items-center bg-transparent transition-all duration-300">
         <div class="logo-area flex items-center gap-2 md:gap-4 relative z-50">
-             <!-- Logo -->
+             <!-- [確認] Logo 為 logo2.png -->
              <img src="logo2.png" alt="Owlnest Logo" class="h-10 md:h-14 w-auto brightness-200 contrast-100">
              <span class="font-serif text-lg md:text-3xl tracking-widest font-bold">Owlnest Official</span>
         </div>
@@ -300,7 +300,6 @@
             </button>
         </div>
 
-        <!-- 手機版控制區 -->
         <div class="flex lg:hidden items-center gap-4 relative z-50">
             <button class="relative active:scale-95 transition snipcart-checkout">
                 <i class="fas fa-shopping-bag text-2xl"></i>
@@ -343,7 +342,7 @@
         <section id="section-1" class="snap-section bg-brand-dark active">
             <!-- 黏性容器：高度與畫布 -->
             <div class="sticky top-0 h-[100vh] w-full overflow-hidden">
-                <!-- Canvas 播放圖片序列 001-080 -->
+                <!-- Canvas 播放圖片序列 -->
                 <canvas id="hero-canvas" class="absolute inset-0 w-full h-full object-cover bg-brand-dark"></canvas>
                 <div class="absolute inset-0 bg-black/30"></div>
                 
@@ -359,7 +358,7 @@
                     </p>
 
                     <!-- Scroll Down 提示 -->
-                    <div class="absolute bottom-10 animate-bounce text-brand-gold/70 text-sm tracking-widest uppercase">
+                    <div class="absolute bottom-10 animate-bounce text-brand-gold/70 text-sm tracking-widest uppercase hidden xl:block">
                         Scroll to Experience
                     </div>
                 </div>
@@ -410,14 +409,14 @@
             <div class="flex flex-col lg:flex-row w-full h-full">
                 <!-- Image Half: Left side White Background -->
                 <div class="w-full lg:w-1/2 h-[45vh] lg:h-full relative overflow-hidden bg-white group cursor-pointer" onclick="toggleLamp()">
-                    <!-- 預設為 lamp-off.jpg -->
+                    <!-- [確認] 預設為 lamp-off.jpg -->
                     <img id="lamp-sequence-img" src="lamp-off.jpg" alt="Lamp" class="w-full h-full object-cover transition-opacity duration-300 md:group-hover:scale-105 transition-transform duration-700" loading="eager">
                     <div class="absolute inset-0 bg-brand-dark/0 group-hover:bg-brand-dark/5 transition duration-300"></div>
                     
                     <div class="absolute bottom-4 left-4 lg:bottom-8 lg:left-8 bg-brand-cream/90 backdrop-blur p-3 lg:p-4 z-10 pointer-events-none rounded md:rounded-none">
                         <span class="block text-[10px] lg:text-xs tracking-widest uppercase mb-1 text-brand-dark">Interactive Demo</span>
                         <span class="block font-serif text-lg lg:text-xl font-bold flex items-center gap-2 text-brand-dark" id="lamp-status-text">
-                            <!-- 預設為 Click to Turn On -->
+                            <!-- [確認] 預設為 Click to Turn On -->
                             <i class="fas fa-toggle-off text-brand-dark/50"></i> Click to Turn On
                         </span>
                     </div>
@@ -556,7 +555,7 @@
                 </p>
                 
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 text-sm md:text-base w-full max-w-6xl">
-                    <!-- 移除 Dimmable, 更新文字, 7 個項目 -->
+                    <!-- [確認] 移除 Dimmable, 更新文字, 7 個項目 -->
                     <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-temperature-low text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Sleep Temp</div>
                     <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-leaf text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Safe Silicone & Wood</div>
                     <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-power-off text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Button Switch</div>
@@ -566,7 +565,7 @@
                     <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-leaf text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Energy Efficient</div>
                 </div>
 
-                <!-- 移除價格，保留按鈕置中 -->
+                <!-- [確認] 移除價格，保留按鈕置中 -->
                 <div class="mt-10 lg:mt-12 pt-10 border-t border-brand-dark/10 flex justify-center items-center reveal-text w-full max-w-4xl">
                     <button class="snipcart-add-item bg-brand-dark text-white px-10 py-3 md:px-12 md:py-4 text-sm md:text-base tracking-widest uppercase hover:bg-brand-gold hover:text-brand-dark transition duration-300 shadow-lg active:scale-95"
                         data-item-id="owlnest-lamp-001"
@@ -618,7 +617,7 @@
             </div>
         </section>
 
-        <!-- Section 8: Contact -->
+        <!-- Section 8: Contact (淺色) -->
         <section id="section-8" class="snap-section bg-brand-cream text-brand-dark auto-height">
             <div class="max-w-7xl w-full px-4 md:px-8 py-16 lg:py-24 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-start mx-auto">
                 <div class="reveal-text">
@@ -633,11 +632,13 @@
                     </div>
                     <div class="flex items-center gap-4 lg:gap-6"><img src="logo.png" alt="Owlnest Logo" class="h-8 lg:h-10 w-auto opacity-50"><p class="text-xs lg:text-sm text-brand-dark/50 uppercase tracking-widest">&copy; <span id="copyright-year"></span> Owlnest Official.</p><a href="disclaimer.html" class="text-xs lg:text-sm text-brand-dark/50 hover:text-brand-gold ml-4">Disclaimer</a></div>
                 </div>
+                <!-- Contact Form (with Netlify Forms support) -->
                 <div class="bg-white p-6 lg:p-16 shadow-xl rounded-lg reveal-text">
-                    <form onsubmit="event.preventDefault(); alert('Message Sent! We will contact you soon.');">
-                        <div class="mb-6 lg:mb-8"><input type="text" placeholder="YOUR NAME" class="w-full bg-transparent border-b border-brand-dark/20 py-3 lg:py-4 text-brand-dark text-base lg:text-lg focus:outline-none focus:border-brand-gold transition" required></div>
-                        <div class="mb-6 lg:mb-8"><input type="email" placeholder="YOUR EMAIL" class="w-full bg-transparent border-b border-brand-dark/20 py-3 lg:py-4 text-brand-dark text-base lg:text-lg focus:outline-none focus:border-brand-gold transition" required></div>
-                        <div class="mb-8 lg:mb-10"><label class="text-xs lg:text-sm text-brand-gold tracking-widest uppercase mb-2 lg:mb-3 block font-bold">Message</label><textarea rows="5" placeholder="How can we help you?" class="w-full bg-brand-cream border border-brand-dark/10 p-3 lg:p-4 text-brand-dark text-base lg:text-lg focus:outline-none focus:border-brand-gold transition font-mono"></textarea></div>
+                    <form name="contact" method="POST" data-netlify="true" onsubmit="alert('Message Sent! We will contact you soon.');">
+                        <input type="hidden" name="form-name" value="contact" />
+                        <div class="mb-6 lg:mb-8"><input type="text" name="name" placeholder="YOUR NAME" class="w-full bg-transparent border-b border-brand-dark/20 py-3 lg:py-4 text-brand-dark text-base lg:text-lg focus:outline-none focus:border-brand-gold transition" required></div>
+                        <div class="mb-6 lg:mb-8"><input type="email" name="email" placeholder="YOUR EMAIL" class="w-full bg-transparent border-b border-brand-dark/20 py-3 lg:py-4 text-brand-dark text-base lg:text-lg focus:outline-none focus:border-brand-gold transition" required></div>
+                        <div class="mb-8 lg:mb-10"><label class="text-xs lg:text-sm text-brand-gold tracking-widest uppercase mb-2 lg:mb-3 block font-bold">Message</label><textarea name="message" rows="5" placeholder="How can we help you?" class="w-full bg-brand-cream border border-brand-dark/10 p-3 lg:p-4 text-brand-dark text-base lg:text-lg focus:outline-none focus:border-brand-gold transition font-mono"></textarea></div>
                         <button class="w-full bg-brand-dark text-white font-bold py-4 lg:py-5 hover:bg-brand-gold hover:text-brand-dark transition duration-300 tracking-widest text-base lg:text-lg shadow-md active:scale-95">SEND MESSAGE</button>
                     </form>
                 </div>
@@ -658,29 +659,23 @@
         const context = canvas.getContext('2d');
         const section1 = document.getElementById('section-1');
         
-        // **設定區**
         const frameCount = 80; 
-        // [確認] 檔名格式 001.jpg
         const currentFrame = index => `${index.toString().padStart(3, '0')}.jpg`; 
         
         const images = [];
         const skySequence = { frame: 0 };
         let imagesLoaded = 0;
 
-        // 預先載入圖片
         for (let i = 1; i <= frameCount; i++) {
             const img = new Image();
             img.src = currentFrame(i);
             img.onload = () => {
                 imagesLoaded++;
-                if (imagesLoaded === 1) { // 載入第一張就先畫出來
-                    render();
-                }
+                if (imagesLoaded === 1) { render(); }
             };
             images.push(img);
         }
 
-        // 畫布渲染函數 (Cover 模式)
         function render() {
             const img = images[skySequence.frame];
             if (!img) return;
@@ -696,7 +691,10 @@
             context.drawImage(img, x, y, img.width * scale, img.height * scale);
         }
 
-        /* 滾動監聽與動畫控制 */
+        function isDesktop() {
+            return window.innerWidth >= 1280; 
+        }
+
         const container = document.getElementById('scroller');
         const sections = document.querySelectorAll('.snap-section');
         const dots = document.querySelectorAll('.dot');
@@ -704,7 +702,6 @@
         
         let isScrolling = false;
 
-        // 滾動事件
         container.addEventListener('scroll', () => {
             if (!isScrolling) {
                 window.requestAnimationFrame(() => {
@@ -719,23 +716,28 @@
                             const activeDot = document.querySelector(`.dot[href="#${id}"]`);
                             if(activeDot) activeDot.classList.add('active');
 
-                            // 導覽列變色
                             header.classList.remove('nav-dark', 'nav-split');
                             if (s.id === 'section-3') {
                                 header.classList.add('nav-split'); 
                             } else if (s.classList.contains('bg-brand-cream') || s.classList.contains('bg-white')) {
                                 header.classList.add('nav-dark'); 
                             }
+                            
+                            // [關鍵] 全裝置都啟用 Scroll Scrubbing (Section 1)
+                            if (s.id === 'section-1') {
+                                section1.classList.add('desktop-scroll');
+                            } else {
+                                section1.classList.remove('desktop-scroll');
+                            }
                         }
                     });
                     
-                    // 全裝置啟用 Scroll Scrubbing 計算
+                    // [關鍵] 全裝置 Scroll Scrubbing 計算
                     const videoSection = document.getElementById('section-1');
                     const rect = videoSection.getBoundingClientRect();
                     const sectionHeight = videoSection.offsetHeight;
                     const windowHeight = window.innerHeight;
                     
-                    // 當 Section 1 在視窗範圍內
                     if (rect.top <= 0 && rect.bottom >= 0) {
                          const scrollTop = Math.abs(rect.top);
                          const maxScroll = sectionHeight - windowHeight;
@@ -789,7 +791,6 @@
             }
         }
         
-        // 自動跳轉
         document.addEventListener('snipcart.ready', function() {
             Snipcart.events.on('cart.confirmed', function (cartState) {
                 window.location.href = '/thank-you.html';
