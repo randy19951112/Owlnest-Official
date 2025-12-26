@@ -6,7 +6,7 @@
     <title>Owlnest Official | The Art of Deep Sleep</title>
     <meta name="description" content="Owlnest Sleep Aid Lamp - Simulating natural sunset to help you sleep better. ITRI certified, blue-light free.">
     
-    <!-- 設定瀏覽器分頁的小圖示 (Favicon) -->
+    <!-- 設定瀏覽器分頁的小圖示 -->
     <link rel="icon" type="image/png" href="logo.png">
 
     <!-- Tailwind CSS -->
@@ -48,19 +48,20 @@
         }
         body { overflow-x: hidden; } 
         
+        /* 滾動容器 */
         .snap-container {
             height: 100vh;
             height: 100dvh;
             overflow-y: scroll;
-            scroll-snap-type: y mandatory;
+            /* [修正] 改用 proximity (接近吸附)，比 mandatory (強制吸附) 更順暢，減少平板卡頓 */
+            scroll-snap-type: y proximity; 
             scroll-behavior: smooth;
         }
 
-        @media (max-width: 1023px) {
+        /* 手機版 (小於 768px) */
+        @media (max-width: 767px) {
             .snap-container {
-                height: auto;
-                overflow-y: visible;
-                scroll-snap-type: none;
+                scroll-snap-type: none; /* 手機版建議關閉吸附，完全自由滑動體驗最好 */
             }
             .snap-section {
                 height: auto;
@@ -68,20 +69,33 @@
                 padding-top: 60px; 
                 padding-bottom: 60px;
             }
+            /* 手機版首頁不需長捲動，自動播放即可 */
+            #section-1 {
+                height: 100vh !important; 
+                padding: 0 !important;
+            }
             html { scroll-padding-top: 80px; }
         }
         
-        @media (min-width: 1024px) {
+        /* 平板與電腦版 (大於等於 768px) */
+        @media (min-width: 768px) {
             .snap-section {
                 height: 100vh;
                 height: 100dvh;
                 width: 100%;
-                scroll-snap-align: start;
+                scroll-snap-align: start; /* 這裡設定吸附點 */
                 position: relative;
                 overflow: hidden;
                 display: flex;
                 align-items: center;
                 justify-content: center;
+            }
+            /* Section 1 視差捲動區：開啟長高度 */
+            #section-1 {
+                display: block; 
+                height: 400vh; /* 4倍高度供滑動 */
+                overflow: visible;
+                scroll-snap-align: start; /* 只吸附開頭，中間讓用戶自由滑 */
             }
             .snap-section.auto-height {
                 display: block;
@@ -91,6 +105,7 @@
 
         .snap-section.auto-height::-webkit-scrollbar { width: 0px; }
 
+        /* 動畫效果 */
         .reveal-text {
             opacity: 0;
             transform: translateY(30px);
@@ -100,7 +115,7 @@
             opacity: 1;
             transform: translateY(0);
         }
-        @media (max-width: 1023px) {
+        @media (max-width: 767px) {
             .reveal-text { opacity: 1; transform: translateY(0); }
         }
         
@@ -113,6 +128,7 @@
 
         .snap-container::-webkit-scrollbar { width: 0px; background: transparent; }
         
+        /* 導覽點 */
         .nav-dots {
             position: fixed;
             right: 2rem;
@@ -141,69 +157,47 @@
             transform: scale(1.3);
         }
 
+        /* 購物車動畫 */
         #cart-sidebar { transform: translateX(100%); transition: transform 0.3s ease-in-out; }
         #cart-sidebar.open { transform: translateX(0); }
         #cart-overlay { opacity: 0; pointer-events: none; transition: opacity 0.3s ease-in-out; }
         #cart-overlay.open { opacity: 1; pointer-events: auto; }
 
+        /* 手機版選單動畫 */
         #mobile-menu { transform: translateY(-100%); transition: transform 0.3s ease-in-out; }
         #mobile-menu.open { transform: translateY(0); }
         
         .cursor-pointer { cursor: pointer; }
 
-        /* --- 導覽列變色邏輯 (核心修正) --- */
-        
-        /* 1. 預設狀態 (深色背景)：全部奶油米色 */
+        /* 導覽列變色邏輯 */
         #main-header {
-            color: #faefcf; /* brand-cream */
+            color: #faefcf; 
             transition: color 0.3s ease;
         }
         #main-header .logo-area img {
             transition: filter 0.3s ease;
-            filter: none; /* Logo 原色/白色 */
+            filter: none;
         }
-
-        /* 2. 淺色背景狀態 (nav-dark)：全部深藍色 */
         header.nav-dark {
-            color: #455169 !important; /* brand-dark */
+            color: #455169 !important; 
         }
         header.nav-dark .logo-area img {
-            filter: brightness(0.2); /* Logo 變深 */
+            filter: brightness(0.2); 
         }
         header.nav-dark button i, header.nav-dark i {
             color: #455169 !important;
         }
-
-        /* 3. 特殊分割狀態 (Section 3)：左白右深 */
+        /* Section 3 特殊處理 */
         @media (min-width: 1024px) {
-            /* 右邊導覽連結 -> 維持奶油米色 (因為背景是深藍) */
-            header.nav-split nav a {
-                color: #faefcf !important;
-            }
-            header.nav-split button i {
-                color: #faefcf !important;
-            }
-            
-            /* 左邊 Logo區域 -> 變深藍色 (因為背景是白的) */
-            header.nav-split .logo-area {
-                color: #455169 !important;
-            }
-            header.nav-split .logo-area img {
-                filter: brightness(0.2); 
-            }
+            header.nav-split nav a { color: #faefcf !important; }
+            header.nav-split button i { color: #faefcf !important; }
+            header.nav-split .logo-area { color: #455169 !important; }
+            header.nav-split .logo-area img { filter: brightness(0.2); }
         }
-
-        /* 手機版 Section 3: Header 壓在白色圖片上 -> 全部深藍色 */
         @media (max-width: 1023px) {
-            header.nav-split {
-                color: #455169 !important;
-            }
-            header.nav-split .logo-area img {
-                filter: brightness(0.2);
-            }
-            header.nav-split button i {
-                color: #455169 !important;
-            }
+            header.nav-split { color: #455169 !important; }
+            header.nav-split .logo-area img { filter: brightness(0.2); }
+            header.nav-split button i { color: #455169 !important; }
         }
     </style>
 </head>
@@ -211,12 +205,12 @@
 
     <!-- 導覽列 -->
     <header id="main-header" class="fixed top-0 left-0 w-full z-50 px-4 md:px-8 py-4 md:py-6 flex justify-between items-center bg-transparent transition-all duration-300">
-        <!-- Logo 區域 (加入 class logo-area 以便單獨控制顏色) -->
         <div class="logo-area flex items-center gap-2 md:gap-4 relative z-50">
-             <img src="logo.png" alt="Owlnest Logo" class="h-10 md:h-14 w-auto brightness-200 contrast-100">
+             <img src="logo2.png" alt="Owlnest Logo" class="h-10 md:h-14 w-auto brightness-200 contrast-100">
              <span class="font-serif text-lg md:text-3xl tracking-widest font-bold">Owlnest Official</span>
         </div>
         
+        <!-- 電腦版選單 (lg 顯示) -->
         <div class="hidden lg:flex items-center gap-8">
             <nav class="flex gap-8 text-sm tracking-widest uppercase font-semibold">
                 <a href="#section-1" class="border-b-2 border-transparent hover:border-brand-gold hover:text-brand-gold transition-all duration-300 pb-1">Home</a>
@@ -231,6 +225,7 @@
             </button>
         </div>
 
+        <!-- 平板/手機版控制區 -->
         <div class="flex lg:hidden items-center gap-4 relative z-50">
             <button onclick="toggleCart()" class="relative active:scale-95 transition">
                 <i class="fas fa-shopping-bag text-2xl"></i>
@@ -254,7 +249,7 @@
     </div>
 
     <!-- 導覽點 -->
-    <div class="nav-dots hidden lg:flex">
+    <div class="nav-dots hidden xl:flex">
         <a href="#section-1" class="dot active" data-index="0"></a>
         <a href="#section-2" class="dot" data-index="1"></a>
         <a href="#section-3" class="dot" data-index="2"></a>
@@ -292,25 +287,30 @@
     <!-- 主容器 -->
     <div class="snap-container" id="scroller">
 
-        <!-- Section 1: Hero (深色背景，純 LOGO) -->
-        <section id="section-1" class="snap-section bg-brand-dark active" style="min-height: 100vh;">
-            <div class="absolute inset-0 z-0 bg-brand-dark"></div>
-            
-            <div class="relative z-10 text-center px-4 max-w-screen-xl flex flex-col items-center">
-                <img src="logo.png" alt="Owlnest Logo" class="w-32 md:w-48 lg:w-64 mb-8 md:mb-10 brightness-200 contrast-100 drop-shadow-2xl reveal-text" style="transition-delay: 0.1s;">
+        <!-- Section 1: Hero (影片區) -->
+        <!-- 平板(md, >768px) 也開啟 400vh 高度 -->
+        <section id="section-1" class="snap-section bg-brand-dark active">
+            <div class="sticky top-0 h-[100vh] w-full overflow-hidden">
+                <video id="hero-video" class="absolute inset-0 w-full h-full object-cover" muted playsinline loop preload="auto">
+                    <source src="視覺滾動影片.mp4" type="video/mp4">
+                </video>
+                <div class="absolute inset-0 bg-black/30"></div>
                 
-                <h1 class="text-3xl md:text-5xl lg:text-6xl font-serif font-light mb-6 reveal-text text-brand-gold tracking-widest" style="transition-delay: 0.3s;">
-                    THE ART OF DEEP SLEEP
-                </h1>
-                
-                <p class="text-gray-300 max-w-lg mx-auto text-base md:text-lg font-light leading-relaxed reveal-text mb-12" style="transition-delay: 0.5s;">
-                    Experience the ultimate rest with nature-inspired technology.
-                </p>
+                <div class="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 max-w-screen-xl mx-auto">
+                    <img src="logo2.png" alt="Owlnest Logo" class="w-32 md:w-48 lg:w-64 mb-8 md:mb-10 brightness-200 contrast-100 drop-shadow-2xl reveal-text" style="transition-delay: 0.1s;">
+                    
+                    <h1 class="text-3xl md:text-5xl lg:text-6xl font-serif font-light mb-6 reveal-text text-brand-gold tracking-widest" style="transition-delay: 0.3s;">
+                        THE ART OF DEEP SLEEP
+                    </h1>
+                    
+                    <p class="text-gray-300 max-w-lg mx-auto text-base md:text-lg font-light leading-relaxed reveal-text mb-12" style="transition-delay: 0.5s;">
+                        Experience the ultimate rest with nature-inspired technology.
+                    </p>
 
-                <div class="reveal-text" style="transition-delay: 0.7s;">
-                    <a href="#section-2" class="inline-block border border-white/20 bg-white/5 backdrop-blur-md px-10 py-3 md:px-12 md:py-4 hover:bg-brand-gold hover:text-brand-dark hover:border-brand-gold transition duration-500 tracking-[0.2em] text-xs md:text-sm font-bold uppercase active:scale-95">
-                        ENTER
-                    </a>
+                    <!-- Scroll Down 提示 -->
+                    <div class="absolute bottom-10 animate-bounce text-brand-gold/70 text-sm tracking-widest uppercase">
+                        Scroll to Experience
+                    </div>
                 </div>
             </div>
         </section>
@@ -357,7 +357,7 @@
         <!-- Section 3: Interactive Experience (深色) -->
         <section id="section-3" class="snap-section bg-brand-dark auto-height">
             <div class="flex flex-col lg:flex-row w-full h-full">
-                <!-- Image Half: Left side White Background -->
+                <!-- Image Half -->
                 <div class="w-full lg:w-1/2 h-[45vh] lg:h-full relative overflow-hidden bg-white group cursor-pointer" onclick="toggleLamp()">
                     <img id="lamp-sequence-img" src="lamp-off.jpg" alt="Lamp" class="w-full h-full object-cover transition-opacity duration-300 md:group-hover:scale-105 transition-transform duration-700" loading="eager">
                     <div class="absolute inset-0 bg-brand-dark/0 group-hover:bg-brand-dark/5 transition duration-300"></div>
@@ -370,7 +370,7 @@
                     </div>
                 </div>
                 
-                <!-- Text Half: Right side Dark Background -->
+                <!-- Text Half -->
                 <div class="w-full lg:w-1/2 h-auto lg:h-full flex items-center justify-center p-8 lg:p-20 bg-brand-dark relative z-20">
                     <div class="max-w-xl reveal-text text-white">
                         <div class="mb-4">
@@ -540,7 +540,7 @@
             </div>
         </section>
 
-        <!-- Section 8: Contact (淺色) -->
+        <!-- Section 8: Contact -->
         <section id="section-8" class="snap-section bg-brand-cream text-brand-dark auto-height">
             <div class="max-w-7xl w-full px-4 md:px-8 py-16 lg:py-24 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-start mx-auto">
                 <div class="reveal-text">
@@ -570,7 +570,6 @@
 
     <!-- JavaScript -->
     <script>
-        // ... (JS 保持不變，因為邏輯沒問題) ...
         function toggleMobileMenu() {
             const menu = document.getElementById('mobile-menu');
             const icon = document.getElementById('mobile-menu-icon');
@@ -583,9 +582,11 @@
                 icon.classList.add('fa-bars');
             }
         }
+
         let isLampOn = false;
         const lampImg = document.getElementById('lamp-sequence-img');
         const lampStatus = document.getElementById('lamp-status-text');
+
         function toggleLamp() {
             if (isLampOn) {
                 lampImg.src = 'lamp-off.jpg';
@@ -597,6 +598,7 @@
                 isLampOn = true;
             }
         }
+
         let cart = JSON.parse(localStorage.getItem('owlnest_cart')) || [];
         function toggleCart() {
             document.getElementById('cart-sidebar').classList.toggle('open');
@@ -652,7 +654,7 @@
             orderSummary += `\nTotal Estimated: USD $${total.toFixed(2)}`;
             document.getElementById('form-message').value = orderSummary;
             toggleCart();
-            window.location.href = "#section-8";
+            window.location.href = "#section-8"; 
             setTimeout(() => { alert("Please fill in your name and email to finalize the order inquiry."); }, 500);
         }
         function submitOrder(e) {
@@ -664,37 +666,78 @@
         updateCartCount();
         document.getElementById('copyright-year').textContent = new Date().getFullYear();
 
-        /* 滾動監聽：導覽列變色 + 導覽點更新 */
         const container = document.getElementById('scroller');
         const sections = document.querySelectorAll('.snap-section');
         const dots = document.querySelectorAll('.dot');
         const header = document.getElementById('main-header');
         
         let isScrolling = false;
+        
+        // 判斷裝置類型是否為 Desktop (寬度 >= 768px, 但保留 scroll snap 的判斷在CSS中為 1280px)
+        // 這裡的 JS 邏輯只需要知道是否寬於 mobile
+        function isDesktop() {
+            return window.innerWidth >= 768; // 平板以上
+        }
+
         container.addEventListener('scroll', () => {
             if (!isScrolling) {
                 window.requestAnimationFrame(() => {
                     sections.forEach(s => {
                         const rect = s.getBoundingClientRect();
                         if (rect.top >= -window.innerHeight / 2 && rect.top < window.innerHeight / 2) {
+                            
                             sections.forEach(sec => sec.classList.remove('active'));
                             s.classList.add('active');
                             dots.forEach(d => d.classList.remove('active'));
                             const id = s.id;
                             const activeDot = document.querySelector(`.dot[href="#${id}"]`);
                             if(activeDot) activeDot.classList.add('active');
+                            
+                            // [關鍵] 平板以上才執行影片播放邏輯
+                            if (isDesktop() && s.id === 'section-1') {
+                                const video = document.getElementById('hero-video');
+                                if (video && video.paused) {
+                                    video.play();
+                                }
+                            }
 
-                            // 清除狀態
+                            // 導覽列變色
                             header.classList.remove('nav-dark', 'nav-split');
                             
-                            // 變色邏輯
                             if (s.id === 'section-3') {
-                                header.classList.add('nav-split'); // 左深右淺
+                                header.classList.add('nav-split'); 
                             } else if (s.classList.contains('bg-brand-cream') || s.classList.contains('bg-white')) {
-                                header.classList.add('nav-dark'); // 全深色
+                                header.classList.add('nav-dark'); 
                             } 
                         }
                     });
+                    
+                    // [關鍵] 只有桌面版 (>=1280px) 才執行 scroll-scrubbing
+                    if (window.innerWidth >= 1280) {
+                        const videoSection = document.getElementById('section-1');
+                        const video = document.getElementById('hero-video');
+                        const rect = videoSection.getBoundingClientRect();
+                        const sectionHeight = videoSection.offsetHeight;
+                        const windowHeight = window.innerHeight;
+                        
+                        if (rect.top <= 0 && rect.bottom >= 0) {
+                             let progress = Math.abs(rect.top) / (sectionHeight - windowHeight);
+                             if (progress < 0) progress = 0;
+                             if (progress > 1) progress = 1;
+                             
+                             if (video && video.duration) {
+                                 video.currentTime = video.duration * progress;
+                                 video.pause(); 
+                             }
+                        }
+                    } else {
+                        // 平板/手機版：確保影片自動循環播放
+                        const video = document.getElementById('hero-video');
+                        if (video && video.paused) {
+                            video.play().catch(e => console.log("Auto-play prevented"));
+                        }
+                    }
+
                     isScrolling = false;
                 });
                 isScrolling = true;
