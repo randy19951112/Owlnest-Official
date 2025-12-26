@@ -79,7 +79,7 @@
             height: 400vh !important; 
             padding: 0 !important;
             overflow: visible !important;
-            scroll-snap-stop: normal; 
+            scroll-snap-stop: normal; /* 允許順暢滑過 */
         }
 
         /* 手機版 (小於 768px) 微調 */
@@ -260,7 +260,6 @@
     <!-- 導覽列 -->
     <header id="main-header" class="fixed top-0 left-0 w-full z-50 px-4 md:px-8 py-4 md:py-6 flex justify-between items-center bg-transparent transition-all duration-300">
         <div class="logo-area flex items-center gap-2 md:gap-4 relative z-50">
-             <!-- Logo -->
              <img src="logo2.png" alt="Owlnest Logo" class="h-10 md:h-14 w-auto brightness-200 contrast-100">
              <span class="font-serif text-lg md:text-3xl tracking-widest font-bold">Owlnest Official</span>
         </div>
@@ -274,7 +273,6 @@
                 <a href="#section-7" class="border-b-2 border-transparent hover:border-brand-gold hover:text-brand-gold transition-all duration-300 pb-1">Specs</a>
                 <a href="#section-8" class="border-b-2 border-transparent hover:border-brand-gold hover:text-brand-gold transition-all duration-300 pb-1">Contact</a>
             </nav>
-            <!-- 購物車按鈕綁定 Snipcart -->
             <button class="relative group snipcart-checkout">
                 <i class="fas fa-shopping-bag text-2xl md:text-3xl hover:text-brand-gold transition"></i>
                 <span class="snipcart-items-count absolute -top-1 -right-2 bg-brand-gold text-brand-dark text-[10px] md:text-xs font-bold px-1.5 rounded-full">0</span>
@@ -348,14 +346,18 @@
             <div class="sticky top-0 h-[100vh] w-full overflow-hidden">
                 <canvas id="hero-canvas" class="absolute inset-0 w-full h-full object-cover bg-brand-dark"></canvas>
                 <div class="absolute inset-0 bg-black/30"></div>
+                
                 <div class="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 max-w-screen-xl mx-auto">
                     <img src="logo2.png" alt="Owlnest Logo" class="w-32 md:w-48 lg:w-64 mb-8 md:mb-10 brightness-200 contrast-100 drop-shadow-2xl reveal-text" style="transition-delay: 0.1s;">
+                    
                     <h1 class="text-3xl md:text-5xl lg:text-6xl font-serif font-light mb-6 reveal-text text-brand-gold tracking-widest" style="transition-delay: 0.3s;">
                         THE ART OF DEEP SLEEP
                     </h1>
+                    
                     <p class="text-gray-300 max-w-lg mx-auto text-base md:text-lg font-light leading-relaxed reveal-text mb-12" style="transition-delay: 0.5s;">
                         Experience the ultimate rest with nature-inspired technology.
                     </p>
+
                     <div class="absolute bottom-10 animate-bounce text-brand-gold/70 text-sm tracking-widest uppercase">
                         Scroll to Experience
                     </div>
@@ -363,7 +365,7 @@
             </div>
         </section>
 
-        <!-- Section 2: The Problem -->
+        <!-- Section 2: The Problem (淺色) -->
         <section id="section-2" class="snap-section bg-brand-cream auto-height text-brand-dark">
             <div class="relative z-10 max-w-screen-xl px-4 md:px-8 py-16 lg:py-24 text-center mx-auto">
                 <p class="text-brand-gold text-xs md:text-sm tracking-widest uppercase mb-4 reveal-text">Sleep Troubles?</p>
@@ -402,13 +404,14 @@
             </div>
         </section>
 
-        <!-- Section 3: Interactive Experience -->
+        <!-- Section 3: Interactive Experience (深色) -->
         <section id="section-3" class="snap-section bg-brand-dark auto-height">
             <div class="flex flex-col lg:flex-row w-full h-full">
                 <!-- Image Half -->
                 <div class="w-full lg:w-1/2 h-[45vh] lg:h-full relative overflow-hidden bg-white group cursor-pointer" onclick="toggleLamp()">
                     <img id="lamp-sequence-img" src="lamp-off.jpg" alt="Lamp" class="w-full h-full object-cover transition-opacity duration-300 md:group-hover:scale-105 transition-transform duration-700" loading="eager">
                     <div class="absolute inset-0 bg-brand-dark/0 group-hover:bg-brand-dark/5 transition duration-300"></div>
+                    
                     <div class="absolute bottom-4 left-4 lg:bottom-8 lg:left-8 bg-brand-cream/90 backdrop-blur p-3 lg:p-4 z-10 pointer-events-none rounded md:rounded-none">
                         <span class="block text-[10px] lg:text-xs tracking-widest uppercase mb-1 text-brand-dark">Interactive Demo</span>
                         <span class="block font-serif text-lg lg:text-xl font-bold flex items-center gap-2 text-brand-dark" id="lamp-status-text">
@@ -422,6 +425,7 @@
                     <div class="max-w-xl reveal-text text-white">
                         <div class="mb-4">
                             <span class="text-brand-gold text-xs tracking-widest uppercase mb-1 block">Experience Owlnest</span>
+                            <!-- [確認] 產品名稱已修改 -->
                             <h3 class="text-3xl md:text-4xl lg:text-5xl font-serif text-white">Owlnest Sleep Aid Lamp</h3>
                         </div>
                         
@@ -461,11 +465,12 @@
             </div>
         </section>
 
-        <!-- Section 4: The Science -->
+        <!-- Section 4: The Science (淺色) -->
         <section id="section-4" class="snap-section bg-brand-cream text-brand-dark auto-height">
             <div class="max-w-screen-xl w-full px-4 lg:px-8 py-16 lg:py-24 flex flex-col items-center mx-auto">
                 <div class="text-center max-w-5xl reveal-text mb-12">
                     <span class="text-brand-gold text-xs tracking-widest uppercase mb-2 block">The Science of Sleep</span>
+                    <!-- [確認] 標題已修改 -->
                     <h2 class="text-3xl md:text-4xl lg:text-6xl font-serif mb-6 uppercase leading-tight">
                         AMBER LIGHT SPECTRUM <br>
                         <span class="text-brand-dark/50 text-xl lg:text-4xl normal-case font-light block mt-2">vs Blue Light Spectrum</span>
@@ -492,7 +497,7 @@
             </div>
         </section>
 
-        <!-- Section 5: Comparison -->
+        <!-- Section 5: Comparison (深色) -->
         <section id="section-5" class="snap-section bg-brand-dark auto-height">
             <div class="max-w-screen-xl w-full px-4 py-16 lg:py-24 mx-auto">
                 <div class="text-center mb-10 lg:mb-16 reveal-text">
@@ -535,13 +540,14 @@
             </div>
         </section>
 
-        <!-- Section 6: Features -->
+        <!-- Section 6: Features (淺色) -->
         <section id="section-6" class="snap-section bg-brand-cream auto-height text-brand-dark">
             <div class="flex flex-col items-center text-center px-4 py-16 lg:py-24 max-w-screen-xl mx-auto reveal-text">
                 <div class="w-40 h-40 md:w-56 md:h-56 lg:w-64 lg:h-64 mb-8 lg:mb-10 rounded-full border-4 border-brand-dark/10 overflow-hidden shadow-2xl">
                     <img src="lamp-off.jpg" alt="Owlnest Lamp Detail" class="w-full h-full object-cover" loading="lazy">
                 </div>
                 
+                <!-- [確認] 標題大小寫修正 -->
                 <h2 class="text-3xl md:text-4xl lg:text-5xl font-serif mb-6">Designed for Unwind</h2>
                 <p class="text-brand-dark/70 text-base lg:text-lg mb-10 lg:mb-12 font-light max-w-2xl">
                     Crafted with soft silicone and a solid wood base. <br>
@@ -549,6 +555,7 @@
                 </p>
                 
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 text-sm md:text-base w-full max-w-6xl">
+                    <!-- [確認] 項目為 7 個，名稱已修正，Dimmable 已移除 -->
                     <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-temperature-low text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Sleep Temp</div>
                     <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-leaf text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Safe Silicone & Wood</div>
                     <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-power-off text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Button Switch</div>
@@ -558,7 +565,7 @@
                     <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-leaf text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Energy Efficient</div>
                 </div>
 
-                <!-- [修改] 使用 button 並加入 Snipcart 類別 -->
+                <!-- [確認] 底部只有按鈕，無價格 -->
                 <div class="mt-10 lg:mt-12 pt-10 border-t border-brand-dark/10 flex justify-center items-center reveal-text w-full max-w-4xl">
                     <button class="snipcart-add-item bg-brand-dark text-white px-10 py-3 md:px-12 md:py-4 text-sm md:text-base tracking-widest uppercase hover:bg-brand-gold hover:text-brand-dark transition duration-300 shadow-lg active:scale-95"
                         data-item-id="owlnest-lamp-001"
@@ -573,7 +580,7 @@
             </div>
         </section>
 
-        <!-- Section 7: Specs -->
+        <!-- Section 7: Specs (深色) -->
         <section id="section-7" class="snap-section bg-brand-dark auto-height text-white">
             <div class="max-w-5xl w-full px-4 md:px-8 py-16 lg:py-24 reveal-text mx-auto">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-10 mb-12 lg:mb-20 text-center">
@@ -596,6 +603,7 @@
                         <div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">Control</span><span>Button Switch</span></div>
                     </div>
                 </div>
+                <!-- [確認] 新增下載說明書連結 -->
                 <div class="text-center mt-8">
                     <a href="manual.pdf" target="_blank" class="inline-flex items-center text-brand-gold hover:text-white transition text-sm tracking-widest uppercase border-b border-brand-gold pb-1">
                         <i class="fas fa-file-pdf mr-2"></i> Download User Manual
@@ -615,7 +623,7 @@
             </div>
         </section>
 
-        <!-- Section 8: Contact -->
+        <!-- Section 8: Contact (淺色) -->
         <section id="section-8" class="snap-section bg-brand-cream text-brand-dark auto-height">
             <div class="max-w-7xl w-full px-4 md:px-8 py-16 lg:py-24 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-start mx-auto">
                 <div class="reveal-text">
@@ -628,6 +636,7 @@
                     <div class="w-full h-64 lg:h-80 rounded-lg overflow-hidden border border-brand-dark/10 shadow-lg mb-8 lg:mb-10">
                         <iframe width="100%" height="100%" frameborder="0" style="border:0;" src="https://maps.google.com/maps?q=114%20L%C3%BD%20Th%C6%B0%E1%BB%9Dng%20Ki%E1%BB%87t%2C%20Ph%C3%BA%20Qu%E1%BB%91c%2C%20Vietnam&t=&z=15&ie=UTF8&iwloc=&output=embed" allowfullscreen></iframe>
                     </div>
+                    <!-- [確認] 新增 Disclaimer 與 User Manual 連結 -->
                     <div class="flex items-center gap-4 lg:gap-6"><img src="logo.png" alt="Owlnest Logo" class="h-8 lg:h-10 w-auto opacity-50"><p class="text-xs lg:text-sm text-brand-dark/50 uppercase tracking-widest">&copy; <span id="copyright-year"></span> Owlnest Official.</p><a href="disclaimer.html" class="text-xs lg:text-sm text-brand-dark/50 hover:text-brand-gold ml-4">Disclaimer</a><a href="manual.pdf" target="_blank" class="text-xs lg:text-sm text-brand-dark/50 hover:text-brand-gold ml-4">User Manual</a></div>
                 </div>
                 <div class="bg-white p-6 lg:p-16 shadow-xl rounded-lg reveal-text">
@@ -648,7 +657,7 @@
     <script async src="https://cdn.snipcart.com/themes/v3.7.1/default/snipcart.js"></script>
     <div hidden id="snipcart" data-api-key="MmY2MWUwYjMtODI0Mi00NDQ1LTk4YWUtNTQ0NDgwODY5OGM0NjM5MDIzNDE2ODU0NDczMzQz"></div>
 
-    <!-- JavaScript -->
+    <!-- JavaScript (Canvas Animation & Scroll) -->
     <script>
         const canvas = document.getElementById('hero-canvas');
         const context = canvas.getContext('2d');
