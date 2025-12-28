@@ -5,148 +5,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Owlnest Official | The Art of Deep Sleep</title>
     <meta name="description" content="Owlnest Sleep Aid Lamp - Simulating natural sunset to help you sleep better. ITRI certified, blue-light free.">
-    
-    <!-- Favicon -->
     <link rel="icon" type="image/png" href="logo.png">
-
-    <!-- Tailwind CSS (建議生產環境使用 CLI 編譯版本，此為 CDN 開發用) -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-    
-    <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Snipcart CSS -->
     <link rel="stylesheet" href="https://cdn.snipcart.com/themes/v3.7.1/default/snipcart.css" />
 
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['"Manrope"', 'sans-serif'],
-                        serif: ['"Playfair Display"', 'serif'],
-                    },
-                    colors: {
-                        brand: {
-                            dark: '#455169',    // 深岩灰藍
-                            cream: '#faefcf',   // 奶油米色
-                            gold: '#D4AF37',    // 金色
-                            wood: '#4A403A'     // 木頭深棕
-                        }
-                    }
+                    fontFamily: { sans: ['"Manrope"', 'sans-serif'], serif: ['"Playfair Display"', 'serif'] },
+                    colors: { brand: { dark: '#455169', cream: '#faefcf', gold: '#D4AF37', wood: '#4A403A' } }
                 }
             }
         }
     </script>
     <style>
-        /* [核心修正 1] 移除 Scroll Snap 以修復動畫卡頓問題 */
-        html { 
-            scroll-behavior: smooth; 
-        }
+        html { scroll-behavior: smooth; }
+        body { margin: 0; overflow-x: hidden; background-color: #455169; }
         
-        body { 
-            margin: 0;
-            overflow-x: hidden; 
-            background-color: #455169;
-        }
-        
-        /* 區塊通用設定 */
         .section-container {
-            width: 100%;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
+            width: 100%; position: relative; overflow: hidden;
+            display: flex; align-items: center; justify-content: center; min-height: 100vh;
         }
         
-        /* Section 1: 序列幀動畫空間 */
-        /* [優化] 手機版縮短滾動距離 (250vh)，桌機版維持長距離 (400vh) */
-        #section-1 {
-            display: block !important;
-            padding: 0 !important;
-            overflow: visible !important;
-            height: 250vh !important; /* Mobile Default */
-        }
-        @media (min-width: 768px) {
-            #section-1 {
-                height: 400vh !important; /* Desktop/Tablet */
-            }
-        }
+        /* Section 1: Animation Height */
+        #section-1 { display: block !important; padding: 0 !important; overflow: visible !important; height: 250vh !important; }
+        @media (min-width: 768px) { #section-1 { height: 400vh !important; } }
 
-        /* Section 3: RWD 高度修正 */
-        @media (min-width: 1024px) {
-            #section-3 {
-                height: 100vh; 
-                align-items: stretch;
-            }
-        }
+        /* Section 3: Interaction Area */
+        @media (min-width: 1024px) { #section-3 { height: 100vh; align-items: stretch; } }
         @media (max-width: 1023px) {
-            .section-container {
-                height: auto;
-                padding-top: 80px; 
-                padding-bottom: 80px;
-                display: block; 
-            }
-            
-            /* [修復深藍色塊問題] 手機版 Section 3 移除內距，讓圖片無縫銜接 */
-            #section-3 {
-                padding-top: 0 !important;
-                padding-bottom: 0 !important;
-            }
+            .section-container { height: auto; padding-top: 80px; padding-bottom: 80px; display: block; }
+            /* Mobile seamless join */
+            #section-3 { padding-top: 0 !important; padding-bottom: 0 !important; }
         }
 
-        /* Animation Classes */
-        .reveal-text {
-            opacity: 0; 
-            transform: translateY(30px);
-            transition: all 1s ease-out;
-        }
-        .reveal-text.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        .reveal-text { opacity: 0; transform: translateY(30px); transition: all 1s ease-out; }
+        .reveal-text.visible { opacity: 1; transform: translateY(0); }
         
-        /* 導覽點 */
-        .nav-dots {
-            position: fixed; right: 2rem; top: 50%; transform: translateY(-50%);
-            z-index: 50; display: none; flex-direction: column; gap: 1rem;
-        }
+        .nav-dots { position: fixed; right: 2rem; top: 50%; transform: translateY(-50%); z-index: 50; display: none; flex-direction: column; gap: 1rem; }
         @media (min-width: 1280px) { .nav-dots { display: flex; } }
-
-        .dot {
-            width: 12px; height: 12px; border: 1px solid rgba(255,255,255,0.5);
-            border-radius: 50%; cursor: pointer; transition: all 0.3s;
-        }
+        .dot { width: 12px; height: 12px; border: 1px solid rgba(255,255,255,0.5); border-radius: 50%; transition: all 0.3s; }
         .dot.active { background-color: #D4AF37; border-color: #D4AF37; transform: scale(1.3); }
 
-        /* Mobile Menu */
         #mobile-menu { transform: translateY(-100%); transition: transform 0.3s ease-in-out; }
         #mobile-menu.open { transform: translateY(0); }
 
-        /* Snipcart Customization */
-        #snipcart {
-            --color-modal-bg: #faefcf; 
-            --color-button-primary: #D4AF37; 
-            --color-button-primary-hover: #c5a02f; 
-            --color-button-primary-text: #455169; 
-        }
+        #snipcart { --color-modal-bg: #faefcf; --color-button-primary: #D4AF37; --color-button-primary-hover: #c5a02f; --color-button-primary-text: #455169; }
         
-        /* 導覽列狀態 Class */
+        /* Navbar States */
         header.nav-dark { color: #455169 !important; text-shadow: none; }
         header.nav-dark button i, header.nav-dark i { color: #455169 !important; }
-        
         header.nav-split .nav-links a { color: #faefcf !important; }
         header.nav-split .logo-area { color: #455169 !important; }
     </style>
 </head>
 <body class="bg-brand-dark text-white antialiased text-base md:text-lg">
 
-    <!-- 導覽列 -->
     <header id="main-header" class="fixed top-0 left-0 w-full z-50 px-4 md:px-8 py-4 md:py-6 flex justify-between items-center bg-transparent transition-all duration-300 text-brand-cream">
         <div class="logo-area flex items-center gap-2 md:gap-4 relative z-50 transition-colors duration-300">
              <img id="nav-logo" src="logo2.png" onerror="this.style.display='none'" alt="Owlnest Logo" class="h-10 md:h-14 w-auto contrast-100 object-contain">
@@ -179,7 +96,6 @@
         </div>
     </header>
 
-    <!-- 手機選單 -->
     <div id="mobile-menu" class="fixed inset-0 bg-brand-dark z-40 flex flex-col justify-center items-center pt-20 lg:hidden text-white">
         <nav class="flex flex-col gap-8 text-xl tracking-widest uppercase font-semibold text-center">
             <a href="about.html" class="hover:text-brand-gold transition">About Us</a>
@@ -191,7 +107,6 @@
         </nav>
     </div>
 
-    <!-- 導覽點 -->
     <div class="nav-dots hidden xl:flex">
         <a href="#section-1" class="dot active" data-index="0"></a>
         <a href="#section-2" class="dot" data-index="1"></a>
@@ -203,129 +118,58 @@
         <a href="#section-8" class="dot" data-index="7"></a>
     </div>
 
-    <!-- 主容器 -->
     <div class="main-container">
-
-        <!-- Section 1: Hero (Canvas) -->
+        <!-- Hero -->
         <section id="section-1" class="section-container bg-brand-dark active">
             <div class="sticky top-0 h-[100vh] w-full overflow-hidden">
                 <canvas id="hero-canvas" class="absolute inset-0 w-full h-full object-cover bg-brand-dark"></canvas>
                 <div class="absolute inset-0 bg-black/30 z-20"></div>
-                
                 <div class="relative z-30 h-full flex flex-col items-center justify-center text-center px-4 max-w-screen-xl mx-auto">
                     <img src="logo2.png" onerror="this.style.display='none'" alt="Owlnest Logo" class="w-32 md:w-48 lg:w-64 mb-8 md:mb-10 brightness-200 contrast-100 drop-shadow-2xl reveal-text">
-                    <h1 class="text-3xl md:text-5xl lg:text-6xl font-serif font-light mb-6 reveal-text text-brand-gold tracking-widest transition-all duration-700 delay-300">
-                        THE ART OF DEEP SLEEP
-                    </h1>
-                    <p class="text-gray-300 max-w-lg mx-auto text-base md:text-lg font-light leading-relaxed reveal-text mb-12 transition-all duration-700 delay-500">
-                        Experience the ultimate rest with nature-inspired technology.
-                    </p>
-                    <div class="absolute bottom-10 animate-bounce text-brand-gold/70 text-sm tracking-widest uppercase">
-                        Scroll to Experience
-                    </div>
+                    <h1 class="text-3xl md:text-5xl lg:text-6xl font-serif font-light mb-6 reveal-text text-brand-gold tracking-widest transition-all duration-700 delay-300">THE ART OF DEEP SLEEP</h1>
+                    <p class="text-gray-300 max-w-lg mx-auto text-base md:text-lg font-light leading-relaxed reveal-text mb-12 transition-all duration-700 delay-500">Experience the ultimate rest with nature-inspired technology.</p>
+                    <div class="absolute bottom-10 animate-bounce text-brand-gold/70 text-sm tracking-widest uppercase">Scroll to Experience</div>
                 </div>
             </div>
         </section>
 
-        <!-- Section 2: The Problem -->
+        <!-- Problem -->
         <section id="section-2" class="section-container bg-brand-cream text-brand-dark">
             <div class="relative z-10 max-w-screen-xl px-4 md:px-8 py-16 lg:py-24 text-center mx-auto">
                 <p class="text-brand-gold text-xs md:text-sm tracking-widest uppercase mb-4 reveal-text">Sleep Troubles?</p>
-                <h2 class="text-3xl md:text-5xl lg:text-6xl font-serif leading-tight mb-12 lg:mb-16 reveal-text">
-                    Do You Have These <br> <span class="italic text-brand-dark">Sleep Troubles?</span>
-                </h2>
+                <h2 class="text-3xl md:text-5xl lg:text-6xl font-serif leading-tight mb-12 lg:mb-16 reveal-text">Do You Have These <br> <span class="italic text-brand-dark">Sleep Troubles?</span></h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-10 mb-12 lg:mb-20 reveal-text">
-                    <div class="p-6 lg:p-10 bg-white border border-brand-dark/5 rounded shadow-sm hover:border-brand-gold/50 transition">
-                        <i class="fas fa-mobile-alt text-4xl lg:text-5xl text-brand-gold mb-4 lg:mb-6"></i>
-                        <h3 class="text-xl lg:text-2xl font-bold mb-2 lg:mb-3">Blue Light</h3>
-                        <p class="text-brand-dark/70 text-sm lg:text-base">Blue light from screens disrupts sleep rhythm.</p>
-                    </div>
-                    <div class="p-6 lg:p-10 bg-white border border-brand-dark/5 rounded shadow-sm hover:border-brand-gold/50 transition">
-                        <i class="fas fa-bed text-4xl lg:text-5xl text-brand-gold mb-4 lg:mb-6"></i>
-                        <h3 class="text-xl lg:text-2xl font-bold mb-2 lg:mb-3">Tossing & Turning</h3>
-                        <p class="text-brand-dark/70 text-sm lg:text-base">Tossing and turning, can't shut off your mind.</p>
-                    </div>
-                    <div class="p-6 lg:p-10 bg-white border border-brand-dark/5 rounded shadow-sm hover:border-brand-gold/50 transition">
-                        <i class="fas fa-battery-quarter text-4xl lg:text-5xl text-brand-gold mb-4 lg:mb-6"></i>
-                        <h3 class="text-xl lg:text-2xl font-bold mb-2 lg:mb-3">Waking Up Tired</h3>
-                        <p class="text-brand-dark/70 text-sm lg:text-base">Poor sleep quality, waking up groggy and exhausted.</p>
-                    </div>
+                    <div class="p-6 lg:p-10 bg-white border border-brand-dark/5 rounded shadow-sm hover:border-brand-gold/50 transition"><i class="fas fa-mobile-alt text-4xl lg:text-5xl text-brand-gold mb-4 lg:mb-6"></i><h3 class="text-xl lg:text-2xl font-bold mb-2 lg:mb-3">Blue Light</h3><p class="text-brand-dark/70 text-sm lg:text-base">Blue light from screens disrupts sleep rhythm.</p></div>
+                    <div class="p-6 lg:p-10 bg-white border border-brand-dark/5 rounded shadow-sm hover:border-brand-gold/50 transition"><i class="fas fa-bed text-4xl lg:text-5xl text-brand-gold mb-4 lg:mb-6"></i><h3 class="text-xl lg:text-2xl font-bold mb-2 lg:mb-3">Tossing & Turning</h3><p class="text-brand-dark/70 text-sm lg:text-base">Tossing and turning, can't shut off your mind.</p></div>
+                    <div class="p-6 lg:p-10 bg-white border border-brand-dark/5 rounded shadow-sm hover:border-brand-gold/50 transition"><i class="fas fa-battery-quarter text-4xl lg:text-5xl text-brand-gold mb-4 lg:mb-6"></i><h3 class="text-xl lg:text-2xl font-bold mb-2 lg:mb-3">Waking Up Tired</h3><p class="text-brand-dark/70 text-sm lg:text-base">Poor sleep quality, waking up groggy and exhausted.</p></div>
                 </div>
-                
                 <div class="max-w-4xl mx-auto reveal-text border-t border-brand-dark/10 pt-10">
-                    <div class="mt-8">
-                        <a href="#section-3" class="inline-block border border-brand-gold text-brand-gold px-8 py-3 lg:px-10 lg:py-4 hover:bg-brand-gold hover:text-white transition duration-300 tracking-widest text-xs lg:text-sm font-bold active:scale-95">
-                            FIND YOUR SOLUTION
-                        </a>
-                    </div>
+                    <div class="mt-8"><a href="#section-3" class="inline-block border border-brand-gold text-brand-gold px-8 py-3 lg:px-10 lg:py-4 hover:bg-brand-gold hover:text-white transition duration-300 tracking-widest text-xs lg:text-sm font-bold active:scale-95">FIND YOUR SOLUTION</a></div>
                 </div>
             </div>
         </section>
 
-        <!-- Section 3: Interactive Experience -->
+        <!-- Interactive Lamp -->
         <section id="section-3" class="section-container bg-brand-dark">
             <div class="flex flex-col lg:flex-row w-full h-full">
-                <!-- Image Half -->
-                <!-- [優化] 增加 bg-white 到 bg-brand-dark 的過渡，避免開燈時背景閃白 -->
                 <div id="sec3-image" class="w-full lg:w-1/2 h-[50vh] lg:h-full relative overflow-hidden bg-white transition-colors duration-500 group cursor-pointer" onclick="toggleLamp()">
-                    <!-- [Fallback] 增加 onerror 處理，如果沒有圖片顯示灰色背景 -->
                     <img id="lamp-sequence-img" src="lamp-off.jpg" onerror="this.src='https://placehold.co/800x1200/455169/FFF?text=Lamp+Image'" alt="Lamp" class="w-full h-full object-cover transition-opacity duration-300 md:group-hover:scale-105 transition-transform duration-700" loading="eager">
                     <div class="absolute inset-0 bg-brand-dark/0 group-hover:bg-brand-dark/5 transition duration-300"></div>
-                    
-                    <!-- [設計更新] 懸浮膠囊開關 -->
                     <div class="absolute bottom-6 left-6 lg:bottom-10 lg:left-10 z-20 pointer-events-none">
-                        <!-- Visual Switch Container -->
                         <div class="bg-white/90 backdrop-blur-md shadow-2xl rounded-full p-2 pr-6 flex items-center gap-4 transition-all duration-300 border border-white/50 transform group-hover:scale-105">
-                            <!-- The Toggle Graphic -->
-                            <div class="w-14 h-8 rounded-full bg-gray-300 flex items-center px-1 transition-colors duration-500 ease-in-out" id="custom-toggle-bg">
-                                <div class="w-6 h-6 bg-white rounded-full shadow-md transform transition-transform duration-500 ease-in-out" id="custom-toggle-circle"></div>
-                            </div>
-                            <!-- The Text -->
-                            <div class="flex flex-col">
-                                <span class="text-[10px] tracking-widest uppercase text-gray-400 font-bold leading-none mb-1">Interactive</span>
-                                <span class="font-serif text-brand-dark font-bold text-base leading-none transition-all duration-300" id="lamp-status-label">Click to Light Up</span>
-                            </div>
+                            <div class="w-14 h-8 rounded-full bg-gray-300 flex items-center px-1 transition-colors duration-500 ease-in-out" id="custom-toggle-bg"><div class="w-6 h-6 bg-white rounded-full shadow-md transform transition-transform duration-500 ease-in-out" id="custom-toggle-circle"></div></div>
+                            <div class="flex flex-col"><span class="text-[10px] tracking-widest uppercase text-gray-400 font-bold leading-none mb-1">Interactive</span><span class="font-serif text-brand-dark font-bold text-base leading-none transition-all duration-300" id="lamp-status-label">Click to Light Up</span></div>
                         </div>
                     </div>
                 </div>
-                
-                <!-- Text Half -->
                 <div id="sec3-text" class="w-full lg:w-1/2 h-auto lg:h-full flex items-center justify-center p-8 lg:p-20 bg-brand-dark relative z-20">
                     <div class="max-w-xl reveal-text text-white">
-                        <div class="mb-4">
-                            <span class="text-brand-gold text-xs tracking-widest uppercase mb-1 block">Experience Owlnest</span>
-                            <h3 class="text-3xl md:text-4xl lg:text-5xl font-serif text-white">Owlnest Sleep Aid Lamp</h3>
-                        </div>
-                        
-                        <p class="text-gray-300 mb-6 leading-relaxed text-base lg:text-lg">
-                            Create your own bedtime ritual. <br>
-                            Feel the difference of a deep amber glow.
-                            <br><br>
-                            <span class="text-brand-gold font-bold flex items-center gap-2 mt-2 cursor-pointer hover:text-white transition" onclick="toggleLamp()">
-                                <i class="fas fa-hand-pointer animate-pulse"></i> Click image to simulate sunset
-                            </span>
-                        </p>
-                        
-                        <ul class="space-y-3 mb-8 text-sm md:text-base text-gray-400">
-                            <li class="flex items-center gap-3"><span class="w-1 h-1 bg-brand-gold rounded-full"></span> 100% Sunset Glow</li>
-                            <li class="flex items-center gap-3"><span class="w-1 h-1 bg-brand-gold rounded-full"></span> Eye-Protecting Warmth</li>
-                            <li class="flex items-center gap-3"><span class="w-1 h-1 bg-brand-gold rounded-full"></span> Easy Bottom Switch</li>
-                        </ul>
-
+                        <div class="mb-4"><span class="text-brand-gold text-xs tracking-widest uppercase mb-1 block">Experience Owlnest</span><h3 class="text-3xl md:text-4xl lg:text-5xl font-serif text-white">Owlnest Sleep Aid Lamp</h3></div>
+                        <p class="text-gray-300 mb-6 leading-relaxed text-base lg:text-lg">Create your own bedtime ritual. <br>Feel the difference of a deep amber glow.<br><br><span class="text-brand-gold font-bold flex items-center gap-2 mt-2 cursor-pointer hover:text-white transition" onclick="toggleLamp()"><i class="fas fa-hand-pointer animate-pulse"></i> Click image to simulate sunset</span></p>
+                        <ul class="space-y-3 mb-8 text-sm md:text-base text-gray-400"><li class="flex items-center gap-3"><span class="w-1 h-1 bg-brand-gold rounded-full"></span> 100% Sunset Glow</li><li class="flex items-center gap-3"><span class="w-1 h-1 bg-brand-gold rounded-full"></span> Eye-Protecting Warmth</li><li class="flex items-center gap-3"><span class="w-1 h-1 bg-brand-gold rounded-full"></span> Easy Bottom Switch</li></ul>
                         <div class="border-t border-white/10 pt-6 mt-6">
-                            <div class="mb-4">
-                                <span class="text-4xl lg:text-5xl font-serif text-brand-gold">USD $89</span>
-                            </div>
-                            
-                            <!-- [修正] data-item-url 使用 JavaScript 動態賦值 (見底部 Script) -->
-                            <button id="buy-button-1" class="snipcart-add-item bg-brand-gold text-brand-dark px-10 py-4 text-sm md:text-base tracking-widest uppercase hover:bg-white hover:text-brand-dark transition duration-300 w-full font-bold shadow-lg transform active:scale-95"
-                                data-item-id="owlnest-lamp-001"
-                                data-item-price="89.00"
-                                data-item-description="Sleep Aid Lamp with Amber Spectrum"
-                                data-item-image="lamp-on.jpg"
-                                data-item-name="Owlnest Sleep Aid Lamp">
-                                Add to Cart
-                            </button>
+                            <div class="mb-4"><span class="text-4xl lg:text-5xl font-serif text-brand-gold">USD $89</span></div>
+                            <button class="snipcart-add-item bg-brand-gold text-brand-dark px-10 py-4 text-sm md:text-base tracking-widest uppercase hover:bg-white hover:text-brand-dark transition duration-300 w-full font-bold shadow-lg transform active:scale-95" data-item-id="owlnest-lamp-001" data-item-price="89.00" data-item-description="Sleep Aid Lamp with Amber Spectrum" data-item-image="lamp-on.jpg" data-item-name="Owlnest Sleep Aid Lamp">Add to Cart</button>
                             <p class="text-center text-xs text-gray-500 mt-3"><i class="fas fa-lock"></i> Secure Checkout Guaranteed</p>
                         </div>
                     </div>
@@ -333,28 +177,16 @@
             </div>
         </section>
 
-        <!-- Section 4: The Science -->
+        <!-- Science -->
         <section id="section-4" class="section-container bg-brand-cream text-brand-dark">
             <div class="max-w-screen-xl w-full px-4 lg:px-8 py-16 lg:py-24 flex flex-col items-center mx-auto">
                 <div class="text-center max-w-5xl reveal-text mb-12">
                     <span class="text-brand-gold text-xs tracking-widest uppercase mb-2 block">The Science of Sleep</span>
-                    <h2 class="text-3xl md:text-4xl lg:text-6xl font-serif mb-6 uppercase leading-tight">
-                        AMBER LIGHT SPECTRUM <br>
-                        <span class="text-brand-dark/50 text-xl lg:text-4xl normal-case font-light block mt-2">vs Blue Light Spectrum</span>
-                    </h2>
-                    <p class="text-base lg:text-xl leading-relaxed mb-8 text-brand-dark/80">
-                        Owlnest mimics nature by filtering harmful blue light <br class="hidden lg:block">
-                        and boosting natural melatonin production.
-                    </p>
+                    <h2 class="text-3xl md:text-4xl lg:text-6xl font-serif mb-6 uppercase leading-tight">AMBER LIGHT SPECTRUM <br><span class="text-brand-dark/50 text-xl lg:text-4xl normal-case font-light block mt-2">vs Blue Light Spectrum</span></h2>
+                    <p class="text-base lg:text-xl leading-relaxed mb-8 text-brand-dark/80">Owlnest mimics nature by filtering harmful blue light <br class="hidden lg:block">and boosting natural melatonin production.</p>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-10 text-left max-w-3xl mx-auto bg-white/50 p-6 lg:p-10 rounded-lg shadow-sm">
-                        <div>
-                            <strong class="text-brand-dark block mb-2 text-lg">Problem:</strong>
-                            <span class="opacity-70 text-base">Disrupts Melatonin, <br>Causes Insomnia.</span>
-                        </div>
-                        <div class="text-brand-gold">
-                            <strong class="block mb-2 text-lg">Solution:</strong>
-                            <span class="text-base">Promotes Melatonin, <br>Deep, Restful Sleep.</span>
-                        </div>
+                        <div><strong class="text-brand-dark block mb-2 text-lg">Problem:</strong><span class="opacity-70 text-base">Disrupts Melatonin, <br>Causes Insomnia.</span></div>
+                        <div class="text-brand-gold"><strong class="block mb-2 text-lg">Solution:</strong><span class="text-base">Promotes Melatonin, <br>Deep, Restful Sleep.</span></div>
                     </div>
                 </div>
                 <div class="w-full max-w-4xl reveal-text">
@@ -364,42 +196,17 @@
             </div>
         </section>
 
-        <!-- Section 5: Comparison -->
+        <!-- Comparison -->
         <section id="section-5" class="section-container bg-brand-dark">
             <div class="max-w-screen-xl w-full px-4 py-16 lg:py-24 mx-auto">
-                <div class="text-center mb-10 lg:mb-16 reveal-text">
-                    <p class="text-brand-gold text-xs tracking-[0.4em] uppercase mb-4">Why Owlnest is Superior</p>
-                    <h2 class="text-3xl md:text-4xl lg:text-6xl font-serif text-white">The Natural Choice</h2>
-                </div>
+                <div class="text-center mb-10 lg:mb-16 reveal-text"><p class="text-brand-gold text-xs tracking-[0.4em] uppercase mb-4">Why Owlnest is Superior</p><h2 class="text-3xl md:text-4xl lg:text-6xl font-serif text-white">The Natural Choice</h2></div>
                 <div class="overflow-x-auto reveal-text pb-4">
                     <table class="w-full text-left border-collapse min-w-[600px] text-sm lg:text-lg">
-                        <thead>
-                            <tr class="border-b border-white/20 text-gray-400 uppercase tracking-wider text-xs lg:text-sm">
-                                <th class="py-4 lg:py-6 pr-4 font-normal w-1/4">Feature</th>
-                                <th class="py-4 lg:py-6 px-4 text-brand-gold font-bold text-base lg:text-xl w-1/3">Owlnest Sleep Lamp</th>
-                                <th class="py-4 lg:py-6 px-4 font-normal w-1/5">White Noise / Masks</th>
-                                <th class="py-4 lg:py-6 px-4 font-normal w-1/5">Melatonin / Pills</th>
-                            </tr>
-                        </thead>
+                        <thead><tr class="border-b border-white/20 text-gray-400 uppercase tracking-wider text-xs lg:text-sm"><th class="py-4 lg:py-6 pr-4 font-normal w-1/4">Feature</th><th class="py-4 lg:py-6 px-4 text-brand-gold font-bold text-base lg:text-xl w-1/3">Owlnest Sleep Lamp</th><th class="py-4 lg:py-6 px-4 font-normal w-1/5">White Noise / Masks</th><th class="py-4 lg:py-6 px-4 font-normal w-1/5">Melatonin / Pills</th></tr></thead>
                         <tbody class="text-gray-300">
-                            <tr class="border-b border-white/10 hover:bg-white/5 transition">
-                                <td class="py-6 lg:py-8 pr-4 font-bold text-white">Mechanism</td>
-                                <td class="py-6 lg:py-8 px-4 text-white">Promotes <span class="text-brand-gold">NATURAL</span> Melatonin</td>
-                                <td class="py-6 lg:py-8 px-4">Masks sounds or blocks light physically</td>
-                                <td class="py-6 lg:py-8 px-4">External chemical sedation</td>
-                            </tr>
-                            <tr class="border-b border-white/10 hover:bg-white/5 transition">
-                                <td class="py-6 lg:py-8 pr-4 font-bold text-white">Non-Invasive?</td>
-                                <td class="py-6 lg:py-8 px-4 text-white"><i class="fas fa-check text-brand-gold mr-2"></i> Yes. Ambient light.</td>
-                                <td class="py-6 lg:py-8 px-4">No. On face.</td>
-                                <td class="py-6 lg:py-8 px-4">No. Ingested.</td>
-                            </tr>
-                            <tr class="hover:bg-white/5 transition">
-                                <td class="py-6 lg:py-8 pr-4 font-bold text-white">Safety</td>
-                                <td class="py-6 lg:py-8 px-4 text-white"><span class="text-brand-gold">100% Safe</span>. No grogginess.</td>
-                                <td class="py-6 lg:py-8 px-4">Uncomfortable</td>
-                                <td class="py-6 lg:py-8 px-4">Risk of dependency</td>
-                            </tr>
+                            <tr class="border-b border-white/10 hover:bg-white/5 transition"><td class="py-6 lg:py-8 pr-4 font-bold text-white">Mechanism</td><td class="py-6 lg:py-8 px-4 text-white">Promotes <span class="text-brand-gold">NATURAL</span> Melatonin</td><td class="py-6 lg:py-8 px-4">Masks sounds or blocks light physically</td><td class="py-6 lg:py-8 px-4">External chemical sedation</td></tr>
+                            <tr class="border-b border-white/10 hover:bg-white/5 transition"><td class="py-6 lg:py-8 pr-4 font-bold text-white">Non-Invasive?</td><td class="py-6 lg:py-8 px-4 text-white"><i class="fas fa-check text-brand-gold mr-2"></i> Yes. Ambient light.</td><td class="py-6 lg:py-8 px-4">No. On face.</td><td class="py-6 lg:py-8 px-4">No. Ingested.</td></tr>
+                            <tr class="hover:bg-white/5 transition"><td class="py-6 lg:py-8 pr-4 font-bold text-white">Safety</td><td class="py-6 lg:py-8 px-4 text-white"><span class="text-brand-gold">100% Safe</span>. No grogginess.</td><td class="py-6 lg:py-8 px-4">Uncomfortable</td><td class="py-6 lg:py-8 px-4">Risk of dependency</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -407,19 +214,12 @@
             </div>
         </section>
 
-        <!-- Section 6: Features -->
+        <!-- Features -->
         <section id="section-6" class="section-container bg-brand-cream text-brand-dark">
             <div class="flex flex-col items-center text-center px-4 py-16 lg:py-24 max-w-screen-xl mx-auto reveal-text">
-                <div class="w-40 h-40 md:w-56 md:h-56 lg:w-64 lg:h-64 mb-8 lg:mb-10 rounded-full border-4 border-brand-dark/10 overflow-hidden shadow-2xl">
-                    <img src="lamp-off.jpg" onerror="this.src='https://placehold.co/400x400/EEE/455169?text=Detail'" alt="Owlnest Lamp Detail" class="w-full h-full object-cover" loading="lazy">
-                </div>
-                
+                <div class="w-40 h-40 md:w-56 md:h-56 lg:w-64 lg:h-64 mb-8 lg:mb-10 rounded-full border-4 border-brand-dark/10 overflow-hidden shadow-2xl"><img src="lamp-off.jpg" onerror="this.src='https://placehold.co/400x400/EEE/455169?text=Detail'" alt="Owlnest Lamp Detail" class="w-full h-full object-cover" loading="lazy"></div>
                 <h2 class="text-3xl md:text-4xl lg:text-5xl font-serif mb-6">Designed for Unwind</h2>
-                <p class="text-brand-dark/70 text-base lg:text-lg mb-10 lg:mb-12 font-light max-w-2xl">
-                    Crafted with soft silicone and a solid wood base. <br>
-                    Completely wireless and rechargeable.
-                </p>
-                
+                <p class="text-brand-dark/70 text-base lg:text-lg mb-10 lg:mb-12 font-light max-w-2xl">Crafted with soft silicone and a solid wood base. <br>Completely wireless and rechargeable.</p>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 text-sm md:text-base w-full max-w-6xl">
                     <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-temperature-low text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Sleep Temp</div>
                     <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-leaf text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Safe Silicone</div>
@@ -429,21 +229,13 @@
                     <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-expand-arrows-alt text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Compact</div>
                     <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-bolt text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Energy Save</div>
                 </div>
-
                 <div class="mt-10 lg:mt-12 pt-10 border-t border-brand-dark/10 flex justify-center items-center reveal-text w-full max-w-4xl">
-                    <button id="buy-button-2" class="snipcart-add-item bg-brand-dark text-white px-10 py-3 md:px-12 md:py-4 text-sm md:text-base tracking-widest uppercase hover:bg-brand-gold hover:text-brand-dark transition duration-300 shadow-lg active:scale-95"
-                        data-item-id="owlnest-lamp-001"
-                        data-item-price="89.00"
-                        data-item-description="Sleep Aid Lamp with Amber Spectrum"
-                        data-item-image="lamp-on.jpg"
-                        data-item-name="Owlnest Sleep Aid Lamp">
-                        Add to Cart
-                    </button>
+                    <button class="snipcart-add-item bg-brand-dark text-white px-10 py-3 md:px-12 md:py-4 text-sm md:text-base tracking-widest uppercase hover:bg-brand-gold hover:text-brand-dark transition duration-300 shadow-lg active:scale-95" data-item-id="owlnest-lamp-001" data-item-price="89.00" data-item-description="Sleep Aid Lamp with Amber Spectrum" data-item-image="lamp-on.jpg" data-item-name="Owlnest Sleep Aid Lamp">Add to Cart</button>
                 </div>
             </div>
         </section>
 
-        <!-- Section 7: Specs -->
+        <!-- Specs -->
         <section id="section-7" class="section-container bg-brand-dark text-white">
             <div class="max-w-5xl w-full px-4 md:px-8 py-16 lg:py-24 reveal-text mx-auto">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-10 mb-12 lg:mb-20 text-center">
@@ -453,40 +245,15 @@
                 </div>
                 <div class="text-center mb-8 lg:mb-12"><h2 class="text-3xl lg:text-4xl font-serif mb-4">Technical Specifications</h2></div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-10 border-t border-white/20 pt-8 lg:pt-10 text-sm lg:text-lg">
-                    <div class="space-y-4 lg:space-y-6">
-                        <div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">Material</span><span>Silicone</span></div>
-                        <div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">Light Color</span><span class="text-brand-gold">1500K - 2000K</span></div>
-                        <div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">Power</span><span>0.03 - 0.1W</span></div>
-                        <div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">LEDs</span><span>6 Beads</span></div>
-                    </div>
-                    <div class="space-y-4 lg:space-y-6">
-                        <div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">LED Lifespan</span><span>Approx. 3000 Hours</span></div>
-                        <div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">Battery</span><span>1200 mAh Lithium</span></div>
-                        <div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">Charging</span><span>Type-C (Included)</span></div>
-                        <div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">Control</span><span>Button Switch</span></div>
-                    </div>
+                    <div class="space-y-4 lg:space-y-6"><div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">Material</span><span>Silicone</span></div><div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">Light Color</span><span class="text-brand-gold">1500K - 2000K</span></div><div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">Power</span><span>0.03 - 0.1W</span></div><div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">LEDs</span><span>6 Beads</span></div></div>
+                    <div class="space-y-4 lg:space-y-6"><div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">LED Lifespan</span><span>Approx. 3000 Hours</span></div><div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">Battery</span><span>1200 mAh Lithium</span></div><div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">Charging</span><span>Type-C (Included)</span></div><div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">Control</span><span>Button Switch</span></div></div>
                 </div>
-                
-                <div class="text-center mt-12">
-                    <a href="manual.pdf" target="_blank" download class="inline-block border border-brand-gold text-brand-gold px-10 py-3 md:px-12 md:py-4 font-bold tracking-widest uppercase hover:bg-brand-gold hover:text-brand-dark transition duration-300 text-sm lg:text-base shadow-md rounded">
-                        <i class="fas fa-file-pdf mr-2"></i> Download User Manual
-                    </a>
-                </div>
-                
-                <div class="mt-8 lg:mt-10 text-center">
-                    <button id="buy-button-3" class="snipcart-add-item inline-block bg-brand-gold text-brand-dark px-10 py-4 lg:px-12 lg:py-5 font-bold hover:bg-white transition duration-300 tracking-widest text-sm lg:text-base shadow-lg active:scale-95"
-                        data-item-id="owlnest-lamp-001"
-                        data-item-price="89.00"
-                        data-item-description="Sleep Aid Lamp with Amber Spectrum"
-                        data-item-image="lamp-on.jpg"
-                        data-item-name="Owlnest Sleep Aid Lamp">
-                        ORDER NOW
-                    </button>
-                </div>
+                <div class="text-center mt-12"><a href="manual.pdf" target="_blank" download class="inline-block border border-brand-gold text-brand-gold px-10 py-3 md:px-12 md:py-4 font-bold tracking-widest uppercase hover:bg-brand-gold hover:text-brand-dark transition duration-300 text-sm lg:text-base shadow-md rounded"><i class="fas fa-file-pdf mr-2"></i> Download User Manual</a></div>
+                <div class="mt-8 lg:mt-10 text-center"><button class="snipcart-add-item inline-block bg-brand-gold text-brand-dark px-10 py-4 lg:px-12 lg:py-5 font-bold hover:bg-white transition duration-300 tracking-widest text-sm lg:text-base shadow-lg active:scale-95" data-item-id="owlnest-lamp-001" data-item-price="89.00" data-item-description="Sleep Aid Lamp with Amber Spectrum" data-item-image="lamp-on.jpg" data-item-name="Owlnest Sleep Aid Lamp">ORDER NOW</button></div>
             </div>
         </section>
 
-        <!-- Section 8: Contact -->
+        <!-- Contact -->
         <section id="section-8" class="section-container bg-brand-cream text-brand-dark">
             <div class="max-w-7xl w-full px-4 md:px-8 py-16 lg:py-24 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-start mx-auto">
                 <div class="reveal-text">
@@ -496,9 +263,7 @@
                         <p class="flex items-center gap-4 lg:gap-6"><i class="fas fa-map-marker-alt text-brand-gold text-xl lg:text-2xl"></i> 114 Lý Thường Kiệt, Phú Quốc, Vietnam</p>
                         <p class="flex items-center gap-4 lg:gap-6"><i class="fas fa-envelope text-brand-gold text-xl lg:text-2xl"></i> owlnestpq2025@gmail.com</p>
                     </div>
-                    <!-- Google Map Placeholder -->
                     <div class="w-full h-64 lg:h-80 rounded-lg overflow-hidden border border-brand-dark/10 shadow-lg mb-8 lg:mb-10 bg-gray-200">
-                        <!-- [修復] 插入 Google Map -->
                         <iframe width="100%" height="100%" frameborder="0" style="border:0;" src="https://maps.google.com/maps?q=114+Lý+Thường+Kiệt,+Phú+Quốc,+Vietnam&hl=zh-TW&z=15&output=embed" allowfullscreen></iframe>
                     </div>
                     <div class="flex flex-wrap items-center gap-4 lg:gap-6">
@@ -517,293 +282,146 @@
                 </div>
             </div>
         </section>
-
     </div>
 
-    <!-- Snipcart Script -->
     <script async src="https://cdn.snipcart.com/themes/v3.7.1/default/snipcart.js"></script>
     <div hidden id="snipcart" data-api-key="MmY2MWUwYjMtODI0Mi00NDQ1LTk4YWUtNTQ0NDgwODY5OGM0NjM5MDIzNDE2ODU0NDczMzQz"></div>
 
-    <!-- JavaScript -->
     <script>
-        // 1. Snipcart URL 修正 (避免 Validation Error)
-        const currentUrl = window.location.href.split('#')[0]; // 獲取當前頁面乾淨的 URL
-        document.querySelectorAll('.snipcart-add-item').forEach(btn => {
-            btn.setAttribute('data-item-url', currentUrl);
-        });
+        const currentUrl = window.location.href.split('#')[0];
+        document.querySelectorAll('.snipcart-add-item').forEach(btn => btn.setAttribute('data-item-url', currentUrl));
 
-        // 2. Canvas Animation 邏輯優化
         const canvas = document.getElementById('hero-canvas');
         const context = canvas.getContext('2d');
         const section1 = document.getElementById('section-1');
-        
         const frameCount = 96; 
         const currentFrame = index => `${index.toString().padStart(3, '0')}.png`; 
-        
         const images = [];
         const skySequence = { frame: 0 };
         let imagesLoaded = 0;
-        let imagesFailed = false; // 標記是否發生加載錯誤
+        let imagesFailed = false;
 
-        // 預加載圖片
         for (let i = 1; i <= frameCount; i++) {
-            const img = new Image();
-            img.src = currentFrame(i); // 請確保這些圖片真的存在
-            img.onload = () => {
-                imagesLoaded++;
-                if (imagesLoaded === 1) { render(); } // 第一張加載完就先渲染
-            };
-            img.onerror = () => {
-                // 如果找不到圖片 (常見於開發階段)，啟用 Fallback 模式
-                if(!imagesFailed) {
-                    console.warn("Image sequence missing. Using fallback visualization.");
-                    imagesFailed = true;
-                    render(); // 強制渲染 Fallback
-                }
-            }
+            const img = new Image(); img.src = currentFrame(i);
+            img.onload = () => { imagesLoaded++; if (imagesLoaded === 1) render(); };
+            img.onerror = () => { if(!imagesFailed) { imagesFailed = true; render(); } }
             images.push(img);
         }
 
         function render() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            
-            // 如果圖片缺失，繪製一個替代的漸變背景
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
             if (imagesFailed) {
                 const gradient = context.createLinearGradient(0, 0, 0, canvas.height);
-                // 根據滾動進度改變顏色 (模擬日落)
                 const progress = skySequence.frame / frameCount;
-                if (progress < 0.5) {
-                    gradient.addColorStop(0, "#87CEEB"); // Day
-                    gradient.addColorStop(1, "#f0e68c");
-                } else {
-                    gradient.addColorStop(0, "#0f172a"); // Night
-                    gradient.addColorStop(1, "#4A403A");
-                }
-                context.fillStyle = gradient;
-                context.fillRect(0, 0, canvas.width, canvas.height);
-                
-                context.fillStyle = "rgba(255,255,255,0.2)";
-                context.font = "20px sans-serif";
-                context.fillText(`Seq Frame: ${skySequence.frame} (Missing Assets)`, 50, 50);
+                if (progress < 0.5) { gradient.addColorStop(0, "#87CEEB"); gradient.addColorStop(1, "#f0e68c"); } 
+                else { gradient.addColorStop(0, "#0f172a"); gradient.addColorStop(1, "#4A403A"); }
+                context.fillStyle = gradient; context.fillRect(0, 0, canvas.width, canvas.height);
                 return;
             }
-
             const img = images[skySequence.frame];
             if (!img || !img.complete) return;
-
             const scale = Math.max(canvas.width / img.width, canvas.height / img.height);
             const x = (canvas.width / 2) - (img.width / 2) * scale;
             const y = (canvas.height / 2) - (img.height / 2) * scale;
-            
             context.clearRect(0, 0, canvas.width, canvas.height);
             context.drawImage(img, x, y, img.width * scale, img.height * scale);
         }
 
-        // 3. Scroll & Reveal Logic
         const sections = document.querySelectorAll('.section-container');
         const dots = document.querySelectorAll('.dot');
         const header = document.getElementById('main-header');
         const navLogo = document.getElementById('nav-logo');
-        const revealElements = document.querySelectorAll('.reveal-text');
         
         let isScrolling = false;
-        // [新增] 將 Lamp 狀態提升為全域變數，供 updateUI 讀取
         let isLampOn = false;
 
         function updateUI() {
-            // [修正] 動態獲取 Header 高度，避免誤差
             const headerHeight = header.offsetHeight || 80;
-            const scrollY = window.scrollY;
-            const windowHeight = window.innerHeight;
+            const checkY = headerHeight / 2; 
+            let isBgLight = false; 
+            let currentSec = null;
 
-            // Header Color Logic
-            let currentSection = null;
             sections.forEach(s => {
                 const rect = s.getBoundingClientRect();
-                // 檢查哪個 Section 佔據了 Header 區域
-                if (rect.top <= headerHeight && rect.bottom > headerHeight) {
-                    currentSection = s;
-                }
-                
-                // Reveal Animation Logic
-                if (rect.top < windowHeight * 0.85) {
-                    s.querySelectorAll('.reveal-text').forEach(el => el.classList.add('visible'));
-                }
+                if (rect.top <= checkY && rect.bottom > checkY) currentSec = s;
+                if (rect.top < window.innerHeight * 0.85) s.querySelectorAll('.reveal-text').forEach(el => el.classList.add('visible'));
             });
 
-            header.classList.remove('nav-dark', 'nav-split');
-            
-            if (currentSection) {
-                // 更新 Nav Dots
-                const id = currentSection.id;
-                dots.forEach(d => {
-                    d.classList.toggle('active', d.getAttribute('href') === `#${id}`);
-                });
-
-                // Section 3 Special Case: [核心修正] 增加 isLampOn 判斷
-                if (currentSection.id === 'section-3') {
+            if (currentSec) {
+                dots.forEach(d => d.classList.toggle('active', d.getAttribute('href') === `#${currentSec.id}`));
+                if (currentSec.id === 'section-3') {
                      if (window.innerWidth < 1024) {
-                        // Mobile: 
-                        const sec3Img = document.getElementById('sec3-image');
-                        if (sec3Img) {
-                            const rectImg = sec3Img.getBoundingClientRect();
-                            // [修復邏輯] 只有當圖片真正位於 Header 下方 (且未滑過) 時才變色
-                            // 使用 rectImg.top 判斷進入，rectImg.bottom 判斷離開
-                            const isOverImage = (rectImg.top <= headerHeight) && (rectImg.bottom > headerHeight);
-                            
-                            // 1. 如果在圖片上 (isOverImage) 且 沒開燈 (!isLampOn) -> 深色 Nav (nav-dark)
-                            // 2. 如果滑過圖片了 (進入下方深色文字區) -> 淺色 Nav (預設)
-                            // 3. 如果開燈了 (深色圖片區) -> 淺色 Nav (預設)
-                            if (isOverImage && !isLampOn) {
-                                header.classList.add('nav-dark');
-                                if (navLogo) navLogo.src = 'logo.png';
-                            } else {
-                                if (navLogo) navLogo.src = 'logo2.png';
-                            }
+                        const imgEl = document.getElementById('sec3-image');
+                        if (imgEl) {
+                            const imgRect = imgEl.getBoundingClientRect();
+                            if (imgRect.bottom > checkY) isBgLight = !isLampOn; 
+                            else isBgLight = false; 
                         }
-                    } else {
-                        // Desktop: 
-                        if (!isLampOn) {
-                            // 燈關 (左白右深) -> 使用 Split View (左深Logo，右淺文字)
-                            header.classList.add('nav-split');
-                            if (navLogo) navLogo.src = 'logo.png'; 
-                        } else {
-                             // 燈開 (左深右深) -> 使用 全淺色模式 (左淺Logo，右淺文字)
-                             // 不加 nav-split，也不加 nav-dark
-                             if (navLogo) navLogo.src = 'logo2.png';
-                        }
-                    }
+                    } else isBgLight = false; 
                 } 
-                // Light Background Sections
-                else if (currentSection.classList.contains('bg-brand-cream') || currentSection.classList.contains('bg-white')) {
-                    header.classList.add('nav-dark');
-                    if (navLogo) navLogo.src = 'logo.png'; 
-                } 
-                // Dark Background Sections
-                else {
-                    if (navLogo) navLogo.src = 'logo2.png'; 
-                }
+                else if (currentSec.classList.contains('bg-brand-cream') || currentSec.classList.contains('bg-white')) isBgLight = true;
+                else isBgLight = false;
+            }
+
+            header.classList.remove('nav-dark', 'nav-split');
+            if (window.innerWidth >= 1024 && currentSec && currentSec.id === 'section-3' && !isLampOn) {
+                header.classList.add('nav-split'); if (navLogo) navLogo.src = 'logo.png'; 
+            } else {
+                if (isBgLight) { header.classList.add('nav-dark'); if (navLogo) navLogo.src = 'logo.png'; } 
+                else { if (navLogo) navLogo.src = 'logo2.png'; }
             }
         }
 
-        // 4. Hero Scroll Animation
         function updateHeroAnimation() {
             const rect = section1.getBoundingClientRect();
             const sectionHeight = section1.offsetHeight;
             const windowHeight = window.innerHeight;
-            
-            // 計算在 Section 1 內部的滾動進度
-            // 當 rect.top 為 0 時開始，當 rect.bottom 到達 windowHeight 時結束
             if (rect.top <= 0 && rect.bottom >= 0) {
                     const scrollTop = Math.abs(rect.top);
                     const maxScroll = sectionHeight - windowHeight;
                     let scrollFraction = scrollTop / maxScroll;
-                    
-                    // Clamp 0 to 1
                     scrollFraction = Math.max(0, Math.min(1, scrollFraction));
-                    
-                    const frameIndex = Math.min(
-                        frameCount - 1,
-                        Math.ceil(scrollFraction * frameCount)
-                    );
-                    
-                    if (frameIndex >= 0 && frameIndex < frameCount) {
-                        skySequence.frame = frameIndex;
-                        render();
-                    }
+                    const frameIndex = Math.min(frameCount - 1, Math.ceil(scrollFraction * frameCount));
+                    if (frameIndex >= 0 && frameIndex < frameCount) { skySequence.frame = frameIndex; render(); }
             }
         }
 
-        window.addEventListener('scroll', () => {
-            if (!isScrolling) {
-                window.requestAnimationFrame(() => {
-                    updateUI();
-                    updateHeroAnimation();
-                    isScrolling = false;
-                });
-                isScrolling = true;
-            }
-        });
-        
-        window.addEventListener('load', () => {
-            updateUI();
-            render();
-            document.getElementById('copyright-year').textContent = new Date().getFullYear();
-        });
-        
+        window.addEventListener('scroll', () => { if (!isScrolling) { window.requestAnimationFrame(() => { updateUI(); updateHeroAnimation(); isScrolling = false; }); isScrolling = true; } });
+        window.addEventListener('load', () => { updateUI(); render(); document.getElementById('copyright-year').textContent = new Date().getFullYear(); });
         window.addEventListener('resize', render);
 
-        // Mobile Menu Toggle
         function toggleMobileMenu() {
             const menu = document.getElementById('mobile-menu');
             const icon = document.getElementById('mobile-menu-icon');
             menu.classList.toggle('open');
-            if (menu.classList.contains('open')) {
-                icon.classList.remove('fa-bars');
-                icon.classList.add('fa-times');
-            } else {
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-            }
+            if (menu.classList.contains('open')) { icon.classList.remove('fa-bars'); icon.classList.add('fa-times'); } 
+            else { icon.classList.remove('fa-times'); icon.classList.add('fa-bars'); }
         }
 
-        // Lamp Toggle Logic
         const lampImg = document.getElementById('lamp-sequence-img');
-        const lampStatus = document.getElementById('lamp-status-label'); // [修正] ID 更新
+        const lampStatus = document.getElementById('lamp-status-label');
         const lampContainer = document.getElementById('sec3-image');
-        
-        // [新增] 獲取自定義開關元素
         const customToggleBg = document.getElementById('custom-toggle-bg');
         const customToggleCircle = document.getElementById('custom-toggle-circle');
 
         function toggleLamp() {
             if (isLampOn) {
-                // --- 關燈動作 ---
-                lampImg.src = 'lamp-off.jpg';
-                
-                // 更新文字
-                lampStatus.textContent = 'Click to Light Up';
-                
-                // 更新開關樣式 (灰色背景，圓圈歸位)
-                customToggleBg.classList.remove('bg-brand-gold');
-                customToggleBg.classList.add('bg-gray-300');
+                lampImg.src = 'lamp-off.jpg'; lampStatus.textContent = 'Click to Light Up';
+                customToggleBg.classList.remove('bg-brand-gold'); customToggleBg.classList.add('bg-gray-300');
                 customToggleCircle.classList.remove('translate-x-6');
-                
-                // 背景變白
-                lampContainer.classList.remove('bg-brand-dark');
-                lampContainer.classList.add('bg-white');
-                
+                lampContainer.classList.remove('bg-brand-dark'); lampContainer.classList.add('bg-white');
                 isLampOn = false;
             } else {
-                // --- 開燈動作 ---
-                lampImg.src = 'lamp-on.jpg';
-                
-                // 更新文字
-                lampStatus.textContent = 'Click to Turn Off';
-                
-                // 更新開關樣式 (金色背景，圓圈移動)
-                customToggleBg.classList.remove('bg-gray-300');
-                customToggleBg.classList.add('bg-brand-gold');
+                lampImg.src = 'lamp-on.jpg'; lampStatus.textContent = 'Click to Turn Off';
+                customToggleBg.classList.remove('bg-gray-300'); customToggleBg.classList.add('bg-brand-gold');
                 customToggleCircle.classList.add('translate-x-6');
-                
-                // 背景變深
-                lampContainer.classList.remove('bg-white');
-                lampContainer.classList.add('bg-brand-dark');
-                
+                lampContainer.classList.remove('bg-white'); lampContainer.classList.add('bg-brand-dark');
                 isLampOn = true;
             }
-            // 狀態改變後立即更新 UI (Header 顏色)
             updateUI();
         }
         
-        // Snipcart Cart Confirmed
-        document.addEventListener('snipcart.ready', function() {
-            Snipcart.events.on('cart.confirmed', function (cartState) {
-                console.log('Cart Confirmed', cartState);
-                // alert("Thank you for your order!"); // Replace with redirect in production
-            });
-        });
+        document.addEventListener('snipcart.ready', function() { Snipcart.events.on('cart.confirmed', function (cartState) { window.location.href = 'thank-you.html'; }); });
     </script>
 </body>
 </html>
