@@ -45,15 +45,19 @@
         }
     </script>
     <style>
+        /* 全域捲動設定 */
         html { 
             scroll-behavior: smooth; 
-            scroll-padding-top: 100px;
+            overflow-y: scroll;
+            /* Proximity: 接近時才吸附，減少長頁面卡頓 */
+            scroll-snap-type: y proximity; 
+            height: 100%;
         }
+        
         body { 
-            overflow-x: hidden; 
             margin: 0;
-            padding: 0;
-            width: 100%;
+            overflow-x: hidden; 
+            height: 100%;
         }
         
         /* 滾動容器 */
@@ -84,7 +88,7 @@
             scroll-snap-stop: normal; 
         }
 
-        /* [關鍵修正] Section 3: 電腦版強制固定高度，確保版面不塌陷 */
+        /* [關鍵修正] Section 3: 電腦版強制固定高度，確保分割版面不塌陷 */
         @media (min-width: 1024px) {
             #section-3 {
                 height: 100vh !important; 
@@ -95,7 +99,9 @@
 
         /* 手機版 (小於 768px) */
         @media (max-width: 767px) {
-            html { scroll-snap-type: none; }
+            .snap-container {
+                scroll-snap-type: none; /* 手機完全自由捲動 */
+            }
             .snap-section {
                 height: auto;
                 min-height: auto;
@@ -123,11 +129,10 @@
 
         .snap-section.auto-height::-webkit-scrollbar { width: 0px; }
 
-        /* [核心修正] Animation: 強制顯示，避免 JS 延遲導致文字消失 */
+        /* Animation: 強制顯示，避免 JS 延遲導致空白 */
         .reveal-text {
             opacity: 1 !important; 
             transform: translateY(0) !important;
-            /* 保留 transition 供 hover 或其他互動使用，但預設為可見 */
             transition: all 1s ease-out;
         }
         
@@ -163,18 +168,23 @@
             filter: drop-shadow(0 1px 3px rgba(0,0,0,0.3)); 
         }
         
-        header.nav-dark { color: #455169 !important; text-shadow: none; }
-        header.nav-dark button i, header.nav-dark i { color: #455169 !important; }
+        /* 淺色背景模式 (nav-dark) */
+        header.nav-dark {
+            color: #455169 !important; 
+            text-shadow: none; 
+        }
+        header.nav-dark button i, header.nav-dark i {
+            color: #455169 !important;
+        }
         
+        /* 特殊分割模式 (nav-split) */
+        /* 電腦版: 左白右深 */
         @media (min-width: 1024px) {
             header.nav-split nav a { color: #faefcf !important; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
             header.nav-split button i { color: #faefcf !important; }
             header.nav-split .logo-area { color: #455169 !important; text-shadow: none; }
         }
-        @media (max-width: 1023px) {
-            header.nav-split { color: #455169 !important; text-shadow: none; }
-            header.nav-split button i { color: #455169 !important; }
-        }
+        /* 手機版不使用 nav-split，改由 JS 動態判斷 */
 
         /* Snipcart Customization */
         #snipcart {
@@ -213,14 +223,14 @@
 <body class="bg-brand-dark text-white antialiased text-base md:text-lg">
 
     <!-- 導覽列 -->
-    <header id="main-header" class="fixed top-0 left-0 w-full z-50 px-4 md:px-8 py-4 md:py-6 flex justify-between items-center bg-transparent transition-all duration-300">
-        <div class="logo-area flex items-center gap-2 md:gap-4 relative z-50">
-             <!-- [確認] Logo 為 logo2.png，ID 為 nav-logo -->
+    <header id="main-header" class="fixed top-0 left-0 w-full z-50 px-4 md:px-8 py-4 md:py-6 flex justify-between items-center bg-transparent transition-all duration-300 pointer-events-none">
+        <div class="logo-area flex items-center gap-2 md:gap-4 relative z-50 pointer-events-auto">
+             <!-- [確認] Logo ID 正確 -->
              <img id="nav-logo" src="logo2.png" alt="Owlnest Logo" class="h-10 md:h-14 w-auto contrast-100">
              <span class="font-serif text-lg md:text-3xl tracking-widest font-bold">Owlnest Official</span>
         </div>
         
-        <div class="hidden lg:flex items-center gap-8">
+        <div class="hidden lg:flex items-center gap-8 pointer-events-auto">
             <nav class="flex gap-8 text-sm tracking-widest uppercase font-semibold">
                 <a href="about.html" class="border-b-2 border-transparent hover:border-brand-gold hover:text-brand-gold transition-all duration-300 pb-1">About Us</a>
                 <a href="#section-1" class="border-b-2 border-transparent hover:border-brand-gold hover:text-brand-gold transition-all duration-300 pb-1">Home</a>
@@ -235,7 +245,7 @@
             </button>
         </div>
 
-        <div class="flex lg:hidden items-center gap-4 relative z-50">
+        <div class="flex lg:hidden items-center gap-4 relative z-50 pointer-events-auto">
             <button class="relative active:scale-95 transition snipcart-checkout">
                 <i class="fas fa-shopping-bag text-2xl"></i>
                 <span class="snipcart-items-count absolute -top-1 -right-2 bg-brand-gold text-brand-dark text-[10px] font-bold px-1.5 rounded-full">0</span>
@@ -273,10 +283,10 @@
     <!-- 主容器 -->
     <div class="snap-container" id="scroller">
 
-        <!-- Section 1: Hero (序列幀畫布區) -->
+        <!-- Section 1: Hero -->
         <section id="section-1" class="snap-section bg-brand-dark active">
             <div class="sticky top-0 h-[100vh] w-full overflow-hidden">
-                <!-- [修正] 移除墊底圖，只保留 Canvas，背景為 bg-brand-dark -->
+                <!-- Canvas 播放圖片序列 (背景純深色) -->
                 <canvas id="hero-canvas" class="absolute inset-0 w-full h-full object-cover bg-brand-dark"></canvas>
                 <div class="absolute inset-0 bg-black/30 z-20"></div>
                 
@@ -336,8 +346,8 @@
         <!-- Section 3: Interactive Experience -->
         <section id="section-3" class="snap-section bg-brand-dark">
             <div class="flex flex-col lg:flex-row w-full h-full">
-                <!-- Image Half -->
-                <div class="w-full lg:w-1/2 h-[45vh] lg:h-full relative overflow-hidden bg-white group cursor-pointer" onclick="toggleLamp()">
+                <!-- Image Half: Add ID for detection -->
+                <div id="sec3-image" class="w-full lg:w-1/2 h-[45vh] lg:h-full relative overflow-hidden bg-white group cursor-pointer" onclick="toggleLamp()">
                     <img id="lamp-sequence-img" src="lamp-off.jpg" alt="Lamp" class="w-full h-full object-cover transition-opacity duration-300 md:group-hover:scale-105 transition-transform duration-700" loading="eager">
                     <div class="absolute inset-0 bg-brand-dark/0 group-hover:bg-brand-dark/5 transition duration-300"></div>
                     <div class="absolute bottom-4 left-4 lg:bottom-8 lg:left-8 bg-brand-cream/90 backdrop-blur p-3 lg:p-4 z-10 pointer-events-none rounded md:rounded-none">
@@ -349,7 +359,7 @@
                 </div>
                 
                 <!-- Text Half -->
-                <div class="w-full lg:w-1/2 h-auto lg:h-full flex items-center justify-center p-8 lg:p-20 bg-brand-dark relative z-20">
+                <div id="sec3-text" class="w-full lg:w-1/2 h-auto lg:h-full flex items-center justify-center p-8 lg:p-20 bg-brand-dark relative z-20">
                     <div class="max-w-xl reveal-text text-white">
                         <div class="mb-4">
                             <span class="text-brand-gold text-xs tracking-widest uppercase mb-1 block">Experience Owlnest</span>
@@ -523,6 +533,7 @@
                     </div>
                 </div>
                 
+                <!-- Download User Manual Button -->
                 <div class="text-center mt-12">
                     <a href="manual.pdf" target="_blank" class="inline-block border border-brand-gold text-brand-gold px-10 py-3 md:px-12 md:py-4 font-bold tracking-widest uppercase hover:bg-brand-gold hover:text-brand-dark transition duration-300 text-sm lg:text-base shadow-md rounded">
                         <i class="fas fa-file-pdf mr-2"></i> Download User Manual
@@ -587,7 +598,7 @@
         const context = canvas.getContext('2d');
         const section1 = document.getElementById('section-1');
         
-        // 96 張序列幀 (001.png - 096.png)
+        // [確認] 96 張序列幀 (001.png - 096.png)
         const frameCount = 96; 
         const currentFrame = index => `${index.toString().padStart(3, '0')}.png`; 
         
@@ -628,7 +639,7 @@
         
         let isScrolling = false;
 
-        // 導覽列變色邏輯
+        // [核心] 導覽列變色與 Logo 切換邏輯 (含手機版特殊修正)
         function updateHeaderColor() {
             const headerHeight = 80; 
             let currentSection = null;
@@ -644,8 +655,27 @@
             
             if (currentSection) {
                 if (currentSection.id === 'section-3') {
-                    header.classList.add('nav-split');
-                    if (navLogo) navLogo.src = 'logo.png'; 
+                    // [修正] 手機版 Section 3 專屬判斷
+                    if (window.innerWidth < 1024) {
+                        const imgPart = document.getElementById('sec3-image'); // 確保HTML有此ID
+                        // 如果沒有 ID (相容性)，就用 querySelector
+                        const sec3Img = currentSection.querySelector('.group'); 
+                        if (sec3Img) {
+                            const rectImg = sec3Img.getBoundingClientRect();
+                            if (rectImg.bottom > 50) {
+                                // 壓在白圖上 -> 深色
+                                header.classList.add('nav-dark');
+                                if (navLogo) navLogo.src = 'logo.png';
+                            } else {
+                                // 壓在黑文上 -> 淺色
+                                if (navLogo) navLogo.src = 'logo2.png';
+                            }
+                        }
+                    } else {
+                        // 電腦版
+                        header.classList.add('nav-split');
+                        if (navLogo) navLogo.src = 'logo.png'; 
+                    }
                 } else if (currentSection.classList.contains('bg-brand-cream') || currentSection.classList.contains('bg-white')) {
                     header.classList.add('nav-dark');
                     if (navLogo) navLogo.src = 'logo.png'; 
@@ -655,10 +685,9 @@
             }
         }
 
-        window.addEventListener('scroll', () => {
+        container.addEventListener('scroll', () => {
             if (!isScrolling) {
                 window.requestAnimationFrame(() => {
-                    // 更新導覽列顏色
                     updateHeaderColor();
 
                     sections.forEach(s => {
@@ -674,7 +703,6 @@
                         }
                     });
                     
-                    // 全裝置序列幀控制
                     const videoSection = document.getElementById('section-1');
                     const rect = videoSection.getBoundingClientRect();
                     const sectionHeight = videoSection.offsetHeight;
