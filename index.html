@@ -45,7 +45,7 @@
         }
     </script>
     <style>
-        /* [核心修正] 恢復全域滾動，解決滑鼠在 Header 上滾不動的問題 */
+        /* [核心修正] 全域滾動：解決滑鼠死角問題 */
         html { 
             scroll-behavior: smooth; 
             overflow-y: scroll;
@@ -58,6 +58,7 @@
             margin: 0;
             overflow-x: hidden; 
             height: 100%;
+            background-color: #455169; /* 預設背景色 */
         }
         
         /* 移除舊容器限制 */
@@ -78,7 +79,7 @@
             scroll-snap-align: start; 
         }
         
-        /* Section 1: 強制 400vh (序列幀) */
+        /* Section 1: 強制 400vh (序列幀動畫) */
         #section-1 {
             display: block !important;
             height: 400vh !important; 
@@ -87,7 +88,7 @@
             scroll-snap-stop: normal; 
         }
 
-        /* Section 3: 電腦版強制固定高度，解決切換版面塌陷 */
+        /* [關鍵修正] Section 3: 電腦版強制固定高度，確保版面不塌陷 */
         @media (min-width: 1024px) {
             #section-3 {
                 height: 100vh !important; 
@@ -170,7 +171,7 @@
             filter: drop-shadow(0 1px 3px rgba(0,0,0,0.3)); 
         }
         
-        /* 淺色背景模式 */
+        /* 淺色背景模式 (nav-dark) */
         header.nav-dark {
             color: #455169 !important; 
             text-shadow: none; 
@@ -185,10 +186,6 @@
             header.nav-split nav a { color: #faefcf !important; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
             header.nav-split button i { color: #faefcf !important; }
             header.nav-split .logo-area { color: #455169 !important; text-shadow: none; }
-        }
-        @media (max-width: 1023px) {
-            /* 手機版 Sec 3 上白下深 */
-            /* 預設維持淺色字 (下半部)，上半部白底由 JS 動態切換 nav-dark */
         }
 
         /* Snipcart Customization */
@@ -236,7 +233,7 @@
         </div>
         
         <div class="hidden lg:flex items-center gap-8">
-            <nav class="flex gap-8 text-sm tracking-widest uppercase font-semibold">
+            <nav class="flex gap-8 text-sm tracking-widest uppercase font-semibold pointer-events-auto">
                 <a href="about.html" class="border-b-2 border-transparent hover:border-brand-gold hover:text-brand-gold transition-all duration-300 pb-1">About Us</a>
                 <a href="#section-1" class="border-b-2 border-transparent hover:border-brand-gold hover:text-brand-gold transition-all duration-300 pb-1">Home</a>
                 <a href="#section-3" class="border-b-2 border-transparent hover:border-brand-gold hover:text-brand-gold transition-all duration-300 pb-1">Products</a>
@@ -245,13 +242,13 @@
                 <a href="#section-8" class="border-b-2 border-transparent hover:border-brand-gold hover:text-brand-gold transition-all duration-300 pb-1">Contact</a>
             </nav>
             <!-- 購物車按鈕 -->
-            <button class="relative group snipcart-checkout">
+            <button class="relative group snipcart-checkout pointer-events-auto">
                 <i class="fas fa-shopping-bag text-2xl md:text-3xl hover:text-brand-gold transition"></i>
                 <span class="snipcart-items-count absolute -top-1 -right-2 bg-brand-gold text-brand-dark text-[10px] md:text-xs font-bold px-1.5 rounded-full">0</span>
             </button>
         </div>
 
-        <div class="flex lg:hidden items-center gap-4 relative z-50">
+        <div class="flex lg:hidden items-center gap-4 relative z-50 pointer-events-auto">
             <button class="relative active:scale-95 transition snipcart-checkout">
                 <i class="fas fa-shopping-bag text-2xl"></i>
                 <span class="snipcart-items-count absolute -top-1 -right-2 bg-brand-gold text-brand-dark text-[10px] font-bold px-1.5 rounded-full">0</span>
@@ -287,12 +284,12 @@
     </div>
 
     <!-- 主容器 -->
-    <div class="snap-container" id="scroller">
+    <div class="snap-container">
 
-        <!-- Section 1: Hero (序列幀畫布區) -->
+        <!-- Section 1: Hero -->
         <section id="section-1" class="snap-section bg-brand-dark active">
             <div class="sticky top-0 h-[100vh] w-full overflow-hidden">
-                <!-- [修正] 無墊底圖，純深色 + Canvas -->
+                <!-- [確認] 無墊底圖，純深色 + Canvas -->
                 <canvas id="hero-canvas" class="absolute inset-0 w-full h-full object-cover bg-brand-dark"></canvas>
                 <div class="absolute inset-0 bg-black/30 z-20"></div>
                 
@@ -353,7 +350,7 @@
         <section id="section-3" class="snap-section bg-brand-dark">
             <div class="flex flex-col lg:flex-row w-full h-full">
                 <!-- Image Half -->
-                <!-- [修正] 加上 ID 供 JS 偵測 -->
+                <!-- [修正] 加上 class="group" 供 JS 偵測 -->
                 <div id="sec3-image" class="w-full lg:w-1/2 h-[45vh] lg:h-full relative overflow-hidden bg-white group cursor-pointer" onclick="toggleLamp()">
                     <img id="lamp-sequence-img" src="lamp-off.jpg" alt="Lamp" class="w-full h-full object-cover transition-opacity duration-300 md:group-hover:scale-105 transition-transform duration-700" loading="eager">
                     <div class="absolute inset-0 bg-brand-dark/0 group-hover:bg-brand-dark/5 transition duration-300"></div>
@@ -366,13 +363,13 @@
                 </div>
                 
                 <!-- Text Half -->
-                <div class="w-full lg:w-1/2 h-auto lg:h-full flex items-center justify-center p-8 lg:p-20 bg-brand-dark relative z-20">
+                <div id="sec3-text" class="w-full lg:w-1/2 h-auto lg:h-full flex items-center justify-center p-8 lg:p-20 bg-brand-dark relative z-20">
                     <div class="max-w-xl reveal-text text-white">
                         <div class="mb-4">
                             <span class="text-brand-gold text-xs tracking-widest uppercase mb-1 block">Experience Owlnest</span>
-                            <!-- 標題 -->
                             <h3 class="text-3xl md:text-4xl lg:text-5xl font-serif text-white">Owlnest Sleep Aid Lamp</h3>
                         </div>
+                        
                         <p class="text-gray-300 mb-6 leading-relaxed text-base lg:text-lg">
                             Create your own bedtime ritual. <br>
                             Feel the difference of a deep amber glow.
@@ -381,16 +378,18 @@
                                 <i class="fas fa-hand-pointer animate-pulse"></i> Click image to simulate sunset
                             </span>
                         </p>
+                        
                         <ul class="space-y-3 mb-8 text-sm md:text-base text-gray-400">
                             <li class="flex items-center gap-3"><span class="w-1 h-1 bg-brand-gold rounded-full"></span> 100% Sunset Glow</li>
                             <li class="flex items-center gap-3"><span class="w-1 h-1 bg-brand-gold rounded-full"></span> Eye-Protecting Warmth</li>
                             <li class="flex items-center gap-3"><span class="w-1 h-1 bg-brand-gold rounded-full"></span> Easy Bottom Switch</li>
                         </ul>
+
                         <div class="border-t border-white/10 pt-6 mt-6">
                             <div class="mb-4">
-                                <!-- USD $89 -->
                                 <span class="text-4xl lg:text-5xl font-serif text-brand-gold">USD $89</span>
                             </div>
+                            
                             <button class="snipcart-add-item bg-brand-gold text-brand-dark px-10 py-4 text-sm md:text-base tracking-widest uppercase hover:bg-white hover:text-brand-dark transition duration-300 w-full font-bold shadow-lg transform active:scale-95"
                                 data-item-id="owlnest-lamp-001"
                                 data-item-price="89.00"
@@ -407,7 +406,7 @@
             </div>
         </section>
 
-        <!-- Section 4: The Science -->
+        <!-- Section 4: Science -->
         <section id="section-4" class="snap-section bg-brand-cream text-brand-dark auto-height">
             <div class="max-w-screen-xl w-full px-4 lg:px-8 py-16 lg:py-24 flex flex-col items-center mx-auto">
                 <div class="text-center max-w-5xl reveal-text mb-12">
@@ -495,7 +494,7 @@
                 </p>
                 
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 text-sm md:text-base w-full max-w-6xl">
-                    <!-- 移除 Dimmable, 更新文字, 7 個項目 -->
+                    <!-- 7 個項目，移除 Dimmable -->
                     <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-temperature-low text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Sleep Temp</div>
                     <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-leaf text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Safe Silicone & Wood</div>
                     <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-power-off text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Button Switch</div>
@@ -540,12 +539,11 @@
                         <div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">LED Lifespan</span><span>Approx. 3000 Hours</span></div>
                         <div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">Battery</span><span>1200 mAh Lithium</span></div>
                         <div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">Charging</span><span>Type-C (Included)</span></div>
-                        <!-- Control -> Button Switch -->
                         <div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">Control</span><span>Button Switch</span></div>
                     </div>
                 </div>
                 
-                <!-- [修正] Download User Manual - 金色邊框按鈕 -->
+                <!-- [確認] 金色邊框按鈕 -->
                 <div class="text-center mt-12">
                     <a href="manual.pdf" target="_blank" class="inline-block border border-brand-gold text-brand-gold px-10 py-3 md:px-12 md:py-4 font-bold tracking-widest uppercase hover:bg-brand-gold hover:text-brand-dark transition duration-300 text-sm lg:text-base shadow-md rounded">
                         <i class="fas fa-file-pdf mr-2"></i> Download User Manual
@@ -610,7 +608,7 @@
         const context = canvas.getContext('2d');
         const section1 = document.getElementById('section-1');
         
-        // 96 PNG Frames
+        // [確認] 96 PNG Frames
         const frameCount = 96; 
         const currentFrame = index => `${index.toString().padStart(3, '0')}.png`; 
         
@@ -643,7 +641,7 @@
             context.drawImage(img, x, y, img.width * scale, img.height * scale);
         }
 
-        // Global Scroll Logic
+        const container = window; 
         const sections = document.querySelectorAll('.snap-section');
         const dots = document.querySelectorAll('.dot');
         const header = document.getElementById('main-header');
