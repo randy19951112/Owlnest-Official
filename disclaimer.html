@@ -6,7 +6,7 @@
     <title>Disclaimer | Owlnest Official</title>
     <link rel="icon" type="image/png" href="logo.png">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
@@ -19,7 +19,8 @@
                         brand: {
                             dark: '#455169',
                             cream: '#faefcf',
-                            gold: '#D4AF37'
+                            gold: '#D4AF37',
+                            white: '#ffffff'
                         }
                     }
                 }
@@ -27,44 +28,69 @@
         }
     </script>
 </head>
-<body class="bg-brand-cream text-brand-dark antialiased min-h-screen flex flex-col">
+<!-- [修改] 背景改為深色 brand-dark，文字改為淺色以利閱讀 -->
+<body class="bg-brand-dark text-brand-cream antialiased min-h-screen flex flex-col font-sans relative overflow-x-hidden">
 
-    <header class="py-6 px-8 border-b border-brand-dark/10">
-        <div class="max-w-4xl mx-auto flex justify-between items-center">
-            <div class="flex items-center gap-2">
-                 <img src="logo.png" alt="Owlnest Logo" class="h-8 w-auto brightness-0"> <!-- Logo變黑 -->
-                 <span class="font-serif text-xl font-bold">Owlnest</span>
-            </div>
-            <a href="index.html" class="text-sm font-bold border-b border-brand-dark hover:text-brand-gold hover:border-brand-gold transition">Back to Home</a>
-        </div>
+    <!-- [修改] 背景光暈調整：金色加強，深色光暈改為黑色以在深底顯現 -->
+    <div class="fixed top-[-10%] right-[-5%] w-[500px] h-[500px] bg-brand-gold/20 rounded-full blur-[120px] pointer-events-none z-0"></div>
+    <div class="fixed bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-black/20 rounded-full blur-[120px] pointer-events-none z-0"></div>
+
+    <!-- Header -->
+    <!-- [修改] Header 背景透明度與邊框顏色調整以適應深色背景 -->
+    <header class="relative z-10 w-full py-6 px-6 md:px-12 flex justify-between items-center border-b border-brand-cream/10 bg-brand-dark/80 backdrop-blur-md sticky top-0">
+        <a href="Owlnest_Official_Fixed.html" class="flex items-center gap-3 group opacity-90 hover:opacity-100 transition">
+             <!-- [修改] Logo 改為濾鏡反白 (brightness-0 invert)，確保在深色 Header 上可見 -->
+             <img src="logo.png" alt="Owlnest Logo" class="h-10 w-auto brightness-0 invert filter"> 
+             <span class="font-serif text-2xl font-bold tracking-wide text-brand-cream">Owlnest</span>
+        </a>
+        <a href="Owlnest_Official_Fixed.html" class="text-xs md:text-sm font-bold uppercase tracking-widest text-brand-cream/60 hover:text-brand-gold transition duration-300 border-b border-transparent hover:border-brand-gold pb-0.5">
+            Back to Home
+        </a>
     </header>
 
-    <main class="flex-grow py-20 px-4">
-        <div class="max-w-3xl mx-auto bg-white p-10 md:p-16 shadow-lg rounded-sm">
-            <h1 class="text-3xl md:text-4xl font-serif mb-10 text-center border-b-2 border-brand-gold inline-block pb-2">Disclaimer</h1>
+    <!-- Main Content -->
+    <main class="flex-grow flex items-center justify-center p-6 md:p-20 relative z-10">
+        <!-- [修改] 卡片背景維持淺色 (cream/white)，創造與 body 的強烈對比 -->
+        <div class="max-w-3xl w-full bg-brand-cream shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] relative overflow-hidden rounded-sm">
             
-            <div class="prose prose-lg text-brand-dark/80 font-light leading-relaxed text-justify">
-                <p class="mb-6">
-                    The sleep-aid lamps and related products provided by <strong>Owlnest</strong> are intended to assist in improving the user's sleep environment and comfort.
-                </p>
-                <p class="mb-6">
-                    Product effects may vary depending on individual experience, and the Company makes no medical guarantees or promises regarding individual health conditions.
-                </p>
-                <p class="mb-6">
-                    Please follow relevant instructions when using this product. If you have specific health conditions, please consult a medical professional.
-                </p>
-                <p>
-                    Owlnest shall not be held liable for any damages resulting from improper use or unauthorized modifications.
-                </p>
-            </div>
-            
-            <div class="mt-12 text-center">
-                <p class="text-xs text-gray-400 uppercase tracking-widest">Owlnest Official Legal Statement</p>
+            <!-- 頂部裝飾線 -->
+            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-brand-dark via-brand-gold to-brand-dark"></div>
+
+            <div class="p-8 md:p-16">
+                <div class="text-center mb-12 mt-4">
+                    <!-- [修改] 措辭改為 Consumer Information，去除法律強制性意味 -->
+                    <p class="text-brand-dark/50 text-xs font-bold tracking-[0.3em] uppercase mb-4">Consumer Information</p>
+                    <h1 class="text-4xl md:text-5xl font-serif text-brand-dark mb-6 italic">Disclaimer</h1>
+                    <div class="inline-block px-4 py-1 border border-brand-dark/10 rounded-full text-brand-dark/40 text-xs font-medium tracking-wide">Last Updated: January 2025</div>
+                </div>
+                
+                <!-- [保留] 內文維持深色字體，因為卡片是淺底 -->
+                <div class="prose prose-lg text-brand-dark/80 font-light leading-loose text-justify mx-auto">
+                    <p class="mb-8 first-letter:text-5xl first-letter:font-serif first-letter:text-brand-gold first-letter:mr-3 first-letter:float-left first-letter:mt-[-6px]">
+                        The sleep-aid lamps and related products provided by <strong class="text-brand-dark font-semibold">Owlnest</strong> are intended to assist in improving the user's sleep environment and comfort.
+                    </p>
+                    <p class="mb-8">
+                        Product effects may vary depending on individual experience, and the Company makes no medical guarantees or promises regarding individual health conditions. Our products are designed for relaxation and ambient lighting purposes only.
+                    </p>
+                    <p class="mb-8">
+                        Please follow relevant instructions and safety guidelines when using this product. If you have specific health conditions, insomnia, or other medical concerns, please consult a medical professional before use.
+                    </p>
+                    <div class="pl-6 border-l-4 border-brand-gold italic text-brand-dark/90 font-medium my-10 bg-white/50 p-4 rounded-r">
+                        "Owlnest shall not be held liable for any damages resulting from improper use, unauthorized modifications, or failure to follow the user manual."
+                    </div>
+                </div>
+                
+                <div class="mt-16 pt-8 border-t border-brand-dark/10 text-center flex flex-col gap-2">
+                    <img src="logo.png" alt="Icon" class="h-6 w-auto mx-auto opacity-20 mb-2">
+                    <!-- [修改] 措辭改為 Official Statement -->
+                    <p class="text-[10px] text-brand-dark/40 uppercase tracking-widest font-bold">Owlnest Official Statement</p>
+                </div>
             </div>
         </div>
     </main>
 
-    <footer class="bg-brand-dark text-white py-8 text-center text-xs">
+    <!-- Footer -->
+    <footer class="relative z-10 bg-transparent text-brand-cream/30 py-8 text-center text-[10px] uppercase tracking-widest">
         <p>&copy; 2025 Owlnest Official. All Rights Reserved.</p>
     </footer>
 
