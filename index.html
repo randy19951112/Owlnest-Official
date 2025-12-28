@@ -45,22 +45,18 @@
         }
     </script>
     <style>
-        /* [核心修正] 網頁滾動設定：移回 HTML 層級以解決滑鼠死角 */
         html { 
             scroll-behavior: smooth; 
-            overflow-y: scroll;
-            /* 使用 proximity 讓滾動更自然，避免強制吸附造成的卡頓 */
-            scroll-snap-type: y proximity; 
-            height: 100%;
+            scroll-padding-top: 100px;
         }
-        
         body { 
-            margin: 0;
             overflow-x: hidden; 
-            height: 100%;
+            margin: 0;
+            padding: 0;
+            width: 100%;
         }
         
-        /* 滾動容器僅作為包裝 */
+        /* 滾動容器 */
         .snap-container {
             height: auto;
             overflow: visible;
@@ -74,7 +70,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 100vh; /* 預設為最小高度 */
+            min-height: 100vh;
             scroll-snap-align: start; 
             scroll-margin-top: 0;
         }
@@ -88,12 +84,12 @@
             scroll-snap-stop: normal; 
         }
 
-        /* [關鍵修正] Section 3: 電腦版強制固定高度，確保分割版面不塌陷 */
+        /* [關鍵修正] Section 3: 電腦版強制固定高度，確保版面不塌陷 */
         @media (min-width: 1024px) {
             #section-3 {
                 height: 100vh !important; 
                 min-height: 100vh !important;
-                align-items: stretch !important; /* 確保內容拉伸 */
+                align-items: stretch !important;
             }
         }
 
@@ -111,13 +107,13 @@
                 height: 400vh !important; 
                 padding: 0 !important;
             }
-            /* 手機版 Sec 3 維持自動高度 */
+            /* 手機版 Sec 3 自動高度 */
             #section-3 {
                 height: auto !important;
             }
         }
         
-        /* 平板與電腦版通用 */
+        /* 平板與電腦版 */
         @media (min-width: 768px) {
             .snap-section.auto-height {
                 display: block;
@@ -125,10 +121,13 @@
             }
         }
 
-        /* Animation: 強制顯示，避免 JS 延遲導致空白 */
+        .snap-section.auto-height::-webkit-scrollbar { width: 0px; }
+
+        /* [核心修正] Animation: 強制顯示，避免 JS 延遲導致文字消失 */
         .reveal-text {
-            opacity: 1; 
-            transform: translateY(0);
+            opacity: 1 !important; 
+            transform: translateY(0) !important;
+            /* 保留 transition 供 hover 或其他互動使用，但預設為可見 */
             transition: all 1s ease-out;
         }
         
@@ -153,7 +152,7 @@
         #mobile-menu.open { transform: translateY(0); }
         .cursor-pointer { cursor: pointer; }
 
-        /* --- 導覽列 --- */
+        /* --- 導覽列變色邏輯 --- */
         #main-header {
             color: #faefcf; 
             transition: color 0.2s ease; 
@@ -177,7 +176,7 @@
             header.nav-split button i { color: #455169 !important; }
         }
 
-        /* Snipcart */
+        /* Snipcart Customization */
         #snipcart {
             --color-modal-bg: #faefcf; 
             --color-library-background: #faefcf;
@@ -216,7 +215,7 @@
     <!-- 導覽列 -->
     <header id="main-header" class="fixed top-0 left-0 w-full z-50 px-4 md:px-8 py-4 md:py-6 flex justify-between items-center bg-transparent transition-all duration-300">
         <div class="logo-area flex items-center gap-2 md:gap-4 relative z-50">
-             <!-- [確認] Logo 預設為 logo2.png (淺色)，ID 為 nav-logo -->
+             <!-- [確認] Logo 為 logo2.png，ID 為 nav-logo -->
              <img id="nav-logo" src="logo2.png" alt="Owlnest Logo" class="h-10 md:h-14 w-auto contrast-100">
              <span class="font-serif text-lg md:text-3xl tracking-widest font-bold">Owlnest Official</span>
         </div>
@@ -230,7 +229,6 @@
                 <a href="#section-7" class="border-b-2 border-transparent hover:border-brand-gold hover:text-brand-gold transition-all duration-300 pb-1">Specs</a>
                 <a href="#section-8" class="border-b-2 border-transparent hover:border-brand-gold hover:text-brand-gold transition-all duration-300 pb-1">Contact</a>
             </nav>
-            <!-- 購物車按鈕綁定 Snipcart -->
             <button class="relative group snipcart-checkout">
                 <i class="fas fa-shopping-bag text-2xl md:text-3xl hover:text-brand-gold transition"></i>
                 <span class="snipcart-items-count absolute -top-1 -right-2 bg-brand-gold text-brand-dark text-[10px] md:text-xs font-bold px-1.5 rounded-full">0</span>
@@ -278,12 +276,11 @@
         <!-- Section 1: Hero (序列幀畫布區) -->
         <section id="section-1" class="snap-section bg-brand-dark active">
             <div class="sticky top-0 h-[100vh] w-full overflow-hidden">
-                <!-- [確認] 無墊底圖，純深色背景 + Canvas -->
+                <!-- [修正] 移除墊底圖，只保留 Canvas，背景為 bg-brand-dark -->
                 <canvas id="hero-canvas" class="absolute inset-0 w-full h-full object-cover bg-brand-dark"></canvas>
                 <div class="absolute inset-0 bg-black/30 z-20"></div>
                 
                 <div class="relative z-30 h-full flex flex-col items-center justify-center text-center px-4 max-w-screen-xl mx-auto">
-                    <!-- 使用 logo2.png -->
                     <img src="logo2.png" alt="Owlnest Logo" class="w-32 md:w-48 lg:w-64 mb-8 md:mb-10 brightness-200 contrast-100 drop-shadow-2xl reveal-text" style="transition-delay: 0.1s;">
                     <h1 class="text-3xl md:text-5xl lg:text-6xl font-serif font-light mb-6 reveal-text text-brand-gold tracking-widest" style="transition-delay: 0.3s;">
                         THE ART OF DEEP SLEEP
@@ -479,7 +476,6 @@
                 </p>
                 
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 text-sm md:text-base w-full max-w-6xl">
-                    <!-- 7 個項目，移除 Dimmable -->
                     <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-temperature-low text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Sleep Temp</div>
                     <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-leaf text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Safe Silicone & Wood</div>
                     <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-power-off text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Button Switch</div>
@@ -489,7 +485,6 @@
                     <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-leaf text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Energy Efficient</div>
                 </div>
 
-                <!-- 移除價格，按鈕置中 -->
                 <div class="mt-10 lg:mt-12 pt-10 border-t border-brand-dark/10 flex justify-center items-center reveal-text w-full max-w-4xl">
                     <button class="snipcart-add-item bg-brand-dark text-white px-10 py-3 md:px-12 md:py-4 text-sm md:text-base tracking-widest uppercase hover:bg-brand-gold hover:text-brand-dark transition duration-300 shadow-lg active:scale-95"
                         data-item-id="owlnest-lamp-001"
@@ -528,7 +523,6 @@
                     </div>
                 </div>
                 
-                <!-- Download User Manual (Outline Button Style) -->
                 <div class="text-center mt-12">
                     <a href="manual.pdf" target="_blank" class="inline-block border border-brand-gold text-brand-gold px-10 py-3 md:px-12 md:py-4 font-bold tracking-widest uppercase hover:bg-brand-gold hover:text-brand-dark transition duration-300 text-sm lg:text-base shadow-md rounded">
                         <i class="fas fa-file-pdf mr-2"></i> Download User Manual
@@ -661,7 +655,7 @@
             }
         }
 
-        container.addEventListener('scroll', () => {
+        window.addEventListener('scroll', () => {
             if (!isScrolling) {
                 window.requestAnimationFrame(() => {
                     // 更新導覽列顏色
