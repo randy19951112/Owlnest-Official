@@ -73,19 +73,19 @@
             scroll-snap-align: start;
         }
         
-        /* [關鍵] Section 1 全裝置強制開啟 400vh 高度以供序列幀滑動 */
+        /* [關鍵] Section 1 全裝置強制開啟 400vh 高度 */
         #section-1 {
             display: block !important;
             height: 400vh !important; 
             padding: 0 !important;
             overflow: visible !important;
-            scroll-snap-stop: normal; /* 允許順暢滑過 */
+            scroll-snap-stop: normal; 
         }
 
-        /* 手機版 (小於 768px) 微調 */
+        /* 手機版 (小於 768px) */
         @media (max-width: 767px) {
             .snap-container {
-                scroll-snap-type: none; /* 手機完全自由捲動手感最好 */
+                scroll-snap-type: none; /* 手機建議關閉吸附，手感最自由 */
             }
             .snap-section {
                 height: auto;
@@ -93,7 +93,7 @@
                 padding-top: 80px; 
                 padding-bottom: 80px;
             }
-            /* Section 1 手機版依然保持長度供滑動 */
+            /* Section 1 手機版依然保持長度 */
             #section-1 {
                 height: 400vh !important; 
                 padding: 0 !important;
@@ -116,7 +116,7 @@
 
         .snap-section.auto-height::-webkit-scrollbar { width: 0px; }
 
-        /* Animation: 預設顯示以免 JS 載入延遲導致空白 */
+        /* Animation: 強制顯示，避免 JS 延遲導致空白 */
         .reveal-text {
             opacity: 1; 
             transform: translateY(0);
@@ -194,9 +194,10 @@
         @media (min-width: 1024px) {
             header.nav-split nav a { color: #faefcf !important; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
             header.nav-split button i { color: #faefcf !important; }
-            header.nav-split .logo-area { color: #455169 !important; text-shadow: none; }
+            /* Logo 在左側白底上 -> 顯示為 logo.png (深色) */
         }
         @media (max-width: 1023px) {
+            /* 手機版 Sec 3 上圖是白底 -> 變深色 */
             header.nav-split { color: #455169 !important; text-shadow: none; }
             header.nav-split button i { color: #455169 !important; }
         }
@@ -254,7 +255,6 @@
                 <a href="#section-7" class="border-b-2 border-transparent hover:border-brand-gold hover:text-brand-gold transition-all duration-300 pb-1">Specs</a>
                 <a href="#section-8" class="border-b-2 border-transparent hover:border-brand-gold hover:text-brand-gold transition-all duration-300 pb-1">Contact</a>
             </nav>
-            <!-- 購物車按鈕綁定 Snipcart -->
             <button class="relative group snipcart-checkout">
                 <i class="fas fa-shopping-bag text-2xl md:text-3xl hover:text-brand-gold transition"></i>
                 <span class="snipcart-items-count absolute -top-1 -right-2 bg-brand-gold text-brand-dark text-[10px] md:text-xs font-bold px-1.5 rounded-full">0</span>
@@ -296,37 +296,13 @@
         <a href="#section-8" class="dot" data-index="7"></a>
     </div>
 
-    <!-- 購物車側邊欄 -->
-    <div id="cart-overlay" class="fixed inset-0 bg-brand-dark/60 z-[60] backdrop-blur-sm" onclick="toggleCart()"></div>
-    <div id="cart-sidebar" class="fixed top-0 right-0 w-full sm:w-[450px] h-full bg-brand-cream z-[70] text-brand-dark shadow-2xl flex flex-col">
-        <div class="p-6 border-b border-brand-dark/10 flex justify-between items-center">
-            <h2 class="font-serif text-2xl">Your Cart</h2>
-            <button onclick="toggleCart()" class="text-gray-400 hover:text-red-500 transition"><i class="fas fa-times text-xl"></i></button>
-        </div>
-        <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-6">
-            <div class="text-center text-gray-400 mt-10">
-                <i class="fas fa-shopping-basket text-4xl mb-4 opacity-30"></i>
-                <p>Your cart is empty.</p>
-            </div>
-        </div>
-        <div class="p-6 bg-white/50 border-t border-brand-dark/10">
-            <div class="flex justify-between items-center mb-4 text-lg font-bold">
-                <span>Total</span>
-                <span id="cart-total">USD $0.00</span>
-            </div>
-            <button onclick="checkout()" class="w-full bg-brand-dark text-white py-4 font-bold tracking-widest uppercase hover:bg-brand-gold hover:text-brand-dark transition duration-300">
-                SUBMIT ORDER REQUEST
-            </button>
-        </div>
-    </div>
-
     <!-- 主容器 -->
     <div class="snap-container" id="scroller">
 
         <!-- Section 1: Hero (序列幀畫布區) -->
         <section id="section-1" class="snap-section bg-brand-dark active">
             <div class="sticky top-0 h-[100vh] w-full overflow-hidden">
-                <!-- Canvas 播放圖片序列 -->
+                <!-- [確認] 無墊底圖，純深色背景 + Canvas -->
                 <canvas id="hero-canvas" class="absolute inset-0 w-full h-full object-cover bg-brand-dark"></canvas>
                 <div class="absolute inset-0 bg-black/30 z-20"></div>
                 
@@ -384,8 +360,8 @@
             </div>
         </section>
 
-        <!-- Section 3: Interactive Experience -->
-        <section id="section-3" class="snap-section bg-brand-dark auto-height">
+        <!-- Section 3: Interactive Experience (移除 auto-height) -->
+        <section id="section-3" class="snap-section bg-brand-dark">
             <div class="flex flex-col lg:flex-row w-full h-full">
                 <!-- Image Half -->
                 <div class="w-full lg:w-1/2 h-[45vh] lg:h-full relative overflow-hidden bg-white group cursor-pointer" onclick="toggleLamp()">
@@ -530,7 +506,7 @@
                 </p>
                 
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 text-sm md:text-base w-full max-w-6xl">
-                    <!-- 移除 Dimmable, 更新文字, 7 個項目 -->
+                    <!-- 7 個項目，移除 Dimmable -->
                     <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-temperature-low text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Sleep Temp</div>
                     <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-leaf text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Safe Silicone & Wood</div>
                     <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-power-off text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Button Switch</div>
@@ -580,7 +556,7 @@
                     </div>
                 </div>
                 
-                <!-- [修正] Download User Manual - 邊框按鈕風格 -->
+                <!-- [確認] 金色邊框按鈕 -->
                 <div class="text-center mt-12">
                     <a href="manual.pdf" target="_blank" class="inline-block border border-brand-gold text-brand-gold px-10 py-3 md:px-12 md:py-4 font-bold tracking-widest uppercase hover:bg-brand-gold hover:text-brand-dark transition duration-300 text-sm lg:text-base shadow-md rounded">
                         <i class="fas fa-file-pdf mr-2"></i> Download User Manual
@@ -645,7 +621,7 @@
         const context = canvas.getContext('2d');
         const section1 = document.getElementById('section-1');
         
-        // [確認] 96 張序列幀 (001.png - 096.png)
+        // 96 張序列幀
         const frameCount = 96; 
         const currentFrame = index => `${index.toString().padStart(3, '0')}.png`; 
         
@@ -678,6 +654,10 @@
             context.drawImage(img, x, y, img.width * scale, img.height * scale);
         }
 
+        function isDesktop() {
+            return true; // 全裝置啟用
+        }
+
         const container = document.getElementById('scroller');
         const sections = document.querySelectorAll('.snap-section');
         const dots = document.querySelectorAll('.dot');
@@ -686,7 +666,7 @@
         
         let isScrolling = false;
 
-        // 導覽列變色邏輯
+        // 導覽列變色邏輯 (只保留這一套正確的)
         function updateHeaderColor() {
             const headerHeight = 80; 
             let currentSection = null;
@@ -760,7 +740,6 @@
             }
         });
         
-        // 確保初始載入觸發一次 (避免 Logo 顏色不對)
         window.addEventListener('load', () => {
             updateHeaderColor();
         });
