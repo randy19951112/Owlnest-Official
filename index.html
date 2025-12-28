@@ -56,7 +56,6 @@
             height: 100vh;
             height: 100dvh;
             overflow-y: scroll;
-            /* 全裝置使用 proximity，避免手機平板卡頓 */
             scroll-snap-type: y proximity; 
             scroll-behavior: smooth;
         }
@@ -73,27 +72,24 @@
             scroll-snap-align: start;
         }
         
-        /* [關鍵] Section 1 全裝置強制開啟 400vh 高度以供序列幀滑動 */
+        /* Section 1: 強制 400vh */
         #section-1 {
             display: block !important;
             height: 400vh !important; 
             padding: 0 !important;
             overflow: visible !important;
-            scroll-snap-stop: normal; /* 允許順暢滑過 */
+            scroll-snap-stop: normal; 
         }
 
-        /* 手機版 (小於 768px) 微調 */
+        /* RWD */
         @media (max-width: 767px) {
-            .snap-container {
-                scroll-snap-type: none; /* 手機完全自由捲動手感最好 */
-            }
+            .snap-container { scroll-snap-type: none; }
             .snap-section {
                 height: auto;
                 min-height: auto;
                 padding-top: 80px; 
                 padding-bottom: 80px;
             }
-            /* Section 1 手機版依然保持長度供滑動 */
             #section-1 {
                 height: 400vh !important; 
                 padding: 0 !important;
@@ -101,7 +97,6 @@
             html { scroll-padding-top: 80px; }
         }
         
-        /* 平板與電腦版 */
         @media (min-width: 768px) {
             .snap-section {
                 height: 100vh;
@@ -116,52 +111,30 @@
 
         .snap-section.auto-height::-webkit-scrollbar { width: 0px; }
 
-        /* Animation: 預設顯示以免 JS 載入延遲導致空白 */
+        /* Animation */
         .reveal-text {
             opacity: 1; 
             transform: translateY(0);
             transition: all 1s ease-out;
         }
         
-        .zoom-bg {
-            transition: transform 10s ease;
-        }
-        .active .zoom-bg {
-            transform: scale(1.1);
-        }
+        .zoom-bg { transition: transform 10s ease; }
+        .active .zoom-bg { transform: scale(1.1); }
 
         .snap-container::-webkit-scrollbar { width: 0px; background: transparent; }
         
-        /* 導覽點 */
         .nav-dots {
-            position: fixed;
-            right: 2rem;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 50;
-            display: none;
-            flex-direction: column;
-            gap: 1rem;
+            position: fixed; right: 2rem; top: 50%; transform: translateY(-50%);
+            z-index: 50; display: none; flex-direction: column; gap: 1rem;
         }
-        @media (min-width: 1024px) {
-            .nav-dots { display: flex; }
-        }
+        @media (min-width: 1024px) { .nav-dots { display: flex; } }
 
         .dot {
-            width: 12px;
-            height: 12px;
-            border: 1px solid rgba(255,255,255,0.5);
-            border-radius: 50%;
-            cursor: pointer;
-            transition: all 0.3s;
+            width: 12px; height: 12px; border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 50%; cursor: pointer; transition: all 0.3s;
         }
-        .dot.active {
-            background-color: #D4AF37;
-            border-color: #D4AF37;
-            transform: scale(1.3);
-        }
+        .dot.active { background-color: #D4AF37; border-color: #D4AF37; transform: scale(1.3); }
 
-        /* Cart & Menu Transitions */
         #cart-sidebar { transform: translateX(100%); transition: transform 0.3s ease-in-out; }
         #cart-sidebar.open { transform: translateX(0); }
         #cart-overlay { opacity: 0; pointer-events: none; transition: opacity 0.3s ease-in-out; }
@@ -170,18 +143,19 @@
         #mobile-menu.open { transform: translateY(0); }
         .cursor-pointer { cursor: pointer; }
 
-        /* --- 導覽列變色邏輯 --- */
+        /* --- 導覽列變色邏輯 (CSS部分) --- */
         #main-header {
             color: #faefcf; 
-            transition: color 0.2s ease; 
+            transition: color 0.3s ease; 
             text-shadow: 0 1px 3px rgba(0,0,0,0.3); 
         }
+        /* Logo 圖片轉場 */
         #nav-logo {
-            transition: opacity 0.2s ease;
+            transition: opacity 0.3s ease;
             filter: drop-shadow(0 1px 3px rgba(0,0,0,0.3)); 
         }
         
-        /* 淺色背景模式 */
+        /* 淺色背景模式 (nav-dark) */
         header.nav-dark {
             color: #455169 !important; 
             text-shadow: none; 
@@ -190,17 +164,18 @@
             color: #455169 !important;
         }
         
+        /* Section 3 特殊模式 */
         @media (min-width: 1024px) {
             header.nav-split nav a { color: #faefcf !important; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
             header.nav-split button i { color: #faefcf !important; }
-            header.nav-split .logo-area { color: #455169 !important; text-shadow: none; }
+            /* Logo 在左側白底上 -> 顯示為 logo.png (深色) */
         }
         @media (max-width: 1023px) {
             header.nav-split { color: #455169 !important; text-shadow: none; }
             header.nav-split button i { color: #455169 !important; }
         }
 
-        /* Snipcart Customization */
+        /* Snipcart */
         #snipcart {
             --color-modal-bg: #faefcf; 
             --color-library-background: #faefcf;
@@ -239,7 +214,7 @@
     <!-- 導覽列 -->
     <header id="main-header" class="fixed top-0 left-0 w-full z-50 px-4 md:px-8 py-4 md:py-6 flex justify-between items-center bg-transparent transition-all duration-300">
         <div class="logo-area flex items-center gap-2 md:gap-4 relative z-50">
-             <!-- Logo -->
+             <!-- [確認] 加入 id="nav-logo" -->
              <img id="nav-logo" src="logo2.png" alt="Owlnest Logo" class="h-10 md:h-14 w-auto contrast-100">
              <span class="font-serif text-lg md:text-3xl tracking-widest font-bold">Owlnest Official</span>
         </div>
@@ -297,16 +272,14 @@
     <!-- 主容器 -->
     <div class="snap-container" id="scroller">
 
-        <!-- Section 1: Hero (序列幀畫布區) -->
+        <!-- Section 1: Hero -->
         <section id="section-1" class="snap-section bg-brand-dark active">
             <div class="sticky top-0 h-[100vh] w-full overflow-hidden">
-                <!-- [修改] 移除 lamp-on.jpg 墊底圖，改為純色背景 -->
-                <!-- Canvas 播放圖片序列 -->
+                <!-- [確認] 無背景圖，純深色 + Canvas -->
                 <canvas id="hero-canvas" class="absolute inset-0 w-full h-full object-cover bg-brand-dark"></canvas>
                 <div class="absolute inset-0 bg-black/30 z-20"></div>
                 
                 <div class="relative z-30 h-full flex flex-col items-center justify-center text-center px-4 max-w-screen-xl mx-auto">
-                    <!-- 使用 logo2.png -->
                     <img src="logo2.png" alt="Owlnest Logo" class="w-32 md:w-48 lg:w-64 mb-8 md:mb-10 brightness-200 contrast-100 drop-shadow-2xl reveal-text" style="transition-delay: 0.1s;">
                     <h1 class="text-3xl md:text-5xl lg:text-6xl font-serif font-light mb-6 reveal-text text-brand-gold tracking-widest" style="transition-delay: 0.3s;">
                         THE ART OF DEEP SLEEP
@@ -369,7 +342,6 @@
                     <div class="absolute bottom-4 left-4 lg:bottom-8 lg:left-8 bg-brand-cream/90 backdrop-blur p-3 lg:p-4 z-10 pointer-events-none rounded md:rounded-none">
                         <span class="block text-[10px] lg:text-xs tracking-widest uppercase mb-1 text-brand-dark">Interactive Demo</span>
                         <span class="block font-serif text-lg lg:text-xl font-bold flex items-center gap-2 text-brand-dark" id="lamp-status-text">
-                            <!-- 預設為 Click to Turn On -->
                             <i class="fas fa-toggle-off text-brand-dark/50"></i> Click to Turn On
                         </span>
                     </div>
@@ -380,7 +352,6 @@
                     <div class="max-w-xl reveal-text text-white">
                         <div class="mb-4">
                             <span class="text-brand-gold text-xs tracking-widest uppercase mb-1 block">Experience Owlnest</span>
-                            <!-- 標題 -->
                             <h3 class="text-3xl md:text-4xl lg:text-5xl font-serif text-white">Owlnest Sleep Aid Lamp</h3>
                         </div>
                         <p class="text-gray-300 mb-6 leading-relaxed text-base lg:text-lg">
@@ -398,7 +369,6 @@
                         </ul>
                         <div class="border-t border-white/10 pt-6 mt-6">
                             <div class="mb-4">
-                                <!-- USD $89 -->
                                 <span class="text-4xl lg:text-5xl font-serif text-brand-gold">USD $89</span>
                             </div>
                             <button class="snipcart-add-item bg-brand-gold text-brand-dark px-10 py-4 text-sm md:text-base tracking-widest uppercase hover:bg-white hover:text-brand-dark transition duration-300 w-full font-bold shadow-lg transform active:scale-95"
@@ -505,7 +475,6 @@
                 </p>
                 
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 text-sm md:text-base w-full max-w-6xl">
-                    <!-- 移除 Dimmable, 更新文字, 7 個項目 -->
                     <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-temperature-low text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Sleep Temp</div>
                     <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-leaf text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Safe Silicone & Wood</div>
                     <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-power-off text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Button Switch</div>
@@ -515,7 +484,6 @@
                     <div class="p-4 md:p-6 bg-white/50 rounded border border-brand-dark/10 hover:border-brand-gold transition"><i class="fas fa-leaf text-brand-gold text-2xl md:text-3xl mb-3 block"></i> Energy Efficient</div>
                 </div>
 
-                <!-- 移除價格，按鈕置中 -->
                 <div class="mt-10 lg:mt-12 pt-10 border-t border-brand-dark/10 flex justify-center items-center reveal-text w-full max-w-4xl">
                     <button class="snipcart-add-item bg-brand-dark text-white px-10 py-3 md:px-12 md:py-4 text-sm md:text-base tracking-widest uppercase hover:bg-brand-gold hover:text-brand-dark transition duration-300 shadow-lg active:scale-95"
                         data-item-id="owlnest-lamp-001"
@@ -550,12 +518,11 @@
                         <div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">LED Lifespan</span><span>Approx. 3000 Hours</span></div>
                         <div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">Battery</span><span>1200 mAh Lithium</span></div>
                         <div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">Charging</span><span>Type-C (Included)</span></div>
-                        <!-- Control -> Button Switch -->
                         <div class="flex justify-between border-b border-white/10 pb-2 lg:pb-3"><span class="text-gray-400">Control</span><span>Button Switch</span></div>
                     </div>
                 </div>
                 
-                <!-- Download User Manual (Outline Button Style) -->
+                <!-- [修正] Download User Manual - 邊框按鈕風格 -->
                 <div class="text-center mt-12">
                     <a href="manual.pdf" target="_blank" class="inline-block border border-brand-gold text-brand-gold px-10 py-3 md:px-12 md:py-4 font-bold tracking-widest uppercase hover:bg-brand-gold hover:text-brand-dark transition duration-300 text-sm lg:text-base shadow-md rounded">
                         <i class="fas fa-file-pdf mr-2"></i> Download User Manual
@@ -620,7 +587,6 @@
         const context = canvas.getContext('2d');
         const section1 = document.getElementById('section-1');
         
-        // 序列幀動畫設定 (001.jpg - 096.jpg) [確認] 96張
         const frameCount = 96; 
         const currentFrame = index => `${index.toString().padStart(3, '0')}.jpg`; 
         
@@ -661,9 +627,39 @@
         
         let isScrolling = false;
 
+        // 導覽列變色邏輯
+        function updateHeaderColor() {
+            const headerHeight = 80; 
+            let currentSection = null;
+
+            sections.forEach(s => {
+                const rect = s.getBoundingClientRect();
+                if (rect.top <= headerHeight && rect.bottom > headerHeight) {
+                    currentSection = s;
+                }
+            });
+
+            header.classList.remove('nav-dark', 'nav-split');
+            
+            if (currentSection) {
+                if (currentSection.id === 'section-3') {
+                    header.classList.add('nav-split');
+                    if (navLogo) navLogo.src = 'logo.png'; 
+                } else if (currentSection.classList.contains('bg-brand-cream') || currentSection.classList.contains('bg-white')) {
+                    header.classList.add('nav-dark');
+                    if (navLogo) navLogo.src = 'logo.png'; 
+                } else {
+                    if (navLogo) navLogo.src = 'logo2.png'; 
+                }
+            }
+        }
+
         container.addEventListener('scroll', () => {
             if (!isScrolling) {
                 window.requestAnimationFrame(() => {
+                    // 更新導覽列顏色
+                    updateHeaderColor();
+
                     sections.forEach(s => {
                         const rect = s.getBoundingClientRect();
                         if (rect.top >= -window.innerHeight / 2 && rect.top < window.innerHeight / 2) {
@@ -674,23 +670,6 @@
                             const id = s.id;
                             const activeDot = document.querySelector(`.dot[href="#${id}"]`);
                             if(activeDot) activeDot.classList.add('active');
-
-                            header.classList.remove('nav-dark', 'nav-split');
-                            if (s.id === 'section-3') {
-                                header.classList.add('nav-split');
-                                if (navLogo) navLogo.src = 'logo.png'; 
-                            } else if (s.classList.contains('bg-brand-cream') || s.classList.contains('bg-white')) {
-                                header.classList.add('nav-dark');
-                                if (navLogo) navLogo.src = 'logo.png'; 
-                            } else {
-                                if (navLogo) navLogo.src = 'logo2.png'; 
-                            }
-                            
-                            if (s.id === 'section-1') {
-                                section1.classList.add('desktop-scroll');
-                            } else {
-                                section1.classList.remove('desktop-scroll');
-                            }
                         }
                     });
                     
@@ -722,12 +701,11 @@
             }
         });
         
-        // 確保初始載入觸發一次 (避免 Logo 顏色不對)
-        window.addEventListener('load', () => {
-            container.dispatchEvent(new Event('scroll'));
-        });
-        
         window.addEventListener('resize', render);
+        // 初始化檢查
+        window.addEventListener('load', () => {
+            updateHeaderColor();
+        });
 
         function toggleMobileMenu() {
             const menu = document.getElementById('mobile-menu');
