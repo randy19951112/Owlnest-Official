@@ -503,7 +503,6 @@
                 </div>
                 
                 <div class="text-center mt-12">
-                    <!-- [修正] 正確下載連結 -->
                     <a href="manual.pdf" target="_blank" download class="inline-block border border-brand-gold text-brand-gold px-10 py-3 md:px-12 md:py-4 font-bold tracking-widest uppercase hover:bg-brand-gold hover:text-brand-dark transition duration-300 text-sm lg:text-base shadow-md rounded">
                         <i class="fas fa-file-pdf mr-2"></i> Download User Manual
                     </a>
@@ -532,7 +531,7 @@
                         <p class="flex items-center gap-4 lg:gap-6"><i class="fas fa-map-marker-alt text-brand-gold text-xl lg:text-2xl"></i> 114 Lý Thường Kiệt, Phú Quốc, Vietnam</p>
                         <p class="flex items-center gap-4 lg:gap-6"><i class="fas fa-envelope text-brand-gold text-xl lg:text-2xl"></i> owlnestpq2025@gmail.com</p>
                         
-                        <!-- [新增] 社交連結 (對應正確網址) -->
+                        <!-- [新增] Social Icons with correct links & SVG for X -->
                         <div class="flex items-center gap-6 mt-6">
                             <a href="http://facebook.com/owlnestofficial" target="_blank" class="w-10 h-10 rounded-full bg-brand-gold text-brand-dark flex items-center justify-center hover:bg-brand-dark hover:text-brand-gold transition duration-300 shadow-md">
                                 <i class="fab fa-facebook-f text-lg"></i>
@@ -541,7 +540,10 @@
                                 <i class="fab fa-instagram text-lg"></i>
                             </a>
                             <a href="http://x.com/owlnestpq_2025" target="_blank" class="w-10 h-10 rounded-full bg-brand-gold text-brand-dark flex items-center justify-center hover:bg-brand-dark hover:text-brand-gold transition duration-300 shadow-md">
-                                <i class="fab fa-x-twitter text-lg"></i>
+                                <!-- High-Quality SVG for X Logo -->
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-current" viewBox="0 0 512 512">
+                                    <path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z"/>
+                                </svg>
                             </a>
                         </div>
                     </div>
@@ -791,7 +793,7 @@
 
         // Lamp Toggle Logic
         const lampImg = document.getElementById('lamp-sequence-img');
-        const lampStatus = document.getElementById('lamp-status-label');
+        const lampStatus = document.getElementById('lamp-status-label'); // [修正] ID 更新
         const lampContainer = document.getElementById('sec3-image');
         
         // Custom Toggle Elements
@@ -800,37 +802,41 @@
 
         function toggleLamp() {
             if (isLampOn) {
-                // --- 關燈 (變白) ---
+                // --- 關燈動作 ---
                 lampImg.src = 'lamp-off.jpg';
+                
+                // 更新文字
                 lampStatus.textContent = 'Click to Light Up';
                 
-                // Toggle UI Reset
+                // 更新開關樣式 (灰色背景，圓圈歸位)
                 customToggleBg.classList.remove('bg-brand-gold');
                 customToggleBg.classList.add('bg-gray-300');
                 customToggleCircle.classList.remove('translate-x-6');
                 
-                // Container BG Change
+                // 背景變白
                 lampContainer.classList.remove('bg-brand-dark');
                 lampContainer.classList.add('bg-white');
                 
                 isLampOn = false;
             } else {
-                // --- 開燈 (變深) ---
+                // --- 開燈動作 ---
                 lampImg.src = 'lamp-on.jpg';
+                
+                // 更新文字
                 lampStatus.textContent = 'Click to Turn Off';
                 
-                // Toggle UI Active
+                // 更新開關樣式 (金色背景，圓圈移動)
                 customToggleBg.classList.remove('bg-gray-300');
                 customToggleBg.classList.add('bg-brand-gold');
                 customToggleCircle.classList.add('translate-x-6');
                 
-                // Container BG Change
+                // 背景變深
                 lampContainer.classList.remove('bg-white');
                 lampContainer.classList.add('bg-brand-dark');
                 
                 isLampOn = true;
             }
-            // 立即更新 Nav 顏色
+            // 狀態改變後立即更新 UI (Header 顏色)
             updateUI();
         }
         
