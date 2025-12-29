@@ -9,24 +9,52 @@
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
-        tailwind.config = { theme: { extend: { fontFamily: { sans: ['"Manrope"', 'sans-serif'], serif: ['"Playfair Display"', 'serif'] }, colors: { brand: { dark: '#455169', cream: '#faefcf', gold: '#D4AF37', wood: '#4A403A' } } } } }
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Manrope"', 'sans-serif'],
+                        serif: ['"Playfair Display"', 'serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#455169',
+                            cream: '#faefcf',
+                            gold: '#D4AF37',
+                            wood: '#4A403A'
+                        }
+                    }
+                }
+            }
+        }
     </script>
 </head>
 <body class="bg-brand-dark text-white antialiased text-base md:text-lg">
+
+    <!-- Header -->
     <header class="fixed top-0 left-0 w-full z-50 px-4 md:px-8 py-4 md:py-6 flex justify-between items-center bg-brand-dark/95 backdrop-blur-md shadow-lg transition-all duration-300">
-        <div class="flex items-center gap-2 md:gap-4"><img src="logo2.png" alt="Owlnest Logo" class="h-10 md:h-14 w-auto brightness-200 contrast-100"><a href="index.html" class="font-serif text-lg md:text-3xl tracking-widest font-bold text-white hover:text-brand-gold transition">Owlnest Official</a></div>
-        <div class="flex items-center gap-8"><a href="index.html" class="text-sm tracking-widest uppercase font-semibold text-brand-gold hover:text-white transition border-b border-brand-gold">Back to Home</a></div>
+        <div class="flex items-center gap-2 md:gap-4">
+            <img src="logo2.png" alt="Owlnest Logo" class="h-10 md:h-14 w-auto brightness-200 contrast-100">
+            <a href="index.html" class="font-serif text-lg md:text-3xl tracking-widest font-bold text-white hover:text-brand-gold transition">Owlnest Official</a>
+        </div>
+        <div class="flex items-center gap-8">
+            <a href="index.html" class="text-sm tracking-widest uppercase font-semibold text-brand-gold hover:text-white transition border-b border-brand-gold">Back to Home</a>
+        </div>
     </header>
 
+    <!-- Hero Section -->
     <section class="pt-40 pb-20 px-4 text-center bg-brand-dark">
         <h1 class="text-4xl md:text-6xl font-serif text-brand-gold mb-6">About Us</h1>
         <p class="max-w-2xl mx-auto text-gray-300 font-light">Harmonizing body, mind, and spirit through the union of technology and nature.</p>
     </section>
 
+    <!-- Philosophy Section -->
     <section class="py-20 px-4 bg-brand-dark relative overflow-hidden">
         <div class="absolute top-0 right-0 w-1/2 h-full bg-brand-gold/5 rounded-l-full blur-3xl"></div>
         <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-8 md:gap-12 relative z-10">
-            <div class="w-full md:w-5/12 text-center md:text-right"><img src="logo2.png" alt="Owlnest Emblem" class="w-40 md:w-48 inline-block opacity-80 brightness-150 contrast-125"></div>
+            <div class="w-full md:w-5/12 text-center md:text-right">
+                <img src="logo2.png" alt="Owlnest Emblem" class="w-40 md:w-48 inline-block opacity-80 brightness-150 contrast-125">
+            </div>
             <div class="w-full md:w-7/12">
                 <span class="text-brand-gold text-xs tracking-[0.3em] uppercase mb-4 block">Our Belief</span>
                 <h2 class="text-3xl md:text-4xl font-serif mb-6">Brand Philosophy</h2>
@@ -39,6 +67,7 @@
         </div>
     </section>
 
+    <!-- Tech Section -->
     <section class="py-20 px-4 bg-brand-cream text-brand-dark">
         <div class="max-w-6xl mx-auto">
             <div class="text-center mb-16">
@@ -47,33 +76,74 @@
                 <p class="max-w-3xl mx-auto text-brand-dark/70">Owlnest’s R&D team brings together experts in optics, health science, and lifestyle aesthetics, focusing on translating scientific research into tangible benefits for daily life.</p>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Card 1 -->
                 <div class="p-8 bg-white rounded-lg shadow-sm border border-brand-dark/5 text-center hover:-translate-y-1 transition duration-300">
-                    <div class="w-16 h-16 mx-auto bg-brand-dark text-brand-gold rounded-full flex items-center justify-center text-3xl mb-6"><i class="fas fa-wave-square"></i></div>
-                    <h3 class="text-xl font-bold mb-4">Spectral Regulation</h3><p class="text-sm text-brand-dark/70 leading-relaxed">Precisely simulates natural twilight, guiding the body to naturally secrete melatonin and helping to regulate the circadian rhythm.</p>
+                    <div class="w-16 h-16 mx-auto bg-brand-dark text-brand-gold rounded-full flex items-center justify-center text-3xl mb-6">
+                        <i class="fas fa-wave-square"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Spectral Regulation</h3>
+                    <p class="text-sm text-brand-dark/70 leading-relaxed">Precisely simulates natural twilight, guiding the body to naturally secrete melatonin and helping to regulate the circadian rhythm.</p>
                 </div>
+                <!-- Card 2 -->
                 <div class="p-8 bg-white rounded-lg shadow-sm border border-brand-dark/5 text-center hover:-translate-y-1 transition duration-300">
-                    <div class="w-16 h-16 mx-auto bg-brand-dark text-brand-gold rounded-full flex items-center justify-center text-3xl mb-6"><i class="fas fa-flask"></i></div>
-                    <h3 class="text-xl font-bold mb-4">Scientific Verification</h3><p class="text-sm text-brand-dark/70 leading-relaxed">The application of this technology elevates our products beyond simple tools into scientifically verified sleep-aid solutions.</p>
+                    <div class="w-16 h-16 mx-auto bg-brand-dark text-brand-gold rounded-full flex items-center justify-center text-3xl mb-6">
+                        <i class="fas fa-flask"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Scientific Verification</h3>
+                    <p class="text-sm text-brand-dark/70 leading-relaxed">The application of this technology elevates our products beyond simple tools into scientifically verified sleep-aid solutions.</p>
                 </div>
+                <!-- Card 3 -->
                 <div class="p-8 bg-white rounded-lg shadow-sm border border-brand-dark/5 text-center hover:-translate-y-1 transition duration-300">
-                    <div class="w-16 h-16 mx-auto bg-brand-dark text-brand-gold rounded-full flex items-center justify-center text-3xl mb-6"><i class="fas fa-leaf"></i></div>
-                    <h3 class="text-xl font-bold mb-4">Holistic Solution</h3><p class="text-sm text-brand-dark/70 leading-relaxed">Expanding to incorporate agarwood, fragrances, and essential oils, creating a comprehensive "calming and sleep-soothing" solution.</p>
+                    <div class="w-16 h-16 mx-auto bg-brand-dark text-brand-gold rounded-full flex items-center justify-center text-3xl mb-6">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Holistic Solution</h3>
+                    <p class="text-sm text-brand-dark/70 leading-relaxed">Expanding to incorporate agarwood, fragrances, and essential oils, creating a comprehensive "calming and sleep-soothing" solution.</p>
                 </div>
             </div>
         </div>
     </section>
 
+    <!-- Future Section -->
     <section class="py-20 px-4 bg-brand-dark text-white relative">
         <div class="absolute inset-0 bg-black/20"></div>
         <div class="max-w-4xl mx-auto relative z-10 text-center">
-            <div class="mb-16"><h2 class="text-3xl md:text-4xl font-serif mb-8 text-brand-gold">Future Outlook</h2><p class="text-gray-300 font-light leading-relaxed mb-6">At Owlnest, we continuously explore the possibilities between light and health. Beyond our current sleep-aid products, we will continue to deepen our research in spectral applications and expand into more innovative designs, aiming to create all-encompassing nighttime care solutions.</p><p class="text-xl font-serif italic text-white/90">"Our goal is for Owlnest to be more than just a brand, but a lifestyle."</p></div>
-            <div class="border-t border-white/10 pt-12"><h2 class="text-2xl md:text-3xl font-serif mb-8">Company Statement</h2><p class="text-gray-400 font-light leading-relaxed text-sm md:text-base text-justify">At Owlnest, our mission is to guard the happiness and comfort of every family through the light of technology. We firmly believe that every beam of light should be filled with warmth and care. Therefore, we constantly pursue innovation and design every product with human-centric values. We promise that in the days to come, we will continue to deepen our work in the field of light spectrums, bringing the latest research results into thousands of homes to add a sense of peace and beauty to your life. Choosing Owlnest is choosing a persistence in quality of life and a relentless pursuit of the future.</p><div class="mt-12 opacity-50 hover:opacity-80 transition duration-500"><img src="logo2.png" alt="Signature" class="h-12 mx-auto filter brightness-200"></div></div>
+            <div class="mb-16">
+                <h2 class="text-3xl md:text-4xl font-serif mb-8 text-brand-gold">Future Outlook</h2>
+                <p class="text-gray-300 font-light leading-relaxed mb-6">At Owlnest, we continuously explore the possibilities between light and health. Beyond our current sleep-aid products, we will continue to deepen our research in spectral applications and expand into more innovative designs, aiming to create all-encompassing nighttime care solutions.</p>
+                <p class="text-xl font-serif italic text-white/90">"Our goal is for Owlnest to be more than just a brand, but a lifestyle."</p>
+            </div>
+            <div class="border-t border-white/10 pt-12">
+                <h2 class="text-2xl md:text-3xl font-serif mb-8">Company Statement</h2>
+                <p class="text-gray-400 font-light leading-relaxed text-sm md:text-base text-justify">At Owlnest, our mission is to guard the happiness and comfort of every family through the light of technology. We firmly believe that every beam of light should be filled with warmth and care. Therefore, we constantly pursue innovation and design every product with human-centric values. We promise that in the days to come, we will continue to deepen our work in the field of light spectrums, bringing the latest research results into thousands of homes to add a sense of peace and beauty to your life. Choosing Owlnest is choosing a persistence in quality of life and a relentless pursuit of the future.</p>
+                <div class="mt-12 opacity-50 hover:opacity-80 transition duration-500">
+                    <img src="logo2.png" alt="Signature" class="h-12 mx-auto filter brightness-200">
+                </div>
+            </div>
         </div>
     </section>
 
+    <!-- Footer -->
     <footer class="bg-black py-10 text-center text-gray-500 text-xs">
         <p>&copy; 2025 Owlnest Official. All Rights Reserved.</p>
-        <div class="mt-4 space-x-4"><a href="index.html" class="hover:text-white transition">Home</a><a href="disclaimer.html" class="hover:text-white transition">Disclaimer</a></div>
+        
+        <!-- Social Icons -->
+        <div class="flex justify-center gap-6 mt-6 mb-6">
+            <a href="http://facebook.com/owlnestofficial" target="_blank" class="text-gray-400 hover:text-white transition">
+                <i class="fab fa-facebook-f text-lg"></i>
+            </a>
+            <a href="http://www.instagram.com/owlnestpq_chilllife" target="_blank" class="text-gray-400 hover:text-white transition">
+                <i class="fab fa-instagram text-lg"></i>
+            </a>
+            <a href="http://x.com/owlnestpq_2025" target="_blank" class="text-gray-400 hover:text-white transition">
+                <i class="fab fa-x-twitter text-lg"></i>
+            </a>
+        </div>
+        
+        <div class="space-x-4">
+            <a href="index.html" class="hover:text-white transition">Home</a>
+            <a href="disclaimer.html" class="hover:text-white transition">Disclaimer</a>
+        </div>
     </footer>
 </body>
 </html>
