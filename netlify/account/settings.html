@@ -1,1 +1,16 @@
+<!doctype html><html lang="zh-Hant"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="stylesheet" href="/account/css/account.css"/><title>Account · Settings</title></head>
+<body><div class="wrap">
+<aside class="sidebar"><div id="nav"></div></aside>
+<main class="main">
+  <div class="topbar"><div><div class="h1">Settings</div><div class="muted">Phase 3</div></div></div>
+  <section class="card"><div class="muted">Coming soon.</div></section>
+</main></div>
+<script type="module">
+  import { requireUser } from "/account/js/authGuard.js";
+  import { renderNav } from "/account/js/uiNav.js";
+  renderNav("settings");
+  await requireUser();
+</script></body></html>
 
