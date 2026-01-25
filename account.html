@@ -217,7 +217,7 @@
         if (error) throw error;
 
         if (!data || data.length === 0) {
-          listEl.innerHTML = `<li class="text-center opacity-60 py-6">尚無綁定產品</li>`;
+          listEl.innerHTML = `<li class="text-center opacity-60 py-6">No Linked Product</li>`;
           return;
         }
 
@@ -234,7 +234,7 @@
             </li>`;
         });
       } catch (e) {
-        listEl.innerHTML = `<li class="text-center text-red-300 py-6">讀取產品失敗：${e?.message || e}</li>`;
+        listEl.innerHTML = `<li class="text-center text-red-300 py-6">Unable To Load Product Information.：${e?.message || e}</li>`;
       }
     }
 
@@ -254,7 +254,7 @@
         if (error) throw error;
 
         if (!data || data.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center opacity-60">尚無訂單</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center opacity-60">No Orders To Display</td></tr>`;
           return;
         }
 
@@ -279,12 +279,12 @@
       } catch (e) {
         // 常見：RLS policy 不允許 select orders
         tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-red-300">
-          讀取訂單失敗：${e?.message || e}
+          Unable To Load Orders. Tap To Retry.：${e?.message || e}
         </td></tr>`;
 
         showTopMsg(
-          `⚠️ 讀不到 Orders 很常見原因是 RLS policy。<br>
-          如果你看到像 "permission denied" 或 "new row violates row-level security" 之類，跟我說錯誤訊息我直接給你對應修法。`,
+         // `⚠️ 讀不到 Orders 很常見原因是 RLS policy。<br>
+          //如果你看到像 "permission denied" 或 "new row violates row-level security" 之類，跟我說錯誤訊息我直接給你對應修法。`,
           "error"
         );
       }
@@ -317,4 +317,5 @@
 
 </body>
 </html>
+
 
