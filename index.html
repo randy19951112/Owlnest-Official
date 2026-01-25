@@ -164,7 +164,8 @@
             text-shadow: none; 
         }
         header.nav-dark button i, 
-        header.nav-dark i { 
+        header.nav-dark i,
+        header.nav-dark a i { 
             color: #455169 !important; 
         }
         
@@ -198,14 +199,26 @@
                 <a href="#section-7" class="border-b-2 border-transparent hover:border-brand-gold hover:text-brand-gold transition-all duration-300 pb-1">Specs</a>
                 <a href="#section-8" class="border-b-2 border-transparent hover:border-brand-gold hover:text-brand-gold transition-all duration-300 pb-1">Contact</a>
             </nav>
-            <button class="relative group snipcart-checkout">
-                <i class="fas fa-shopping-bag text-2xl md:text-3xl hover:text-brand-gold transition"></i>
-                <span class="snipcart-items-count absolute -top-1 -right-2 bg-brand-gold text-brand-dark text-[10px] md:text-xs font-bold px-1.5 rounded-full">0</span>
-            </button>
+            
+            <!-- [新增] 會員按鈕 (Desktop) -->
+            <div class="flex items-center gap-4">
+                <a href="account.html" class="relative group" title="Member Login">
+                    <i class="fas fa-user text-xl md:text-2xl hover:text-brand-gold transition"></i>
+                </a>
+                <button class="relative group snipcart-checkout">
+                    <i class="fas fa-shopping-bag text-2xl md:text-3xl hover:text-brand-gold transition"></i>
+                    <span class="snipcart-items-count absolute -top-1 -right-2 bg-brand-gold text-brand-dark text-[10px] md:text-xs font-bold px-1.5 rounded-full">0</span>
+                </button>
+            </div>
         </div>
 
         <!-- Mobile Toggle Button -->
         <div class="flex lg:hidden items-center gap-4 relative z-50">
+            <!-- [新增] 會員按鈕 (Mobile) -->
+            <a href="account.html" class="relative active:scale-95 transition">
+                <i class="fas fa-user text-xl"></i>
+            </a>
+            
             <button class="relative active:scale-95 transition snipcart-checkout">
                 <i class="fas fa-shopping-bag text-2xl"></i>
                 <span class="snipcart-items-count absolute -top-1 -right-2 bg-brand-gold text-brand-dark text-[10px] font-bold px-1.5 rounded-full">0</span>
@@ -219,6 +232,10 @@
     <!-- Mobile Menu Overlay -->
     <div id="mobile-menu" class="fixed inset-0 bg-brand-dark z-40 flex flex-col justify-center items-center pt-20 lg:hidden text-white">
         <nav class="flex flex-col gap-8 text-xl tracking-widest uppercase font-semibold text-center">
+            <a href="account.html" class="hover:text-brand-gold transition flex items-center justify-center gap-2">
+                <i class="fas fa-user"></i> Member Login
+            </a>
+            <hr class="w-12 border-white/20 mx-auto">
             <a href="about.html" class="hover:text-brand-gold transition">About Us</a>
             <a href="#section-1" onclick="toggleMobileMenu()" class="hover:text-brand-gold transition">Home</a>
             <a href="#section-3" onclick="toggleMobileMenu()" class="hover:text-brand-gold transition">Products</a>
