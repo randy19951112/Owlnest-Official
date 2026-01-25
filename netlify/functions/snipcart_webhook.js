@@ -14,13 +14,10 @@ function getHeader(headers, name) {
   return key ? headers[key] : null;
 }
 
-// Snipcart webhook 安全驗證：用 X-Snipcart-RequestToken 去 requestvalidation endpoint 驗證
-async function validateSnipcartRequest(eventHeaders) {
+// 用 Snipcart 的 requestvalidation endpoint 驗證 webhook
+async function validateSnipcartRequest(eventHeaders, apiKey) {
   const token = getHeader(eventHeaders, "X-Snipcart-RequestToken");
-  if (!token) return false;
-
-  const apiKey = process.env.SNIPCART_SECRET_API_KEY; // Snipcart Secret API Key
-  if (!apiKey) return false;
+  if (!token || !apiKey) return false;
 
   const auth = Buffer.from(`${apiKey}:`).toString("base64");
   const url = `https://app.snipcart.com/api/requestvalidation/${token}`;
@@ -42,45 +39,64 @@ exports.handler = async (event) => {
     return { statusCode: 405, body: "Method Not Allowed" };
   }
 
-  // 1) 先做 Snipcart webhook 驗證（官方建議）
-  const isValid = await validateSnipcartRequest(event.headers);
-  if (!isValid) {
-    return { statusCode: 401, body: "Invalid webhook request" };
-  }
-
-  // 2) 解析 payload
-  let body;
+  // 先 parse JSON（我們只是拿 mode 來決定「先試哪把 key」，真正安全還是靠 requestvalidation）
+  let body = {};
   try {
     body = JSON.parse(event.body || "{}");
   } catch (e) {
     return { statusCode: 400, body: "Bad JSON" };
   }
 
-  // Snipcart webhook 會帶 eventName，像 order.completed
-  if (!body.eventName) {
-    return { statusCode: 400, body: "Missing eventName" };
+  const KEY_TEST = process.env.SNIPCART_SECRET_API_KEY_TEST;
+  const KEY_LIVE = process.env.SNIPCART_SECRET_API_KEY_LIVE;
+
+  // Snipcart webhook 會帶 mode: "Test" | "Live"
+  const modeRaw = body.mode ?? body.content?.mode ?? "";
+  const mode = String(modeRaw).toLowerCase(); // "test" | "live" | ""
+
+  // 先依 mode 決定優先嘗試哪把 key（但會兩把都試，避免 mode 被偽造）
+  let keyTryOrder;
+  if (mode === "live") keyTryOrder = [KEY_LIVE, KEY_TEST];
+  else if (mode === "test") keyTryOrder = [KEY_TEST, KEY_LIVE];
+  else keyTryOrder = [KEY_LIVE, KEY_TEST]; // mode 缺失：先試 LIVE 再試 TEST
+
+  // 去掉空值與重複
+  const keys = [...new Set(keyTryOrder.filter(Boolean))];
+
+  let isValid = false;
+  for (const k of keys) {
+    if (await validateSnipcartRequest(event.headers, k)) {
+      isValid = true;
+      break;
+    }
   }
 
-  // 只處理訂單完成
+  if (!isValid) {
+    return { statusCode: 401, body: "Invalid webhook request" };
+  }
+
+  // 只處理 order.completed
   if (body.eventName !== "order.completed") {
     return { statusCode: 200, body: "Ignored" };
   }
 
   const content = body.content || {};
 
-  // 3) 抽取你要的欄位（不同設定可能會有些差異，所以我做容錯）
+  // 容錯抽取訂單資訊
   const orderId =
     content.token ||
     content.orderToken ||
     content.invoiceNumber ||
     content.id;
 
-  const email =
-    (content.email ||
+  const email = String(
+    content.email ||
+      content.userEmail ||
+      content.customerEmail ||
       (content.billingAddress && content.billingAddress.email) ||
       (content.customer && content.customer.email) ||
       ""
-    ).toLowerCase();
+  ).trim();
 
   const total =
     content.grandTotal ??
@@ -91,14 +107,14 @@ exports.handler = async (event) => {
   const items = content.items ?? content.cart?.items ?? [];
 
   if (!orderId || !email) {
-    // 沒有 orderId 或 email 的話，你 account 頁也無法對應顯示
+    // 沒有 orderId / email 就無法在 account 頁面正確對應
     return { statusCode: 200, body: "Missing order id or email" };
   }
 
-  // 4) 寫入 Supabase（Service Role 可繞過 RLS）
+  // 寫入 Supabase（Service Role 可繞過 RLS）
   const { error } = await supabaseAdmin.from("orders").upsert({
     id: String(orderId),
-    user_email: email,
+    user_email: email.toLowerCase(),
     total: total,
     items: items,
   });
