@@ -74,10 +74,10 @@
             if (!supabase) return;
             const { data: { session } } = await supabase.auth.getSession();
             if (!session) {
-                // 記住現在的 query string (code)
                 const params = new URLSearchParams(window.location.search);
                 sessionStorage.setItem('redirect_after_login', window.location.href);
-                window.location.href = 'login.html';
+                // [修正] 重導向至 member-login.html
+                window.location.href = 'member-login.html';
                 return;
             }
             
