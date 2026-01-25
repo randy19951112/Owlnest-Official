@@ -1,219 +1,232 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Account | Owlnest</title>
-    <link rel="icon" type="image/png" href="logo.png">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['"Manrope"', 'sans-serif'], serif: ['"Playfair Display"', 'serif'] },
-                    colors: { brand: { dark: '#455169', cream: '#faefcf', gold: '#D4AF37' } }
-                }
-            }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Account | Owlnest</title>
+  <link rel="icon" type="image/png" href="logo.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['"Manrope"', 'sans-serif'], serif: ['"Playfair Display"', 'serif'] },
+          colors: { brand: { dark: '#455169', cream: '#faefcf', gold: '#D4AF37' } }
         }
-    </script>
+      }
+    }
+  </script>
 </head>
+
 <body class="bg-brand-dark text-white min-h-screen font-sans flex flex-col">
 
-    <header class="py-6 px-8 border-b border-white/5 bg-brand-dark/50 backdrop-blur-md flex justify-between items-center sticky top-0 z-50">
-        <div class="flex items-center gap-3">
-             <img src="logo2.png" alt="Owlnest Logo" class="h-8 w-auto brightness-200 contrast-100">
-             <span class="font-serif text-xl tracking-widest font-bold">Owlnest</span>
-        </div>
-        <button id="logout-btn" class="text-xs uppercase tracking-widest hover:text-brand-gold transition border-b border-transparent hover:border-brand-gold pb-0.5">
-            Sign Out
-        </button>
-    </header>
+  <header class="py-6 px-8 border-b border-white/5 bg-brand-dark/50 backdrop-blur-md flex justify-between items-center sticky top-0 z-50">
+    <div class="flex items-center gap-3">
+      <img src="logo2.png" alt="Owlnest Logo" class="h-8 w-auto brightness-200 contrast-100">
+      <span class="font-serif text-xl tracking-widest font-bold">Owlnest</span>
+    </div>
+    <button id="logout-btn" class="text-xs uppercase tracking-widest hover:text-brand-gold transition border-b border-transparent hover:border-brand-gold pb-0.5">
+      Sign Out
+    </button>
+  </header>
 
-    <main class="flex-grow max-w-5xl mx-auto p-6 md:p-12 w-full">
-        <h1 class="text-3xl md:text-4xl font-serif text-brand-gold mb-8">My Account</h1>
+  <main class="flex-grow max-w-5xl mx-auto p-6 md:p-12 w-full">
+    <h1 class="text-3xl md:text-4xl font-serif text-brand-gold mb-8">My Account</h1>
 
-        <div class="grid md:grid-cols-3 gap-8">
-            <!-- Profile Card -->
-            <div class="md:col-span-1 space-y-8">
-                <div class="bg-white/5 border border-white/10 p-6 rounded-lg backdrop-blur-sm">
-                    <h2 class="text-xs font-bold text-brand-gold uppercase tracking-[0.2em] mb-4">Profile</h2>
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="w-10 h-10 rounded-full bg-brand-gold/20 flex items-center justify-center text-brand-gold">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <div class="overflow-hidden">
-                            <p class="text-xs text-gray-400">Signed in as</p>
-                            <p id="user-email" class="font-medium text-sm truncate">Loading...</p>
-                        </div>
-                    </div>
-                    <a href="verify.html" class="block w-full text-center bg-white/10 hover:bg-brand-gold hover:text-brand-dark text-white py-3 rounded transition duration-300 text-sm font-bold uppercase tracking-wide border border-white/10">
-                        <i class="fas fa-qrcode mr-2"></i> Verify Product
-                    </a>
-                </div>
-                
-                <div class="bg-brand-gold/10 border border-brand-gold/20 p-6 rounded-lg">
-                    <h3 class="text-brand-gold font-serif text-lg mb-2">Need Help?</h3>
-                    <p class="text-xs text-gray-400 mb-4 leading-relaxed">Contact our support team for warranty or usage questions.</p>
-                    <a href="mailto:owlnestpq2025@gmail.com" class="text-sm underline hover:text-brand-gold">Contact Support</a>
-                </div>
+    <div id="top-msg" class="hidden mb-6 text-sm p-4 rounded bg-black/20 border border-white/10"></div>
+
+    <div class="grid md:grid-cols-3 gap-8">
+      <!-- Profile Card -->
+      <div class="md:col-span-1 space-y-8">
+        <div class="bg-white/5 border border-white/10 p-6 rounded-lg backdrop-blur-sm">
+          <h2 class="text-xs font-bold text-brand-gold uppercase tracking-[0.2em] mb-4">Profile</h2>
+
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 rounded-full bg-brand-gold/20 flex items-center justify-center text-brand-gold">
+              <i class="fas fa-user"></i>
             </div>
-
-            <!-- Products List -->
-            <div class="md:col-span-2 space-y-8">
-                <div class="bg-white/5 border border-white/10 p-8 rounded-lg backdrop-blur-sm min-h-[200px]">
-                    <h2 class="text-xs font-bold text-brand-gold uppercase tracking-[0.2em] mb-6 border-b border-white/10 pb-4">My Products</h2>
-                    <ul id="product-list" class="space-y-4">
-                        <li class="text-center py-8 text-gray-500 font-light text-sm italic">Loading products...</li>
-                    </ul>
-                </div>
+            <div class="overflow-hidden">
+              <p class="text-xs text-gray-400">Signed in as</p>
+              <p id="user-email" class="font-medium text-sm truncate">Checking...</p>
             </div>
+          </div>
+
+          <a href="verify.html" class="block w-full text-center bg-white/10 hover:bg-brand-gold hover:text-brand-dark text-white py-3 rounded transition duration-300 text-sm font-bold uppercase tracking-wide border border-white/10">
+            <i class="fas fa-qrcode mr-2"></i> Verify Product
+          </a>
         </div>
-    </main>
 
-    <footer class="py-8 text-center text-xs text-gray-500 border-t border-white/5 mt-auto">
-        <div class="flex justify-center items-center gap-6 mb-4">
-            <a href="http://facebook.com/owlnestofficial" target="_blank" class="hover:text-brand-gold transition"><i class="fab fa-facebook-f text-lg"></i></a>
-            <a href="http://www.instagram.com/owlnestpq_chilllife" target="_blank" class="hover:text-brand-gold transition"><i class="fab fa-instagram text-lg"></i></a>
-            <a href="http://x.com/owlnestpq_2025" target="_blank" class="hover:text-brand-gold transition flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-current" viewBox="0 0 512 512"><path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z"/></svg>
-            </a>
+        <div class="bg-brand-gold/10 border border-brand-gold/20 p-6 rounded-lg">
+          <h3 class="text-brand-gold font-serif text-lg mb-2">Need Help?</h3>
+          <p class="text-xs text-gray-400 mb-4 leading-relaxed">Contact our support team for warranty or usage questions.</p>
+          <a href="mailto:owlnestpq2025@gmail.com" class="text-sm underline hover:text-brand-gold">Contact Support</a>
         </div>
-        <p>&copy; 2025 Owlnest Official. All Rights Reserved.</p>
-    </footer>
+      </div>
 
-   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-  // 1) 你的 Supabase 設定（你已經換好了就保留）
-  const SUPABASE_URL = "YOUR_SUPABASE_URL";
-  const SUPABASE_KEY = "YOUR_SUPABASE_PUBLISHABLE_KEY";
+      <!-- Products List -->
+      <div class="md:col-span-2 space-y-8">
+        <div class="bg-white/5 border border-white/10 p-8 rounded-lg backdrop-blur-sm min-h-[200px]">
+          <h2 class="text-xs font-bold text-brand-gold uppercase tracking-[0.2em] mb-6 border-b border-white/10 pb-4">
+            My Products
+          </h2>
 
-  // 2) 正確建立 client：用 window.supabase，並且變數不要叫 supabase
-  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-      detectSessionInUrl: true,
-    },
-  });
+          <ul id="product-list" class="space-y-4">
+            <li class="text-center py-8 text-gray-500 font-light text-sm italic">Loading products...</li>
+          </ul>
+        </div>
 
-  function $(id) { return document.getElementById(id); }
+        <!-- ✅ 你目前頁面沒有訂單表格，所以我先不顯示 Orders 區塊。
+             你要加 Orders，我再給你一個完整區塊 + 對應 JS。 -->
+      </div>
+    </div>
+  </main>
 
-  async function ensureSession() {
-    // 有些 magic link 會帶 ?code=...（保險起見處理）
-    try {
+  <footer class="py-8 text-center text-xs text-gray-500 border-t border-white/5 mt-auto">
+    <div class="flex justify-center items-center gap-6 mb-4">
+      <a href="http://facebook.com/owlnestofficial" target="_blank" class="hover:text-brand-gold transition"><i class="fab fa-facebook-f text-lg"></i></a>
+      <a href="http://www.instagram.com/owlnestpq_chilllife" target="_blank" class="hover:text-brand-gold transition"><i class="fab fa-instagram text-lg"></i></a>
+      <a href="http://x.com/owlnestpq_2025" target="_blank" class="hover:text-brand-gold transition flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-current" viewBox="0 0 512 512"><path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z"/></svg>
+      </a>
+    </div>
+    <p>&copy; 2025 Owlnest Official. All Rights Reserved.</p>
+  </footer>
+
+  <script>
+    // ✅ 前端用 Publishable key（public/anon），不要用 secret key
+    const SUPABASE_URL = "https://khoiplqugajmybmultzs.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_ic3b9TeYt7SuXxLIhLuyvA_FWHYVb0Z";
+
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true
+      }
+    });
+
+    const $ = (id) => document.getElementById(id);
+
+    function showTopMsg(html, type = "info") {
+      const el = $("top-msg");
+      if (!el) return;
+      el.classList.remove("hidden");
+      el.className = "mb-6 text-sm p-4 rounded bg-black/20 border border-white/10";
+      if (type === "error") el.classList.add("text-red-300", "border-red-500/30");
+      if (type === "ok") el.classList.add("text-green-300", "border-green-500/30");
+      el.innerHTML = html;
+    }
+
+    function hideTopMsg() {
+      const el = $("top-msg");
+      if (!el) return;
+      el.classList.add("hidden");
+      el.innerHTML = "";
+    }
+
+    async function handleEmailRedirectSession() {
+      // 兼容兩種 email 驗證/登入回跳：
+      // 1) ?code=...（PKCE）
+      // 2) ?token_hash=...&type=signup|magiclink|recovery...
       const url = new URL(window.location.href);
-      if (url.searchParams.get("code")) {
-        await sb.auth.exchangeCodeForSession(window.location.href);
-        url.searchParams.delete("code");
-        window.history.replaceState({}, document.title, url.toString());
+
+      try {
+        if (url.searchParams.get("code")) {
+          const code = url.searchParams.get("code");
+          await sb.auth.exchangeCodeForSession(code);
+          url.searchParams.delete("code");
+          window.history.replaceState({}, document.title, url.pathname + (url.search ? url.search : ""));
+        } else if (url.searchParams.get("token_hash") && url.searchParams.get("type")) {
+          const token_hash = url.searchParams.get("token_hash");
+          const type = url.searchParams.get("type");
+          await sb.auth.verifyOtp({ token_hash, type });
+          url.searchParams.delete("token_hash");
+          url.searchParams.delete("type");
+          window.history.replaceState({}, document.title, url.pathname + (url.search ? url.search : ""));
+        }
+      } catch (e) {
+        console.warn("Redirect session handling failed:", e);
       }
-    } catch (e) {
-      // 忽略即可
     }
 
-    const { data: { session } } = await sb.auth.getSession();
-    if (!session) {
-      window.location.href = "member-login.html";
-      return null;
+    async function ensureSessionOrRedirect() {
+      await handleEmailRedirectSession();
+
+      const { data: { session } } = await sb.auth.getSession();
+      if (!session) {
+        // 記住來源頁，讓 login 登入後可以回來（可選）
+        sessionStorage.setItem("redirect_after_login", window.location.href);
+        window.location.href = "member-login.html";
+        return null;
+      }
+      return session;
     }
-    return session;
-  }
 
-  async function loadActivations() {
-    const listEl = $("product-list");
-    if (!listEl) return;
+    async function loadActivations() {
+      const listEl = $("product-list");
+      if (!listEl) return;
 
-    listEl.innerHTML = `<li class="text-center opacity-60 py-4">Loading products...</li>`;
+      listEl.innerHTML = `<li class="text-center opacity-60 py-6 italic">Loading products...</li>`;
 
-    try {
-      const { data, error } = await sb
-        .from("activations")
-        .select("*")
-        .order("activated_at", { ascending: false });
+      try {
+        const { data, error } = await sb
+          .from("activations")
+          .select("payload, activated_at")
+          .order("activated_at", { ascending: false });
 
-      if (error) throw error;
+        if (error) throw error;
 
-      if (!data || data.length === 0) {
-        listEl.innerHTML = `<li class="text-center opacity-60 py-4">尚無綁定產品</li>`;
-        return;
+        if (!data || data.length === 0) {
+          listEl.innerHTML = `<li class="text-center opacity-60 py-6">尚無綁定產品</li>`;
+          return;
+        }
+
+        listEl.innerHTML = "";
+        data.forEach((item) => {
+          const d = new Date(item.activated_at).toLocaleDateString();
+          listEl.innerHTML += `
+            <li class="flex items-center justify-between bg-black/20 p-4 rounded border border-white/10">
+              <div class="flex flex-col">
+                <span class="font-mono text-brand-cream text-sm">${item.payload}</span>
+                <span class="text-xs opacity-70 mt-1">Activated: ${d}</span>
+              </div>
+              <span class="text-xs px-3 py-1 rounded bg-brand-gold/20 text-brand-gold border border-brand-gold/20">Active</span>
+            </li>`;
+        });
+      } catch (e) {
+        listEl.innerHTML = `<li class="text-center text-red-300 py-6">讀取產品失敗：${e?.message || e}</li>`;
+      }
+    }
+
+    async function init() {
+      hideTopMsg();
+
+      const session = await ensureSessionOrRedirect();
+      if (!session) return;
+
+      // Email
+      const emailEl = $("user-email");
+      if (emailEl) emailEl.textContent = session.user.email || "(no email)";
+
+      // Logout
+      const logoutBtn = $("logout-btn");
+      if (logoutBtn) {
+        logoutBtn.addEventListener("click", async () => {
+          await sb.auth.signOut();
+          sessionStorage.removeItem("redirect_after_login");
+          window.location.href = "index.html";
+        });
       }
 
-      listEl.innerHTML = "";
-      data.forEach((item) => {
-        const d = new Date(item.activated_at).toLocaleDateString();
-        listEl.innerHTML += `
-          <li class="flex justify-between bg-black/20 p-3 rounded mb-2">
-            <span class="font-mono text-yellow-300">${item.payload}</span>
-            <span class="text-xs opacity-70 pt-1">${d}</span>
-          </li>`;
-      });
-    } catch (e) {
-      listEl.innerHTML = `<li class="text-center text-red-300 py-4">讀取產品失敗：${e.message || e}</li>`;
-    }
-  }
-
-  async function loadOrders() {
-    const tbody = $("order-list");
-    if (!tbody) return;
-
-    tbody.innerHTML = `<tr><td colspan="3" class="text-center py-4 opacity-60">Loading orders...</td></tr>`;
-
-    try {
-      const { data, error } = await sb
-        .from("orders")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-
-      if (!data || data.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="3" class="text-center py-4 opacity-60">尚無訂單</td></tr>`;
-        return;
-      }
-
-      tbody.innerHTML = "";
-      data.forEach((o) => {
-        const d = new Date(o.created_at).toLocaleDateString();
-        tbody.innerHTML += `
-          <tr class="border-b border-white/10 last:border-0">
-            <td class="py-3 font-mono">${o.id}</td>
-            <td class="py-3">${d}</td>
-            <td class="py-3 text-yellow-300">$${o.total}</td>
-          </tr>`;
-      });
-    } catch (e) {
-      tbody.innerHTML = `<tr><td colspan="3" class="text-center py-4 text-red-300">讀取訂單失敗：${e.message || e}</td></tr>`;
-    }
-  }
-
-  async function init() {
-    const session = await ensureSession();
-    if (!session) return;
-
-    // 顯示 email
-    const emailEl = $("user-email");
-    if (emailEl) emailEl.textContent = session.user.email || "(no email)";
-
-    // 登出按鈕
-    const logoutBtn = $("logout-btn");
-    if (logoutBtn) {
-      logoutBtn.addEventListener("click", async () => {
-        await sb.auth.signOut();
-        window.location.href = "index.html";
-      });
+      // Load data
+      await loadActivations();
     }
 
-    // 載入資料
-    await loadActivations();
-    await loadOrders();
-  }
+    init();
+  </script>
 
-  init();
-</script>
 </body>
-
 </html>
-
