@@ -35,37 +35,39 @@
 
   <main class="flex-grow flex items-center justify-center p-4 relative z-10">
     <div class="bg-white/5 border border-white/10 p-8 md:p-12 rounded-lg backdrop-blur-xl shadow-2xl w-full max-w-md">
-      <h2 id="page-title" class="text-3xl font-serif mb-2 text-center text-brand-gold">Member Login</h2>
-      <p id="page-subtitle" class="mb-8 text-sm text-center text-gray-400 font-light tracking-wide">
-        Sign in with email + password.
+
+      <h2 class="text-3xl font-serif mb-2 text-center text-brand-gold">Member</h2>
+      <p id="subtitle" class="mb-6 text-sm text-center text-gray-400 font-light tracking-wide">
+        Sign in with email & password.
       </p>
 
-      <!-- Mode Toggle -->
-      <div class="grid grid-cols-2 gap-3 mb-6">
-        <a id="tab-login" href="member-login.html"
-           class="text-center py-2 rounded border border-brand-gold/30 hover:border-brand-gold transition text-sm tracking-widest uppercase">
-          Login
-        </a>
-        <a id="tab-register" href="member-login.html?mode=register"
-           class="text-center py-2 rounded border border-brand-gold/30 hover:border-brand-gold transition text-sm tracking-widest uppercase">
-          Register
-        </a>
+      <!-- Tabs -->
+      <div class="grid grid-cols-2 gap-2 mb-6">
+        <button id="tab-login" type="button"
+          class="py-3 rounded border border-brand-gold/30 bg-brand-gold text-brand-dark font-bold uppercase tracking-widest text-xs">
+          Sign In
+        </button>
+        <button id="tab-register" type="button"
+          class="py-3 rounded border border-brand-gold/30 bg-transparent text-brand-gold font-bold uppercase tracking-widest text-xs hover:bg-white/5 transition">
+          Create Account
+        </button>
       </div>
 
-      <form id="login-form" class="space-y-6">
-        <!-- Email -->
+      <form id="auth-form" class="space-y-4">
         <div>
-          <input type="email" id="email" placeholder="name@example.com" required
+          <input type="email" id="email" placeholder="name@example.com" required autocomplete="email"
             class="w-full p-4 rounded bg-brand-dark/50 border border-brand-gold/30 text-white placeholder-gray-500 focus:outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold transition text-center tracking-wide">
         </div>
 
-        <!-- Password -->
         <div>
-          <input type="password" id="password" placeholder="Password" required minlength="6"
+          <input type="password" id="password" placeholder="Password" required autocomplete="current-password"
             class="w-full p-4 rounded bg-brand-dark/50 border border-brand-gold/30 text-white placeholder-gray-500 focus:outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold transition text-center tracking-wide">
-          <p class="mt-2 text-[11px] text-gray-500 text-center">
-            Password must be at least 6 characters.
-          </p>
+        </div>
+
+        <!-- Confirm password (only for register) -->
+        <div id="confirm-wrap" class="hidden">
+          <input type="password" id="confirmPassword" placeholder="Confirm Password" autocomplete="new-password"
+            class="w-full p-4 rounded bg-brand-dark/50 border border-brand-gold/30 text-white placeholder-gray-500 focus:outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold transition text-center tracking-wide">
         </div>
 
         <button type="submit" id="submit-btn"
@@ -74,7 +76,7 @@
         </button>
       </form>
 
-      <div id="message" class="mt-6 text-center text-sm hidden p-3 rounded bg-black/20"></div>
+      <div id="message" class="mt-5 text-center text-sm hidden p-3 rounded bg-black/20"></div>
 
       <div class="mt-8 text-center">
         <a href="index.html" class="text-xs text-gray-500 hover:text-brand-gold transition border-b border-transparent hover:border-brand-gold pb-0.5">
@@ -98,96 +100,173 @@
   </footer>
 
   <script>
-    // ===== 1) Supabase Config：把這兩個換成你自己的 =====
-    const supabaseUrl = 'https://khoiplqugajmybmultzs.supabase.co';
-    const supabaseKey = 'sb_publishable_ic3b9TeYt7SuXxLIhLuyvA_FWHYVb0Z'; // Anon/Public key
-    const sb = window.supabase.createClient(supabaseUrl, supabaseKey);
+    // ✅ 前端用 Publishable key（public/anon），不要用 Secret key
+    const SUPABASE_URL = 'https://khoiplqugajmybmultzs.supabase.co';
+    const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_ic3b9TeYt7SuXxLIhLuyvA_FWHYVb0Z';
 
-    // ===== 2) DOM =====
-    const form = document.getElementById('login-form');
-    const btn = document.getElementById('submit-btn');
-    const msg = document.getElementById('message');
-    const emailEl = document.getElementById('email');
-    const pwEl = document.getElementById('password');
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
-    const titleEl = document.getElementById('page-title');
-    const subtitleEl = document.getElementById('page-subtitle');
     const tabLogin = document.getElementById('tab-login');
     const tabRegister = document.getElementById('tab-register');
+    const subtitle = document.getElementById('subtitle');
 
-    const params = new URLSearchParams(window.location.search);
-    const mode = params.get('mode') === 'register' ? 'register' : 'login';
+    const form = document.getElementById('auth-form');
+    const btn = document.getElementById('submit-btn');
+    const msg = document.getElementById('message');
 
-    function setModeUI() {
-      if (mode === 'register') {
-        titleEl.textContent = 'Create Account';
-        subtitleEl.textContent = 'Register with email + password. We will send a verification email.';
-        btn.textContent = 'Create Account';
-        tabRegister.classList.add('bg-brand-gold', 'text-brand-dark', 'border-brand-gold');
-        tabLogin.classList.remove('bg-brand-gold', 'text-brand-dark', 'border-brand-gold');
+    const emailEl = document.getElementById('email');
+    const pwEl = document.getElementById('password');
+    const confirmWrap = document.getElementById('confirm-wrap');
+    const confirmEl = document.getElementById('confirmPassword');
+
+    let mode = 'login'; // 'login' | 'register'
+
+    function setMode(nextMode) {
+      mode = nextMode;
+
+      // tab styles
+      if (mode === 'login') {
+        tabLogin.className = "py-3 rounded border border-brand-gold/30 bg-brand-gold text-brand-dark font-bold uppercase tracking-widest text-xs";
+        tabRegister.className = "py-3 rounded border border-brand-gold/30 bg-transparent text-brand-gold font-bold uppercase tracking-widest text-xs hover:bg-white/5 transition";
+        subtitle.textContent = "Sign in with email & password.";
+        btn.textContent = "Sign In";
+        confirmWrap.classList.add('hidden');
+        pwEl.setAttribute('autocomplete', 'current-password');
       } else {
-        titleEl.textContent = 'Member Login';
-        subtitleEl.textContent = 'Sign in with email + password.';
-        btn.textContent = 'Sign In';
-        tabLogin.classList.add('bg-brand-gold', 'text-brand-dark', 'border-brand-gold');
-        tabRegister.classList.remove('bg-brand-gold', 'text-brand-dark', 'border-brand-gold');
+        tabRegister.className = "py-3 rounded border border-brand-gold/30 bg-brand-gold text-brand-dark font-bold uppercase tracking-widest text-xs";
+        tabLogin.className = "py-3 rounded border border-brand-gold/30 bg-transparent text-brand-gold font-bold uppercase tracking-widest text-xs hover:bg-white/5 transition";
+        subtitle.textContent = "Create account once. Email verification required.";
+        btn.textContent = "Create Account";
+        confirmWrap.classList.remove('hidden');
+        pwEl.setAttribute('autocomplete', 'new-password');
       }
+
+      hideMessage();
     }
 
     function showMessage(html, type = 'info') {
       msg.classList.remove('hidden');
-      msg.className = 'mt-6 text-center text-sm p-3 rounded bg-black/20';
+      msg.className = 'mt-5 text-center text-sm p-3 rounded bg-black/20';
+
       if (type === 'error') msg.classList.add('text-red-300', 'border', 'border-red-500/30');
       if (type === 'ok') msg.classList.add('text-green-300', 'border', 'border-green-500/30');
+
       msg.innerHTML = html;
     }
 
-    async function ensureNotLoggedInRedirect() {
-      // 如果已登入，直接送到 account，避免重複登入
-      const { data: { session } } = await sb.auth.getSession();
-      if (session) window.location.href = 'account.html';
+    function hideMessage() {
+      msg.classList.add('hidden');
+      msg.innerHTML = '';
     }
+
+    function getNextUrl() {
+      const params = new URLSearchParams(window.location.search);
+      return sessionStorage.getItem('redirect_after_login')
+        || params.get('next')
+        || (window.location.origin + '/account.html');
+    }
+
+    async function handleEmailRedirectSession() {
+      // 兼容 Supabase email link 的兩種參數：
+      // 1) ?code=...（PKCE）
+      // 2) ?token_hash=...&type=signup|magiclink|recovery...
+      const url = new URL(window.location.href);
+
+      try {
+        if (url.searchParams.get('code')) {
+          await sb.auth.exchangeCodeForSession(url.searchParams.get('code'));
+          url.searchParams.delete('code');
+          window.history.replaceState({}, document.title, url.pathname + (url.search ? url.search : ''));
+        } else if (url.searchParams.get('token_hash') && url.searchParams.get('type')) {
+          const token_hash = url.searchParams.get('token_hash');
+          const type = url.searchParams.get('type');
+          await sb.auth.verifyOtp({ token_hash, type });
+          url.searchParams.delete('token_hash');
+          url.searchParams.delete('type');
+          window.history.replaceState({}, document.title, url.pathname + (url.search ? url.search : ''));
+        }
+      } catch (e) {
+        // 不阻斷流程，只提示
+        console.warn('handleEmailRedirectSession error', e);
+      }
+    }
+
+    async function kickIfAlreadyLoggedIn() {
+      const { data: { session } } = await sb.auth.getSession();
+      if (session) {
+        const nextUrl = getNextUrl();
+        sessionStorage.removeItem('redirect_after_login');
+        window.location.href = nextUrl;
+      }
+    }
+
+    // UI events
+    tabLogin.addEventListener('click', () => setMode('login'));
+    tabRegister.addEventListener('click', () => setMode('register'));
+
+    // init
+    (async function init() {
+      setMode('login');
+      await handleEmailRedirectSession();
+      await kickIfAlreadyLoggedIn();
+    })();
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      hideMessage();
+
       const email = emailEl.value.trim();
       const password = pwEl.value;
 
       if (!email || !password) return;
 
+      // register needs confirm
+      if (mode === 'register') {
+        const confirmPw = (confirmEl?.value || '');
+        if (confirmPw.length < 6) {
+          showMessage('❌ Password too short (min 6).', 'error');
+          return;
+        }
+        if (password !== confirmPw) {
+          showMessage('❌ Passwords do not match.', 'error');
+          return;
+        }
+      }
+
       btn.disabled = true;
       btn.classList.add('opacity-50');
+      btn.textContent = (mode === 'register') ? 'Creating...' : 'Signing in...';
 
       try {
         if (mode === 'register') {
-          // 註冊：會寄「驗證信」
+          // ✅ 註冊：只會寄一次 Email 驗證連結（你要的 OTP/驗證）
           const { error } = await sb.auth.signUp({
             email,
             password,
-            options: { emailRedirectTo: window.location.origin + '/account.html' }
+            options: {
+              emailRedirectTo: window.location.origin + '/account.html'
+            }
           });
           if (error) throw error;
 
-          showMessage('✅ 註冊已送出！請到信箱點「驗證連結」完成啟用後再登入。', 'ok');
-          // 註冊成功後不自動跳轉（要等他驗證信）
+          showMessage('✅ Account created. Please check your email to verify, then come back to sign in.', 'ok');
         } else {
-          // 登入：Email + 密碼
+          // ✅ 登入：Email + 密碼，不寄信
           const { error } = await sb.auth.signInWithPassword({ email, password });
           if (error) throw error;
 
-          window.location.href = 'account.html';
+          const nextUrl = getNextUrl();
+          sessionStorage.removeItem('redirect_after_login');
+          window.location.href = nextUrl;
         }
       } catch (err) {
         showMessage('❌ ' + (err?.message || 'Unknown error'), 'error');
       } finally {
         btn.disabled = false;
         btn.classList.remove('opacity-50');
+        btn.textContent = (mode === 'register') ? 'Create Account' : 'Sign In';
       }
     });
-
-    // Init
-    setModeUI();
-    ensureNotLoggedInRedirect();
   </script>
 </body>
 </html>
