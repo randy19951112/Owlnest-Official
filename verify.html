@@ -12,13 +12,8 @@
     tailwind.config = {
       theme: {
         extend: {
-          fontFamily: {
-            sans: ['"Manrope"', 'sans-serif'],
-            serif: ['"Playfair Display"', 'serif']
-          },
-          colors: {
-            brand: { dark: '#455169', cream: '#faefcf', gold: '#D4AF37' }
-          }
+          fontFamily: { sans: ['"Manrope"', 'sans-serif'], serif: ['"Playfair Display"', 'serif'] },
+          colors: { brand: { dark: '#455169', cream: '#faefcf', gold: '#D4AF37' } }
         }
       }
     }
@@ -96,7 +91,6 @@
   </footer>
 
   <script>
-    // ====== 0) DOM ======
     const inputEl = document.getElementById("verify-code");
     const btn = document.getElementById("verify-btn");
     const resultArea = document.getElementById("result-area");
@@ -109,6 +103,24 @@
       btn.disabled = isLoading;
       btn.classList.toggle("opacity-50", isLoading);
       btn.textContent = isLoading ? "Verifying..." : "Verify Now";
+    }
+
+    function splitKey(raw) {
+      const s = String(raw || "").trim();
+      if (!s) return { key: "", serial: "", token: "" };
+
+      // 允許兩種輸入：
+      // 1) 完整 key: OWL-2026A-000001.dd39eac4c6fc
+      // 2) 只輸入 token: dd39eac4c6fc
+      const lastDot = s.lastIndexOf(".");
+      if (lastDot === -1) {
+        return { key: s, serial: "", token: s };
+      }
+      return {
+        key: s,
+        serial: s.slice(0, lastDot),     // OWL-2026A-000001
+        token: s.slice(lastDot + 1)      // dd39eac4c6fc
+      };
     }
 
     function showResult({ ok, activated, message }) {
@@ -124,10 +136,9 @@
           msgEl.textContent = message || "This product has already been activated and registered to an account.";
         } else {
           msgEl.textContent = message || "This is a valid Owlnest product and has not been activated yet. Register it now to claim ownership.";
-
-          const key = inputEl.value.trim();
-          // ✅ 第二步：這裡要用 key，不要用 code
-          actLink.href = `activate.html?key=${encodeURIComponent(key)}`;
+          const rawKey = inputEl.value.trim();
+          // ✅ activate 走完整 key（含 serial.token）
+          actLink.href = `activate.html?key=${encodeURIComponent(rawKey)}`;
           actLink.classList.remove("hidden");
         }
       } else {
@@ -138,21 +149,18 @@
       }
     }
 
-    // ====== 1) URL auto-fill: ?key=xxxxx ======
+    // URL 自動填入：?key=
     (function autoFillFromUrl() {
       const params = new URLSearchParams(window.location.search);
-      const urlKey = params.get("key"); // ✅ 用 key
-      if (urlKey) {
-        inputEl.value = urlKey;
-        // 如果你想「一進來就自動驗證」，把下面這行取消註解
-        // verifyProduct();
-      }
+      const urlKey = params.get("key");
+      if (urlKey) inputEl.value = urlKey;
     })();
 
-    // ====== 2) Verify ======
     async function verifyProduct() {
-      const key = inputEl.value.trim();
-      if (!key) return;
+      const raw = inputEl.value.trim();
+      if (!raw) return;
+
+      const { key, token } = splitKey(raw);
 
       setLoading(true);
       resultArea.classList.add("hidden");
@@ -162,42 +170,34 @@
         const res = await fetch("/.netlify/functions/verify", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          // 兼容：同時送 key + token（有些舊版 function 只吃 token）
-          body: JSON.stringify({ key, token: key })
+          // ✅ 重點：送 token（點號後面那段）去比對
+          body: JSON.stringify({ token, key })
         });
 
+        // 兼容：有時候 function 不一定回 JSON（先拿 text 再 try parse）
+        const rawText = await res.text();
         let data = {};
-        try { data = await res.json(); } catch (_) {}
+        try { data = JSON.parse(rawText); } catch (_) { data = { message: rawText }; }
 
-        // 兼容不同回傳格式
         const valid = !!(data.valid ?? data.ok ?? data.isValid);
         const activated = !!(data.activated ?? data.isActivated);
+        const message = data.message || data.msg || (data.error ? String(data.error) : "");
 
-        // 兼容訊息欄位
-        const message =
-          data.message ||
-          data.msg ||
-          (data.error ? String(data.error) : "");
+        if (!res.ok && !message) {
+          showResult({ ok: false, activated: false, message: `Verify API error (${res.status})` });
+          return;
+        }
 
-        showResult({
-          ok: valid,
-          activated,
-          message: message || undefined
-        });
+        showResult({ ok: valid, activated, message: message || undefined });
 
       } catch (err) {
         console.error(err);
-        showResult({
-          ok: false,
-          activated: false,
-          message: "Service unavailable. Please try again later."
-        });
+        showResult({ ok: false, activated: false, message: "Service unavailable. Please try again later." });
       } finally {
         setLoading(false);
       }
     }
 
-    // button / enter key
     btn.addEventListener("click", verifyProduct);
     inputEl.addEventListener("keydown", (e) => {
       if (e.key === "Enter") verifyProduct();
@@ -205,4 +205,3 @@
   </script>
 </body>
 </html>
-
