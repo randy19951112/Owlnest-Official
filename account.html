@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account | Owlnest</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['"Manrope"', 'sans-serif'], serif: ['"Playfair Display"', 'serif'] },
+                    colors: { brand: { dark: '#455169', cream: '#faefcf', gold: '#D4AF37' } }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-brand-dark text-white min-h-screen font-sans flex flex-col">
+
+    <header class="py-6 px-8 border-b border-white/5 bg-brand-dark/50 backdrop-blur-md flex justify-between items-center sticky top-0 z-50">
+        <div class="flex items-center gap-3">
+             <img src="logo2.png" alt="Owlnest Logo" class="h-8 w-auto brightness-200 contrast-100">
+             <span class="font-serif text-xl tracking-widest font-bold">Owlnest</span>
+        </div>
+        <button id="logout-btn" class="text-xs uppercase tracking-widest hover:text-brand-gold transition border-b border-transparent hover:border-brand-gold pb-0.5">
+            Sign Out
+        </button>
+    </header>
+
+    <main class="flex-grow max-w-5xl mx-auto p-6 md:p-12 w-full">
+        <h1 class="text-3xl md:text-4xl font-serif text-brand-gold mb-8">My Account</h1>
+
+        <div class="grid md:grid-cols-3 gap-8">
+            <!-- Profile Card -->
+            <div class="md:col-span-1 space-y-8">
+                <div class="bg-white/5 border border-white/10 p-6 rounded-lg backdrop-blur-sm">
+                    <h2 class="text-xs font-bold text-brand-gold uppercase tracking-[0.2em] mb-4">Profile</h2>
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-full bg-brand-gold/20 flex items-center justify-center text-brand-gold">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="overflow-hidden">
+                            <p class="text-xs text-gray-400">Signed in as</p>
+                            <p id="user-email" class="font-medium text-sm truncate">Loading...</p>
+                        </div>
+                    </div>
+                    <a href="verify.html" class="block w-full text-center bg-white/10 hover:bg-brand-gold hover:text-brand-dark text-white py-3 rounded transition duration-300 text-sm font-bold uppercase tracking-wide border border-white/10">
+                        <i class="fas fa-qrcode mr-2"></i> Verify Product
+                    </a>
+                </div>
+                
+                <div class="bg-brand-gold/10 border border-brand-gold/20 p-6 rounded-lg">
+                    <h3 class="text-brand-gold font-serif text-lg mb-2">Need Help?</h3>
+                    <p class="text-xs text-gray-400 mb-4 leading-relaxed">Contact our support team for warranty or usage questions.</p>
+                    <a href="mailto:owlnestpq2025@gmail.com" class="text-sm underline hover:text-brand-gold">Contact Support</a>
+                </div>
+            </div>
+
+            <!-- Products List -->
+            <div class="md:col-span-2 space-y-8">
+                <div class="bg-white/5 border border-white/10 p-8 rounded-lg backdrop-blur-sm min-h-[200px]">
+                    <h2 class="text-xs font-bold text-brand-gold uppercase tracking-[0.2em] mb-6 border-b border-white/10 pb-4">My Products</h2>
+                    <ul id="product-list" class="space-y-4">
+                        <li class="text-center py-8 text-gray-500 font-light text-sm italic">Loading products...</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="py-8 text-center text-xs text-gray-500 border-t border-white/5 mt-auto">
+        <div class="flex justify-center items-center gap-6 mb-4">
+            <a href="http://facebook.com/owlnestofficial" target="_blank" class="hover:text-brand-gold transition"><i class="fab fa-facebook-f text-lg"></i></a>
+            <a href="http://www.instagram.com/owlnestpq_chilllife" target="_blank" class="hover:text-brand-gold transition"><i class="fab fa-instagram text-lg"></i></a>
+            <a href="http://x.com/owlnestpq_2025" target="_blank" class="hover:text-brand-gold transition flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-current" viewBox="0 0 512 512"><path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z"/></svg>
+            </a>
+        </div>
+        <p>&copy; 2025 Owlnest Official. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        const supabaseUrl = 'https://khoiplqugajmybmultzs.supabase.co';
+        const supabaseKey = 'sb_publishable_ic3b9TeYt7SuXxLIhLuyyA_FWHYVb0Z';
+        const supabase = (supabaseUrl !== 'YOUR_SUPABASE_URL') ? supabase.createClient(supabaseUrl, supabaseKey) : null;
+
+        async function init() {
+            if (!supabase) return;
+            // 檢查是否登入
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) { window.location.href = 'login.html'; return; }
+            document.getElementById('user-email').textContent = session.user.email;
+
+            // 登出
+            document.getElementById('logout-btn').addEventListener('click', async () => {
+                await supabase.auth.signOut();
+                window.location.href = 'index.html';
+            });
+
+            // 讀取已綁定產品
+            const { data: activations, error: actError } = await supabase.from('activations').select('*').order('activated_at', { ascending: false });
+            const prodList = document.getElementById('product-list');
+            prodList.innerHTML = '';
+            
+            if (actError || !activations || activations.length === 0) {
+                prodList.innerHTML = '<li class="text-center py-8 text-gray-500 font-light text-sm italic">No products registered yet.</li>';
+            } else {
+                activations.forEach(item => {
+                    const date = new Date(item.activated_at).toLocaleDateString();
+                    prodList.innerHTML += `
+                        <li class="flex items-center justify-between bg-black/20 p-4 rounded border border-white/5 hover:border-brand-gold/30 transition">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded bg-brand-gold/20 flex items-center justify-center text-brand-gold"><i class="fas fa-check-circle"></i></div>
+                                <div><p class="font-mono text-brand-gold tracking-wide text-sm">${item.payload}</p><p class="text-xs text-gray-500">OwlNest Sleep Lamp</p></div>
+                            </div>
+                            <span class="text-xs text-gray-400 bg-white/5 px-2 py-1 rounded">${date}</span>
+                        </li>`;
+                });
+            }
+        }
+        init();
+    </script>
+</body>
+</html>

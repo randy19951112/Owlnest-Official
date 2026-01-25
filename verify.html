@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Verify | Owlnest</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['"Manrope"', 'sans-serif'], serif: ['"Playfair Display"', 'serif'] },
+                    colors: { brand: { dark: '#455169', cream: '#faefcf', gold: '#D4AF37' } }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-brand-dark text-white min-h-screen flex flex-col font-sans relative">
+    
+    <header class="py-6 px-8 flex justify-center border-b border-white/5 relative z-10 bg-brand-dark/50 backdrop-blur-md">
+        <a href="index.html" class="flex items-center gap-3 hover:opacity-80 transition">
+             <img src="logo2.png" alt="Owlnest Logo" class="h-10 w-auto brightness-200 contrast-100">
+             <span class="font-serif text-2xl tracking-widest font-bold">Owlnest</span>
+        </a>
+    </header>
+
+    <main class="flex-grow flex items-center justify-center p-4 relative z-10">
+        <div class="bg-white/5 border border-white/10 p-10 rounded-lg backdrop-blur-xl shadow-2xl w-full max-w-lg text-center">
+            
+            <div class="w-16 h-16 bg-brand-gold rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-brand-gold/20">
+                <i class="fas fa-shield-alt text-brand-dark text-3xl"></i>
+            </div>
+
+            <h2 class="text-3xl font-serif mb-2 text-brand-gold">Authenticity Check</h2>
+            <p class="mb-8 text-sm text-gray-400 font-light">Verify your Owlnest product by entering the code or scanning the QR.</p>
+
+            <input type="text" id="verify-code" placeholder="ENTER PRODUCT TOKEN" 
+                class="w-full p-4 rounded bg-brand-dark/50 border border-brand-gold/30 text-white placeholder-gray-500 focus:outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold transition text-center tracking-widest font-mono mb-6">
+            
+            <button id="verify-btn" onclick="verifyProduct()"
+                class="w-full bg-brand-cream text-brand-dark font-bold py-4 rounded hover:bg-white transition duration-300 uppercase tracking-widest text-sm shadow-lg mb-6">
+                Verify Now
+            </button>
+
+            <!-- Result Area -->
+            <div id="result-area" class="hidden text-left bg-black/30 rounded p-6 border border-white/5 animate-fade-in">
+                <div class="flex items-start gap-4">
+                    <div id="status-icon" class="text-2xl mt-1"></div>
+                    <div>
+                        <p id="result-status" class="font-bold text-lg mb-1"></p>
+                        <p id="result-msg" class="text-sm text-gray-400 mb-4 leading-relaxed"></p>
+                    </div>
+                </div>
+                
+                <a id="activate-link" href="#" class="block text-center bg-brand-gold text-brand-dark py-3 rounded font-bold text-sm uppercase tracking-wide hover:bg-white transition hidden mt-2">
+                    Activate & Register
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="py-8 text-center text-xs text-gray-500 relative z-10">
+        <div class="flex justify-center items-center gap-6 mb-4">
+            <a href="http://facebook.com/owlnestofficial" target="_blank" class="hover:text-brand-gold transition"><i class="fab fa-facebook-f text-lg"></i></a>
+            <a href="http://www.instagram.com/owlnestpq_chilllife" target="_blank" class="hover:text-brand-gold transition"><i class="fab fa-instagram text-lg"></i></a>
+            <a href="http://x.com/owlnestpq_2025" target="_blank" class="hover:text-brand-gold transition flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-current" viewBox="0 0 512 512"><path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z"/></svg>
+            </a>
+        </div>
+        <a href="index.html" class="hover:text-brand-gold transition border-b border-transparent hover:border-brand-gold pb-0.5">Back to Home</a>
+        <p class="mt-4">&copy; 2025 Owlnest Official. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        // 自動讀取 URL query param
+        const params = new URLSearchParams(window.location.search);
+        const urlCode = params.get('code');
+        if (urlCode) {
+            document.getElementById('verify-code').value = urlCode;
+        }
+
+        async function verifyProduct() {
+            const code = document.getElementById('verify-code').value.trim();
+            const btn = document.getElementById('verify-btn');
+            const resultArea = document.getElementById('result-area');
+            const statusEl = document.getElementById('result-status');
+            const msgEl = document.getElementById('result-msg');
+            const iconEl = document.getElementById('status-icon');
+            const actLink = document.getElementById('activate-link');
+
+            if (!code) return;
+
+            btn.disabled = true; btn.textContent = 'Verifying...'; btn.classList.add('opacity-50');
+            resultArea.classList.add('hidden'); actLink.classList.add('hidden');
+
+            try {
+                // 呼叫 Netlify Function
+                const response = await fetch('/.netlify/functions/verify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token: code })
+                });
+                
+                const data = await response.json();
+                resultArea.classList.remove('hidden');
+                
+                if (data.valid) {
+                    statusEl.textContent = 'Genuine Product';
+                    statusEl.className = 'font-bold text-lg mb-1 text-green-400';
+                    iconEl.innerHTML = '<i class="fas fa-check-circle text-green-400"></i>';
+                    
+                    if (data.activated) {
+                        msgEl.textContent = 'This product has already been activated and registered to an account.';
+                    } else {
+                        msgEl.textContent = 'This is a valid Owlnest product and has not been activated yet. Register it now to claim ownership.';
+                        actLink.href = `activate.html?code=${encodeURIComponent(code)}`;
+                        actLink.classList.remove('hidden');
+                    }
+                } else {
+                    statusEl.textContent = 'Verification Failed';
+                    statusEl.className = 'font-bold text-lg mb-1 text-red-400';
+                    iconEl.innerHTML = '<i class="fas fa-times-circle text-red-400"></i>';
+                    msgEl.textContent = 'We could not verify this code. It may be invalid, counterfeit, or revoked.';
+                }
+
+            } catch (err) {
+                console.error(err);
+                alert('Service unavailable. Please try again later.');
+            } finally {
+                btn.disabled = false; btn.textContent = 'Verify Now'; btn.classList.remove('opacity-50');
+            }
+        }
+    </script>
+</body>
+</html>
