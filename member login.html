@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Member Login | Owlnest</title>
-  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="icon" type="image/png" href="logo.png" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
@@ -43,6 +43,7 @@
           <input type="email" id="email" placeholder="name@example.com" required
             class="w-full p-4 rounded bg-brand-dark/50 border border-brand-gold/30 text-white placeholder-gray-500 focus:outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold transition text-center tracking-wide">
         </div>
+
         <button type="submit" id="submit-btn"
           class="w-full bg-brand-gold text-brand-dark font-bold py-4 rounded hover:bg-white transition duration-300 uppercase tracking-widest text-sm shadow-lg">
           Send Magic Link
@@ -52,7 +53,9 @@
       <div id="message" class="mt-6 text-center text-sm hidden p-3 rounded bg-black/20"></div>
 
       <div class="mt-8 text-center">
-        <a href="index.html" class="text-xs text-gray-500 hover:text-brand-gold transition border-b border-transparent hover:border-brand-gold pb-0.5">Back to Home</a>
+        <a href="index.html" class="text-xs text-gray-500 hover:text-brand-gold transition border-b border-transparent hover:border-brand-gold pb-0.5">
+          Back to Home
+        </a>
       </div>
     </div>
   </main>
@@ -62,66 +65,73 @@
       <a href="http://facebook.com/owlnestofficial" target="_blank" class="hover:text-brand-gold transition"><i class="fab fa-facebook-f text-lg"></i></a>
       <a href="http://www.instagram.com/owlnestpq_chilllife" target="_blank" class="hover:text-brand-gold transition"><i class="fab fa-instagram text-lg"></i></a>
       <a href="http://x.com/owlnestpq_2025" target="_blank" class="hover:text-brand-gold transition flex items-center justify-center">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-current" viewBox="0 0 512 512"><path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-current" viewBox="0 0 512 512">
+          <path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z"/>
+        </svg>
       </a>
     </div>
     <p>&copy; 2025 Owlnest Official. All Rights Reserved.</p>
   </footer>
 
   <script>
-    // ✅ 你的 Supabase Project URL & Publishable key（可公開）
-    const SUPABASE_URL = "https://khoiplqugajmybmultzs.supabase.co";
-    const SUPABASE_ANON_KEY = "sb_publishable_ic3b9TeYt7SuXxLIhLuyvA_FWHYVb0Z";
+    // ✅ 你的 Supabase Project URL + Publishable Key（前端用這個沒問題）
+    const supabaseUrl = 'https://khoiplqugajmybmultzs.supabase.co';
+    const supabaseKey = 'sb_publishable_ic3b9TeYt7SuXxLIhLuyyA_FWHYVboZ';
 
-    // ✅ 正確建立 client（不要叫 supabase 當變數名，會跟全域衝突）
-    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const sb = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-    // 讀取 next 參數（例如 activate.html 沒登入被導到 login.html?next=activate.html?...）
-    const params = new URLSearchParams(window.location.search);
-    const next = params.get("next");
-    if (next) {
-      localStorage.setItem("owlnest_next", next);
-    }
+    // 如果已登入，直接進 account
+    (async function autoRedirectIfLoggedIn(){
+      const { data: { session } } = await sb.auth.getSession();
+      if (session) window.location.href = 'account.html';
+    })();
 
-    document.getElementById("login-form").addEventListener("submit", async (e) => {
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      const btn = document.getElementById("submit-btn");
-      const msg = document.getElementById("message");
-      const email = document.getElementById("email").value.trim();
+      const btn = document.getElementById('submit-btn');
+      const msg = document.getElementById('message');
+      const email = document.getElementById('email').value.trim();
+
+      msg.classList.add('hidden');
+      msg.className = 'mt-6 text-center text-sm hidden p-3 rounded bg-black/20';
 
       if (!email) return;
 
       btn.disabled = true;
-      btn.textContent = "Sending...";
-      btn.classList.add("opacity-50");
+      btn.textContent = 'Sending...';
+      btn.classList.add('opacity-50');
 
-      msg.classList.add("hidden");
-      msg.className = "mt-6 text-center text-sm hidden p-3 rounded bg-black/20";
+      try {
+        const { error } = await sb.auth.signInWithOtp({
+          email,
+          options: {
+            emailRedirectTo: `${window.location.origin}/account.html`
+          }
+        });
 
-      // ✅ 登入成功後回到 account.html（並把 next 一起帶回去）
-      const storedNext = localStorage.getItem("owlnest_next") || "";
-      const redirectTo = storedNext
-        ? `${window.location.origin}/account.html?next=${encodeURIComponent(storedNext)}`
-        : `${window.location.origin}/account.html`;
+        msg.classList.remove('hidden');
 
-      const { error } = await sb.auth.signInWithOtp({
-        email,
-        options: { emailRedirectTo: redirectTo }
-      });
+        if (error) {
+          msg.textContent = 'Error: ' + error.message;
+          msg.classList.add('text-red-300', 'border', 'border-red-500/30', 'bg-red-500/10');
+          btn.disabled = false;
+          btn.textContent = 'Send Magic Link';
+          btn.classList.remove('opacity-50');
+          return;
+        }
 
-      msg.classList.remove("hidden");
-
-      if (error) {
-        msg.textContent = "Error: " + error.message;
-        msg.classList.add("text-red-300", "border", "border-red-500/30");
-        btn.disabled = false;
-        btn.textContent = "Send Magic Link";
-        btn.classList.remove("opacity-50");
-      } else {
         msg.innerHTML = '<i class="fas fa-paper-plane mr-2"></i>Link sent! Check your inbox.';
-        msg.className = "mt-6 text-center text-sm p-3 rounded bg-green-500/20 text-green-200 border border-green-500/30";
-        btn.classList.add("hidden");
+        msg.className = 'mt-6 text-center text-sm p-3 rounded bg-green-500/20 text-green-300 border border-green-500/30';
+        btn.classList.add('hidden');
+
+      } catch (err) {
+        msg.classList.remove('hidden');
+        msg.textContent = 'Unexpected error. Please try again.';
+        msg.classList.add('text-red-300');
+        btn.disabled = false;
+        btn.textContent = 'Send Magic Link';
+        btn.classList.remove('opacity-50');
       }
     });
   </script>
