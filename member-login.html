@@ -73,67 +73,65 @@
     <p>&copy; 2025 Owlnest Official. All Rights Reserved.</p>
   </footer>
 
-  <script>
-    // ✅ 你的 Supabase Project URL + Publishable Key（前端用這個沒問題）
-    const supabaseUrl = 'https://khoiplqugajmybmultzs.supabase.co';
-    const supabaseKey = 'sb_publishable_ic3b9TeYt7SuXxLIhLuyyA_FWHYVboZ';
+ <script>
+  // 1) 貼上你的 Project URL（長得像 https://xxxx.supabase.co）
+  const SUPABASE_URL = 'https://khoiplqugajmybmultzs.supabase.co';
 
-    const sb = window.supabase.createClient(supabaseUrl, supabaseKey);
+  // 2) 一定要用「Legacy anon key」（開頭 eyJ...）
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtob2lwbHF1Z2FqbXlibXVsdHpzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkzMDMxMjYsImV4cCI6MjA4NDg3OTEyNn0.m1X9gt_RwlXx9k0rtx_DbI8JNJ4it4bhlYKhrkz50lQ';
 
-    // 如果已登入，直接進 account
-    (async function autoRedirectIfLoggedIn(){
-      const { data: { session } } = await sb.auth.getSession();
-      if (session) window.location.href = 'account.html';
-    })();
+  // 3) 建立 Supabase client
+  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    document.getElementById('login-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
+  // 4) 綁定表單
+  document.getElementById('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-      const btn = document.getElementById('submit-btn');
-      const msg = document.getElementById('message');
-      const email = document.getElementById('email').value.trim();
+    const btn = document.getElementById('submit-btn');
+    const msg = document.getElementById('message');
+    const email = document.getElementById('email').value.trim();
 
-      msg.classList.add('hidden');
-      msg.className = 'mt-6 text-center text-sm hidden p-3 rounded bg-black/20';
+    msg.classList.add('hidden');
+    msg.textContent = '';
+    msg.className = 'mt-6 text-center text-sm hidden p-3 rounded bg-black/20';
 
-      if (!email) return;
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+    btn.classList.add('opacity-50');
 
-      btn.disabled = true;
-      btn.textContent = 'Sending...';
-      btn.classList.add('opacity-50');
-
-      try {
-        const { error } = await sb.auth.signInWithOtp({
-          email,
-          options: {
-            emailRedirectTo: `${window.location.origin}/account.html`
-          }
-        });
-
-        msg.classList.remove('hidden');
-
-        if (error) {
-          msg.textContent = 'Error: ' + error.message;
-          msg.classList.add('text-red-300', 'border', 'border-red-500/30', 'bg-red-500/10');
-          btn.disabled = false;
-          btn.textContent = 'Send Magic Link';
-          btn.classList.remove('opacity-50');
-          return;
+    try {
+      const { error } = await sb.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo: window.location.origin + '/account.html'
         }
+      });
 
-        msg.innerHTML = '<i class="fas fa-paper-plane mr-2"></i>Link sent! Check your inbox.';
-        msg.className = 'mt-6 text-center text-sm p-3 rounded bg-green-500/20 text-green-300 border border-green-500/30';
-        btn.classList.add('hidden');
+      msg.classList.remove('hidden');
 
-      } catch (err) {
-        msg.classList.remove('hidden');
-        msg.textContent = 'Unexpected error. Please try again.';
-        msg.classList.add('text-red-300');
+      if (error) {
+        msg.textContent = 'Error: ' + error.message;
+        msg.classList.add('text-red-400');
         btn.disabled = false;
         btn.textContent = 'Send Magic Link';
         btn.classList.remove('opacity-50');
+        return;
       }
-    });
-  </script>
+
+      msg.innerHTML = '<i class="fas fa-paper-plane mr-2"></i>Link sent! Check your inbox.';
+      msg.className = 'mt-6 text-center text-sm p-3 rounded bg-green-500/20 text-green-300 border border-green-500/30';
+      btn.classList.add('hidden');
+
+    } catch (err) {
+      msg.classList.remove('hidden');
+      msg.textContent = 'Error: ' + (err?.message || 'Unknown error');
+      msg.classList.add('text-red-400');
+      btn.disabled = false;
+      btn.textContent = 'Send Magic Link';
+      btn.classList.remove('opacity-50');
+    }
+  });
+</script>
 </body>
 </html>
+
