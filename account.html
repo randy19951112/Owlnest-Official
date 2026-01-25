@@ -205,7 +205,12 @@
     async function ensureSessionOrRedirect() {
         await handleEmailRedirectSession();
         const { data: { session } } = await sb.auth.getSession();
-        if (!session) { sessionStorage.setItem("redirect_after_login", window.location.href); window.location.href = "login.html"; return null; }
+        if (!session) { 
+            sessionStorage.setItem("redirect_after_login", window.location.href); 
+            // [修正] 重導向至 member-login.html
+            window.location.href = "member-login.html"; 
+            return null; 
+        }
         return session;
     }
 
@@ -248,6 +253,7 @@
         const emailEl = $("user-email"); if (emailEl) emailEl.textContent = session.user.email || "(no email)";
         
         const logoutHandler = async () => { await sb.auth.signOut(); sessionStorage.removeItem("redirect_after_login"); window.location.href = "index.html"; };
+        if($("logout-btn")) $("logout-btn").addEventListener("click", logoutHandler);
         if($("logout-btn-desktop")) $("logout-btn-desktop").addEventListener("click", logoutHandler);
         if($("logout-btn-mobile")) $("logout-btn-mobile").addEventListener("click", logoutHandler);
 
