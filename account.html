@@ -84,51 +84,136 @@
         <p>&copy; 2025 Owlnest Official. All Rights Reserved.</p>
     </footer>
 
-    <script>
-        const supabaseUrl = 'https://khoiplqugajmybmultzs.supabase.co';
-        const supabaseKey = 'sb_publishable_ic3b9TeYt7SuXxLIhLuyyA_FWHYVb0Z';
-        const supabase = (supabaseUrl !== 'YOUR_SUPABASE_URL') ? supabase.createClient(supabaseUrl, supabaseKey) : null;
+   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  // 1) 你的 Supabase 設定（你已經換好了就保留）
+  const SUPABASE_URL = "YOUR_SUPABASE_URL";
+  const SUPABASE_KEY = "YOUR_SUPABASE_PUBLISHABLE_KEY";
 
-        async function init() {
-            if (!supabase) return;
-            // 檢查是否登入
-            const { data: { session } } = await supabase.auth.getSession();
-            if (!session) {
-  window.location.href = 'member-login.html';
-  return;
-}
+  // 2) 正確建立 client：用 window.supabase，並且變數不要叫 supabase
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+    },
+  });
 
-            document.getElementById('user-email').textContent = session.user.email;
+  function $(id) { return document.getElementById(id); }
 
-            // 登出
-            document.getElementById('logout-btn').addEventListener('click', async () => {
-                await supabase.auth.signOut();
-                window.location.href = 'index.html';
-            });
+  async function ensureSession() {
+    // 有些 magic link 會帶 ?code=...（保險起見處理）
+    try {
+      const url = new URL(window.location.href);
+      if (url.searchParams.get("code")) {
+        await sb.auth.exchangeCodeForSession(window.location.href);
+        url.searchParams.delete("code");
+        window.history.replaceState({}, document.title, url.toString());
+      }
+    } catch (e) {
+      // 忽略即可
+    }
 
-            // 讀取已綁定產品
-            const { data: activations, error: actError } = await supabase.from('activations').select('*').order('activated_at', { ascending: false });
-            const prodList = document.getElementById('product-list');
-            prodList.innerHTML = '';
-            
-            if (actError || !activations || activations.length === 0) {
-                prodList.innerHTML = '<li class="text-center py-8 text-gray-500 font-light text-sm italic">No products registered yet.</li>';
-            } else {
-                activations.forEach(item => {
-                    const date = new Date(item.activated_at).toLocaleDateString();
-                    prodList.innerHTML += `
-                        <li class="flex items-center justify-between bg-black/20 p-4 rounded border border-white/5 hover:border-brand-gold/30 transition">
-                            <div class="flex items-center gap-4">
-                                <div class="w-10 h-10 rounded bg-brand-gold/20 flex items-center justify-center text-brand-gold"><i class="fas fa-check-circle"></i></div>
-                                <div><p class="font-mono text-brand-gold tracking-wide text-sm">${item.payload}</p><p class="text-xs text-gray-500">OwlNest Sleep Lamp</p></div>
-                            </div>
-                            <span class="text-xs text-gray-400 bg-white/5 px-2 py-1 rounded">${date}</span>
-                        </li>`;
-                });
-            }
-        }
-        init();
-    </script>
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) {
+      window.location.href = "member-login.html";
+      return null;
+    }
+    return session;
+  }
+
+  async function loadActivations() {
+    const listEl = $("product-list");
+    if (!listEl) return;
+
+    listEl.innerHTML = `<li class="text-center opacity-60 py-4">Loading products...</li>`;
+
+    try {
+      const { data, error } = await sb
+        .from("activations")
+        .select("*")
+        .order("activated_at", { ascending: false });
+
+      if (error) throw error;
+
+      if (!data || data.length === 0) {
+        listEl.innerHTML = `<li class="text-center opacity-60 py-4">尚無綁定產品</li>`;
+        return;
+      }
+
+      listEl.innerHTML = "";
+      data.forEach((item) => {
+        const d = new Date(item.activated_at).toLocaleDateString();
+        listEl.innerHTML += `
+          <li class="flex justify-between bg-black/20 p-3 rounded mb-2">
+            <span class="font-mono text-yellow-300">${item.payload}</span>
+            <span class="text-xs opacity-70 pt-1">${d}</span>
+          </li>`;
+      });
+    } catch (e) {
+      listEl.innerHTML = `<li class="text-center text-red-300 py-4">讀取產品失敗：${e.message || e}</li>`;
+    }
+  }
+
+  async function loadOrders() {
+    const tbody = $("order-list");
+    if (!tbody) return;
+
+    tbody.innerHTML = `<tr><td colspan="3" class="text-center py-4 opacity-60">Loading orders...</td></tr>`;
+
+    try {
+      const { data, error } = await sb
+        .from("orders")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      if (!data || data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" class="text-center py-4 opacity-60">尚無訂單</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = "";
+      data.forEach((o) => {
+        const d = new Date(o.created_at).toLocaleDateString();
+        tbody.innerHTML += `
+          <tr class="border-b border-white/10 last:border-0">
+            <td class="py-3 font-mono">${o.id}</td>
+            <td class="py-3">${d}</td>
+            <td class="py-3 text-yellow-300">$${o.total}</td>
+          </tr>`;
+      });
+    } catch (e) {
+      tbody.innerHTML = `<tr><td colspan="3" class="text-center py-4 text-red-300">讀取訂單失敗：${e.message || e}</td></tr>`;
+    }
+  }
+
+  async function init() {
+    const session = await ensureSession();
+    if (!session) return;
+
+    // 顯示 email
+    const emailEl = $("user-email");
+    if (emailEl) emailEl.textContent = session.user.email || "(no email)";
+
+    // 登出按鈕
+    const logoutBtn = $("logout-btn");
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", async () => {
+        await sb.auth.signOut();
+        window.location.href = "index.html";
+      });
+    }
+
+    // 載入資料
+    await loadActivations();
+    await loadOrders();
+  }
+
+  init();
+</script>
 </body>
 
 </html>
+
