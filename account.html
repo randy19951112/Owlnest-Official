@@ -93,7 +93,11 @@
             if (!supabase) return;
             // 檢查是否登入
             const { data: { session } } = await supabase.auth.getSession();
-            if (!session) { window.location.href = 'login.html'; return; }
+            if (!session) {
+  window.location.href = 'member-login.html';
+  return;
+}
+
             document.getElementById('user-email').textContent = session.user.email;
 
             // 登出
@@ -126,4 +130,5 @@
         init();
     </script>
 </body>
+
 </html>
