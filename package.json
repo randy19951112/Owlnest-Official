@@ -1,0 +1,11 @@
+{
+  "name": "owlnestofficial-site",
+  "private": true,
+  "version": "1.0.0",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.0"
+  },
+  "engines": {
+    "node": "18"
+  }
+}
