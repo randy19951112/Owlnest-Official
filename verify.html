@@ -78,7 +78,7 @@
     <script>
         // 自動讀取 URL query param
         const params = new URLSearchParams(window.location.search);
-        const urlCode = params.get('code');
+        const key = params.get("key"); // ✅ 改成 key
         if (urlCode) {
             document.getElementById('verify-code').value = urlCode;
         }
@@ -136,4 +136,5 @@
         }
     </script>
 </body>
+
 </html>
