@@ -1,129 +1,94 @@
-<script>
-  // ✅ 1) 填你自己的 Supabase 專案資訊（用 Publishable key，不要用 secret）
-  const SUPABASE_URL = "https://khoiplqugajmybmultzs.supabase.co";
-  const SUPABASE_KEY = "sb_publishable_ic3b9TeYt7SuXxLIhLuyvA_FWHYVb0Z";
+// netlify/functions/activate.js
+const { createClient } = require("@supabase/supabase-js");
 
-  // ✅ 2) 建立 Supabase client（不要命名成 supabase，避免覆蓋 window.supabase）
-  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-      detectSessionInUrl: true
-    }
-  });
+const supabaseAdmin = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
 
-  // ✅ 3) 你的 Netlify function endpoint（看你檔名是 active.js 還是 activate.js）
-  // - 如果檔案是 netlify/functions/active.js → 用 "/.netlify/functions/active"
-  // - 如果檔案是 netlify/functions/activate.js → 用 "/.netlify/functions/activate"
-  const ACTIVATE_ENDPOINT = "/.netlify/functions/activate";
+exports.handler = async (event) => {
+  const headers = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    "Content-Type": "application/json",
+  };
 
-  let sessionToken = null;
-
-  function $(id) { return document.getElementById(id); }
-
-  async function init() {
-    try {
-      // 顯示載入提示
-      const loading = $("loading-auth");
-      const main = $("main-content");
-      const msg = $("status-msg");
-      const btn = $("activate-btn");
-
-      // 讀取 URL 的 code
-      const params = new URLSearchParams(window.location.search);
-      const code = params.get("code");
-
-      // 沒 code 直接顯示錯誤
-      if (!code) {
-        if (loading) loading.classList.add("hidden");
-        if (main) main.classList.remove("hidden");
-        if ($("activate-code")) $("activate-code").value = "";
-        if (msg) {
-          msg.textContent = "Invalid Link (Missing Code)";
-          msg.className = "text-red-400 font-bold";
-        }
-        if (btn) btn.disabled = true;
-        return;
-      }
-
-      // 先把 code 放到框裡
-      if ($("activate-code")) $("activate-code").value = code;
-
-      // 檢查 session
-      const { data: { session }, error } = await sb.auth.getSession();
-      if (error) console.error(error);
-
-      if (!session) {
-        // 沒登入：記住要回來的網址，再導去 member-login.html
-        sessionStorage.setItem("redirect_after_login", window.location.href);
-        window.location.href = "member-login.html";
-        return;
-      }
-
-      sessionToken = session.access_token;
-
-      // 顯示登入者 email
-      if ($("user-email")) $("user-email").textContent = session.user.email || "";
-
-      // 顯示主內容
-      if (loading) loading.classList.add("hidden");
-      if (main) main.classList.remove("hidden");
-
-    } catch (e) {
-      console.error("init error:", e);
-      const loading = $("loading-auth");
-      if (loading) loading.textContent = "Script error. Please check console.";
-    }
+  if (event.httpMethod === "OPTIONS") {
+    return { statusCode: 200, headers, body: "" };
   }
 
-  async function activateProduct() {
-    const code = $("activate-code")?.value;
-    const btn = $("activate-btn");
-    const msg = $("status-msg");
+  if (event.httpMethod !== "POST") {
+    return { statusCode: 405, headers, body: JSON.stringify({ error: "Method Not Allowed" }) };
+  }
 
-    if (!code) return;
+  try {
+    // 1) 取出使用者 JWT
+    const authHeader = event.headers.authorization || event.headers.Authorization || "";
+    const jwt = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
+    if (!jwt) {
+      return { statusCode: 401, headers, body: JSON.stringify({ success: false, error: "unauthorized" }) };
+    }
 
-    btn.disabled = true;
-    btn.textContent = "Activating...";
-    msg.textContent = "";
+    // 2) 用 service role 驗證這個 JWT 是誰
+    const { data: userData, error: userErr } = await supabaseAdmin.auth.getUser(jwt);
+    const user = userData?.user;
 
-    try {
-      const response = await fetch(ACTIVATE_ENDPOINT, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${sessionToken}`
-        },
-        body: JSON.stringify({ token: code })
+    if (userErr || !user) {
+      return { statusCode: 401, headers, body: JSON.stringify({ success: false, error: "unauthorized" }) };
+    }
+
+    // 3) 讀取 key（相容 token）
+    let body = {};
+    try { body = JSON.parse(event.body || "{}"); } catch {}
+    const key = String(body.key || body.token || "").trim();
+
+    if (!key) {
+      return { statusCode: 200, headers, body: JSON.stringify({ success: false, error: "invalid_code" }) };
+    }
+
+    // 4) 檢查 product_keys 是否存在且 active（payload 就是完整 key）
+    const { data: pk, error: pkErr } = await supabaseAdmin
+      .from("product_keys")
+      .select("status")
+      .eq("payload", key)
+      .maybeSingle();
+
+    if (pkErr || !pk) {
+      return { statusCode: 200, headers, body: JSON.stringify({ success: false, error: "invalid_code" }) };
+    }
+    if (pk.status !== "active") {
+      return { statusCode: 200, headers, body: JSON.stringify({ success: false, error: "revoked" }) };
+    }
+
+    // 5) 是否已被啟用
+    const { data: act } = await supabaseAdmin
+      .from("activations")
+      .select("id")
+      .eq("payload", key)
+      .maybeSingle();
+
+    if (act) {
+      return { statusCode: 200, headers, body: JSON.stringify({ success: false, error: "already_activated" }) };
+    }
+
+    // 6) 寫入 activations
+    const { error: insErr } = await supabaseAdmin
+      .from("activations")
+      .insert({
+        user_id: user.id,     // profiles.id 同 uuid
+        payload: key
       });
 
-      const data = await response.json().catch(() => ({}));
-
-      if (response.ok && data.success) {
-        msg.textContent = "🎉 Success! Product registered to your account.";
-        msg.className = "text-green-400 font-bold";
-        btn.classList.add("hidden");
-      } else {
-        if (data.error === "already_activated") msg.textContent = "⚠️ Product already activated.";
-        else if (data.error === "revoked") msg.textContent = "❌ Product key revoked.";
-        else if (data.error === "invalid_code") msg.textContent = "❌ Invalid code.";
-        else msg.textContent = "❌ Activation Failed.";
-        msg.className = "text-red-400 font-bold";
-      }
-
-    } catch (err) {
-      msg.textContent = "Connection Error.";
-      msg.className = "text-red-400 font-bold";
-    } finally {
-      if (!msg.textContent.includes("Success")) {
-        btn.disabled = false;
-        btn.textContent = "Confirm & Activate";
-      }
+    if (insErr) {
+      // 若同時被重複啟用，可能會撞 unique constraint
+      return { statusCode: 200, headers, body: JSON.stringify({ success: false, error: "db_error", detail: insErr.message }) };
     }
+
+    return { statusCode: 200, headers, body: JSON.stringify({ success: true }) };
+
+  } catch (e) {
+    console.error("activate error", e);
+    return { statusCode: 200, headers, body: JSON.stringify({ success: false, error: "exception" }) };
   }
-
-  // ✅ 讓 HTML 的 onclick="activateProduct()" 找得到這個 function
-  window.activateProduct = activateProduct;
-
-  init();
-</script>
+};
