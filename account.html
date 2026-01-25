@@ -215,21 +215,64 @@
     }
 
     async function loadActivations() {
-        const listEl = $("product-list"); if (!listEl) return;
-        try {
-            const { data, error } = await sb.from("activations").select("payload, activated_at").order("activated_at", { ascending: false });
-            if (error) throw error;
-            if (!data || data.length === 0) {
-                listEl.innerHTML = `<li class="text-center py-10 bg-brand-cream/50 rounded border border-dashed border-brand-dark/10 flex flex-col items-center justify-center gap-3"><i class="fas fa-box-open text-3xl text-brand-dark/20"></i><span class="text-brand-dark/50 text-sm">No products registered yet.</span><a href="verify.html" class="text-brand-gold text-xs font-bold uppercase tracking-widest border-b border-brand-gold pb-0.5 hover:text-brand-dark hover:border-brand-dark transition">Register Now</a></li>`;
-                return;
-            }
-            listEl.innerHTML = "";
-            data.forEach((item) => {
-                const d = new Date(item.activated_at).toLocaleDateString();
-                listEl.innerHTML += `<li class="flex items-center justify-between bg-white p-5 rounded border border-brand-dark/5 hover:shadow-md transition group"><div class="flex items-center gap-4"><div class="w-10 h-10 rounded-full bg-brand-gold flex items-center justify-center text-brand-dark shadow-sm group-hover:scale-110 transition"><i class="fas fa-check"></i></div><div><p class="font-mono text-brand-dark font-bold tracking-wide text-sm">${item.payload}</p><p class="text-xs text-brand-dark/50">OwlNest Sleep Lamp</p></div></div><span class="text-xs text-brand-dark/60 bg-brand-cream px-3 py-1 rounded-full font-medium border border-brand-dark/5">${d}</span></li>`;
-            });
-        } catch (e) { listEl.innerHTML = `<li class="text-center text-red-400 py-6 text-sm">Unable to load products.</li>`; }
+  const listEl = $("product-list");
+  if (!listEl) return;
+
+  try {
+    // ✅ 只讀顯示用代號，不讀 payload（金鑰本體）
+    const { data, error } = await sb
+      .from("activations")
+      .select("display_token, activated_at")
+      .order("activated_at", { ascending: false });
+
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+      listEl.innerHTML = `
+        <li class="text-center py-10 bg-brand-cream/50 rounded border border-dashed border-brand-dark/10 flex flex-col items-center justify-center gap-3">
+          <i class="fas fa-box-open text-3xl text-brand-dark/20"></i>
+          <span class="text-brand-dark/50 text-sm">No products registered yet.</span>
+          <a href="verify.html" class="text-brand-gold text-xs font-bold uppercase tracking-widest border-b border-brand-gold pb-0.5 hover:text-brand-dark hover:border-brand-dark transition">
+            Register Now
+          </a>
+        </li>`;
+      return;
     }
+
+    listEl.innerHTML = "";
+
+    data.forEach((item) => {
+      const d = new Date(item.activated_at).toLocaleDateString();
+
+      // ✅ 顧客看到的代號（display_token）
+      // 舊資料如果沒有 display_token，就顯示「Registered」（不從 payload 推，避免洩漏）
+      const showCode = item.display_token ? String(item.display_token).trim() : "Registered";
+
+      listEl.innerHTML += `
+        <li class="flex items-center justify-between bg-white p-5 rounded border border-brand-dark/5 hover:shadow-md transition group">
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 rounded-full bg-brand-gold flex items-center justify-center text-brand-dark shadow-sm group-hover:scale-110 transition">
+              <i class="fas fa-check"></i>
+            </div>
+
+            <div>
+              <p class="text-brand-dark font-bold tracking-wide text-sm">Sleep Aid Lamp</p>
+              <p class="font-mono text-brand-dark/70 tracking-widest text-sm">${showCode}</p>
+            </div>
+          </div>
+
+          <span class="text-xs text-brand-dark/60 bg-brand-cream px-3 py-1 rounded-full font-medium border border-brand-dark/5">
+            ${d}
+          </span>
+        </li>`;
+    });
+
+  } catch (e) {
+    console.error(e);
+    listEl.innerHTML = `<li class="text-center text-red-400 py-6 text-sm">Unable to load products.</li>`;
+  }
+}
+
 
     async function loadOrders() {
         const tbody = $("order-list"); if (!tbody) return;
@@ -263,3 +306,4 @@
   </script>
 </body>
 </html>
+
