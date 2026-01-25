@@ -19,15 +19,25 @@ exports.handler = async (event) => {
   }
 
   if (event.httpMethod !== "POST") {
-    return { statusCode: 405, headers, body: JSON.stringify({ error: "Method Not Allowed" }) };
+    return {
+      statusCode: 405,
+      headers,
+      body: JSON.stringify({ success: false, error: "Method Not Allowed" }),
+    };
   }
 
   try {
     // 1) 取出使用者 JWT
-    const authHeader = event.headers.authorization || event.headers.Authorization || "";
+    const authHeader =
+      event.headers.authorization || event.headers.Authorization || "";
     const jwt = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
+
     if (!jwt) {
-      return { statusCode: 401, headers, body: JSON.stringify({ success: false, error: "unauthorized" }) };
+      return {
+        statusCode: 401,
+        headers,
+        body: JSON.stringify({ success: false, error: "unauthorized" }),
+      };
     }
 
     // 2) 用 service role 驗證這個 JWT 是誰
@@ -35,30 +45,50 @@ exports.handler = async (event) => {
     const user = userData?.user;
 
     if (userErr || !user) {
-      return { statusCode: 401, headers, body: JSON.stringify({ success: false, error: "unauthorized" }) };
+      return {
+        statusCode: 401,
+        headers,
+        body: JSON.stringify({ success: false, error: "unauthorized" }),
+      };
     }
 
-    // 3) 讀取 key（相容 token）
+    // 3) 讀取 key（相容 key / token）
     let body = {};
-    try { body = JSON.parse(event.body || "{}"); } catch {}
-    const key = String(body.key || body.token || "").trim();
+    try {
+      body = JSON.parse(event.body || "{}");
+    } catch {}
 
+    const key = String(body.key || body.token || "").trim();
     if (!key) {
-      return { statusCode: 200, headers, body: JSON.stringify({ success: false, error: "invalid_code" }) };
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({ success: false, error: "invalid_code" }),
+      };
     }
 
-    // 4) 檢查 product_keys 是否存在且 active（payload 就是完整 key）
+    // 4) 檢查 product_keys 是否存在且 active
+    // ✅ 這裡改成把 token 一起取回來
     const { data: pk, error: pkErr } = await supabaseAdmin
       .from("product_keys")
-      .select("status")
+      .select("status, token")
       .eq("payload", key)
       .maybeSingle();
 
     if (pkErr || !pk) {
-      return { statusCode: 200, headers, body: JSON.stringify({ success: false, error: "invalid_code" }) };
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({ success: false, error: "invalid_code" }),
+      };
     }
+
     if (pk.status !== "active") {
-      return { statusCode: 200, headers, body: JSON.stringify({ success: false, error: "revoked" }) };
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({ success: false, error: "revoked" }),
+      };
     }
 
     // 5) 是否已被啟用
@@ -69,26 +99,44 @@ exports.handler = async (event) => {
       .maybeSingle();
 
     if (act) {
-      return { statusCode: 200, headers, body: JSON.stringify({ success: false, error: "already_activated" }) };
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({ success: false, error: "already_activated" }),
+      };
     }
 
-    // 6) 寫入 activations
-    const { error: insErr } = await supabaseAdmin
-      .from("activations")
-      .insert({
-        user_id: user.id,     // profiles.id 同 uuid
-        payload: key
-      });
+    // 6) 寫入 activations（✅ 存 display_token，顧客端顯示用）
+    const displayToken =
+      (pk.token && String(pk.token).trim()) ||
+      // 保險：若 token 為空，退回用 payload 最後一段當顯示碼
+      String(key).split(".").pop();
+
+    const { error: insErr } = await supabaseAdmin.from("activations").insert({
+      user_id: user.id,
+      payload: key,
+      display_token: displayToken,
+    });
 
     if (insErr) {
-      // 若同時被重複啟用，可能會撞 unique constraint
-      return { statusCode: 200, headers, body: JSON.stringify({ success: false, error: "db_error", detail: insErr.message }) };
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({
+          success: false,
+          error: "db_error",
+          detail: insErr.message,
+        }),
+      };
     }
 
     return { statusCode: 200, headers, body: JSON.stringify({ success: true }) };
-
   } catch (e) {
     console.error("activate error", e);
-    return { statusCode: 200, headers, body: JSON.stringify({ success: false, error: "exception" }) };
+    return {
+      statusCode: 200,
+      headers,
+      body: JSON.stringify({ success: false, error: "exception" }),
+    };
   }
 };
