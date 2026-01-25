@@ -114,15 +114,9 @@
   <div hidden id="snipcart" data-api-key="MmY2MWUwYjMtODI0Mi00NDQ1LTk4YWUtNTQ0NDgwODY5OGM0NjM5MDIzNDE2ODU0NDczMzQz"></div>
 
   <script>
-    // ⚠️ 請務必更換為您的 Supabase 專案資訊 ⚠️
-    const SUPABASE_URL = 'https://khoiplqugajmybmultzs.supabase.co'; // e.g., https://xyz.supabase.co
-    const SUPABASE_KEY = 'sb_publishable_ic3b9TeYt7SuXxLIhLuyvA_FWHYVb0Z'; // e.g., eyJhbGci...
-
-    // 檢查是否已設定
-    if (SUPABASE_URL === 'YOUR_SUPABASE_URL' || !SUPABASE_KEY.startsWith('eyJ')) {
-        console.error("Supabase 未設定！請修改 login.html 內的 SUPABASE_URL 與 SUPABASE_KEY");
-        alert("系統提示：Supabase 連線尚未設定，登入功能將無法使用。\n請在代碼中填入正確的 URL 和 Anon Key。");
-    }
+    // ✅ 已填入您提供的資訊
+    const SUPABASE_URL = 'https://khoiplqugajmybmultzs.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_ic3b9TeYt7SuXxLIhLuyvA_FWHYVb0Z';
 
     const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -242,7 +236,8 @@
           window.location.href = nextUrl;
         }
       } catch (err) {
-        showMessage('❌ ' + (err?.message || 'Unknown error'), 'error');
+        showMessage('❌ ' + (err?.message || 'Authentication Error'), 'error');
+        console.error(err);
       } finally {
         btn.disabled = false; btn.classList.remove('opacity-50');
         btn.textContent = (mode === 'register') ? 'Create Account' : 'Sign In';
