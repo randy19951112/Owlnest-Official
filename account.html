@@ -39,7 +39,7 @@
     <div id="top-msg" class="hidden mb-6 text-sm p-4 rounded bg-black/20 border border-white/10"></div>
 
     <div class="grid md:grid-cols-3 gap-8">
-      <!-- Profile Card -->
+      <!-- Profile -->
       <div class="md:col-span-1 space-y-8">
         <div class="bg-white/5 border border-white/10 p-6 rounded-lg backdrop-blur-sm">
           <h2 class="text-xs font-bold text-brand-gold uppercase tracking-[0.2em] mb-4">Profile</h2>
@@ -66,8 +66,10 @@
         </div>
       </div>
 
-      <!-- Products List -->
+      <!-- Right column -->
       <div class="md:col-span-2 space-y-8">
+
+        <!-- Products -->
         <div class="bg-white/5 border border-white/10 p-8 rounded-lg backdrop-blur-sm min-h-[200px]">
           <h2 class="text-xs font-bold text-brand-gold uppercase tracking-[0.2em] mb-6 border-b border-white/10 pb-4">
             My Products
@@ -78,8 +80,36 @@
           </ul>
         </div>
 
-        <!-- ✅ 你目前頁面沒有訂單表格，所以我先不顯示 Orders 區塊。
-             你要加 Orders，我再給你一個完整區塊 + 對應 JS。 -->
+        <!-- ✅ Orders -->
+        <div class="bg-white/5 border border-white/10 p-8 rounded-lg backdrop-blur-sm">
+          <div class="flex items-center justify-between mb-6 border-b border-white/10 pb-4">
+            <h2 class="text-xs font-bold text-brand-gold uppercase tracking-[0.2em]">Orders</h2>
+            <span class="text-xs opacity-60">Your purchase history</span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead class="text-brand-gold/90">
+                <tr>
+                  <th class="pb-3 font-semibold">Order ID</th>
+                  <th class="pb-3 font-semibold">Date</th>
+                  <th class="pb-3 font-semibold">Total</th>
+                  <th class="pb-3 font-semibold">Items</th>
+                </tr>
+              </thead>
+              <tbody id="order-list">
+                <tr>
+                  <td colspan="4" class="py-6 text-center opacity-60 italic">Loading orders...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p class="mt-4 text-xs opacity-60">
+            如果你剛接好系統但這裡空的，通常是因為 webhook 還沒把訂單寫進 orders 表。
+          </p>
+        </div>
+
       </div>
     </div>
   </main>
@@ -127,25 +157,34 @@
       el.innerHTML = "";
     }
 
+    function formatMoney(n) {
+      const num = Number(n);
+      if (Number.isNaN(num)) return "-";
+      return new Intl.NumberFormat(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(num);
+    }
+
     async function handleEmailRedirectSession() {
-      // 兼容兩種 email 驗證/登入回跳：
-      // 1) ?code=...（PKCE）
-      // 2) ?token_hash=...&type=signup|magiclink|recovery...
       const url = new URL(window.location.href);
 
       try {
+        // 1) PKCE: ?code=...
         if (url.searchParams.get("code")) {
           const code = url.searchParams.get("code");
           await sb.auth.exchangeCodeForSession(code);
           url.searchParams.delete("code");
           window.history.replaceState({}, document.title, url.pathname + (url.search ? url.search : ""));
-        } else if (url.searchParams.get("token_hash") && url.searchParams.get("type")) {
+          return;
+        }
+
+        // 2) token_hash flow: ?token_hash=...&type=magiclink|signup|recovery
+        if (url.searchParams.get("token_hash") && url.searchParams.get("type")) {
           const token_hash = url.searchParams.get("token_hash");
           const type = url.searchParams.get("type");
           await sb.auth.verifyOtp({ token_hash, type });
           url.searchParams.delete("token_hash");
           url.searchParams.delete("type");
           window.history.replaceState({}, document.title, url.pathname + (url.search ? url.search : ""));
+          return;
         }
       } catch (e) {
         console.warn("Redirect session handling failed:", e);
@@ -157,7 +196,6 @@
 
       const { data: { session } } = await sb.auth.getSession();
       if (!session) {
-        // 記住來源頁，讓 login 登入後可以回來（可選）
         sessionStorage.setItem("redirect_after_login", window.location.href);
         window.location.href = "member-login.html";
         return null;
@@ -201,17 +239,67 @@
       }
     }
 
+    async function loadOrders() {
+      const tbody = $("order-list");
+      if (!tbody) return;
+
+      tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center opacity-60 italic">Loading orders...</td></tr>`;
+
+      try {
+        // 你可以依需求加欄位：items, currency, etc.
+        const { data, error } = await sb
+          .from("orders")
+          .select("id, created_at, total, items")
+          .order("created_at", { ascending: false });
+
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center opacity-60">尚無訂單</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = "";
+        data.forEach((o) => {
+          const d = new Date(o.created_at).toLocaleDateString();
+          const itemCount = Array.isArray(o.items) ? o.items.length : (o.items ? "✓" : "-");
+
+          tbody.innerHTML += `
+            <tr class="border-b border-white/10 last:border-0">
+              <td class="py-4">
+                <span class="font-mono text-xs bg-black/20 px-2 py-1 rounded border border-white/10 inline-block max-w-[220px] truncate align-middle">
+                  ${o.id}
+                </span>
+              </td>
+              <td class="py-4">${d}</td>
+              <td class="py-4 text-brand-gold font-semibold">$${formatMoney(o.total)}</td>
+              <td class="py-4 opacity-80">${itemCount}</td>
+            </tr>
+          `;
+        });
+      } catch (e) {
+        // 常見：RLS policy 不允許 select orders
+        tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-red-300">
+          讀取訂單失敗：${e?.message || e}
+        </td></tr>`;
+
+        showTopMsg(
+          `⚠️ 讀不到 Orders 很常見原因是 RLS policy。<br>
+          如果你看到像 "permission denied" 或 "new row violates row-level security" 之類，跟我說錯誤訊息我直接給你對應修法。`,
+          "error"
+        );
+      }
+    }
+
     async function init() {
       hideTopMsg();
 
       const session = await ensureSessionOrRedirect();
       if (!session) return;
 
-      // Email
       const emailEl = $("user-email");
       if (emailEl) emailEl.textContent = session.user.email || "(no email)";
 
-      // Logout
       const logoutBtn = $("logout-btn");
       if (logoutBtn) {
         logoutBtn.addEventListener("click", async () => {
@@ -221,8 +309,8 @@
         });
       }
 
-      // Load data
       await loadActivations();
+      await loadOrders();
     }
 
     init();
