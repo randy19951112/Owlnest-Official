@@ -1,16 +1,48 @@
-<!doctype html><html lang="zh-Hant"><head>
-<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
-<link rel="stylesheet" href="/account/css/account.css"/><title>Account · Orders</title></head>
-<body><div class="wrap">
-<aside class="sidebar"><div id="nav"></div></aside>
-<main class="main">
-  <div class="topbar"><div><div class="h1">Orders</div><div class="muted">Phase 2</div></div></div>
-  <section class="card"><div class="muted">Coming soon.</div></section>
-</main></div>
-<script type="module">
-  import { requireUser } from "/account/js/authGuard.js";
-  import { renderNav } from "/account/js/uiNav.js";
-  renderNav("orders");
-  await requireUser();
-</script></body></html>
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/account/css/account.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <title>Account · Orders</title>
+</head>
+<body>
+  <div class="wrap">
+    <aside class="sidebar">
+      <div id="nav" style="display:flex; flex-direction:column; height:100%;"></div>
+    </aside>
 
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <div class="h1">Orders</div>
+          <div class="muted">Purchase history (Phase 2)</div>
+        </div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <a class="btn" href="/account/index.html"><i class="fas fa-chart-pie"></i> Dashboard</a>
+        </div>
+      </div>
+
+      <section class="card">
+        <div class="muted" style="line-height:1.7;">
+          This section will show your order history once Snipcart orders are linked to member accounts.
+          <br><br>
+          For now, you can still view orders from Snipcart checkout email receipts.
+        </div>
+
+        <div style="margin-top:18px;">
+          <a class="btn primary" href="/index.html#section-3"><i class="fas fa-shopping-bag"></i> Shop</a>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module">
+    import { requireUser } from "/account/js/authGuard.js";
+    import { renderNav } from "/account/js/uiNav.js";
+    renderNav("orders");
+    await requireUser();
+  </script>
+</body>
+</html>
