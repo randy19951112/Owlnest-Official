@@ -7,7 +7,19 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
   <title>Account · Products</title>
+
+  <style>
+    .cards { display:grid; gap:12px; margin-top:14px; }
+    .pCard { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; padding:16px; border:1px solid rgba(0,0,0,.06); border-radius:18px; background:rgba(255,255,255,.92); }
+    .pLeft { display:flex; gap:12px; min-width:0; }
+    .bubble { width:44px; height:44px; border-radius:999px; display:flex; align-items:center; justify-content:center; background:rgba(212,175,55,.18); border:1px solid rgba(212,175,55,.35); color:var(--col-dark); flex-shrink:0; }
+    .pTitle { font-weight:900; font-size:16px; }
+    .sub { opacity:.7; font-size:12px; margin-top:4px; }
+    .badge2 { display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; font-size:12px; border:1px solid rgba(0,0,0,.08); background:rgba(0,0,0,.02); }
+    .pRight { display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
+  </style>
 </head>
+
 <body>
   <div class="wrap">
     <aside class="sidebar"><div id="nav"></div></aside>
@@ -25,9 +37,11 @@
       </div>
 
       <section class="card">
-        <div id="list" class="list">
-          <div class="muted">Loading...</div>
-        </div>
+        <div class="cardTitle">Registered</div>
+        <div class="cardSub">Only display code is shown.</div>
+
+        <div id="msg" class="muted" style="margin-top:10px;">Loading...</div>
+        <div id="cards" class="cards"></div>
       </section>
     </main>
   </div>
@@ -38,30 +52,33 @@
     import { renderNav } from "./js/uiNav.js";
 
     renderNav("products");
+    const $ = (id) => document.getElementById(id);
 
-    function escapeHtml(s){
-      return (s ?? "").toString().replace(/[&<>"']/g, m => ({
+    function safeText(s){
+      return (s ?? "").toString().replace(/[&<>"']/g, (m) => ({
         "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
       }[m]));
     }
 
-    function fmtDate(s){
-      try { return new Date(s).toLocaleString(); } catch(e){ return "-"; }
-    }
-
-    function row(item){
-      const token = escapeHtml(item.display_token || "");
-      const date = escapeHtml(fmtDate(item.activated_at));
-      const name = token ? `Sleep Aid Lamp ${token}` : "Sleep Aid Lamp";
+    function render(a){
+      const token = (a.display_token ?? "").toString().trim();
+      const displayCode = token ? `Sleep Aid Lamp ${token}` : "Sleep Aid Lamp";
+      const activated = a.activated_at ? new Date(a.activated_at).toLocaleString() : "-";
 
       return `
-        <div class="item">
-          <div class="itemLeft">
-            <div class="itemTitle">${name}</div>
-            <div class="itemSub muted">Activated: ${date}</div>
+        <div class="pCard">
+          <div class="pLeft">
+            <div class="bubble"><i class="fa-solid fa-box"></i></div>
+            <div style="min-width:0;">
+              <div class="pTitle">${safeText(displayCode)}</div>
+              <div class="sub">Activated: ${safeText(activated)}</div>
+              <div style="margin-top:8px;">
+                <span class="badge2"><i class="fa-solid fa-circle-check"></i> ACTIVE</span>
+              </div>
+            </div>
           </div>
-          <div class="itemRight">
-            <span class="badge">Active</span>
+          <div class="pRight">
+            <a class="btn" href="./support.html"><i class="fa-solid fa-headset"></i> SUPPORT</a>
           </div>
         </div>
       `;
@@ -71,7 +88,6 @@
       const user = await requireUser();
       if (!user) return;
 
-      const mount = document.getElementById("list");
       const { data, error } = await supabase
         .from("activations")
         .select("display_token, activated_at")
@@ -79,20 +95,19 @@
         .order("activated_at", { ascending:false });
 
       if (error){
-        mount.innerHTML = `<div class="muted">Unable to load.</div>`;
+        $("msg").textContent = "Unable to load: " + (error.message || "error");
         return;
       }
 
       const items = data || [];
       if (!items.length){
-        mount.innerHTML = `
-          <div class="muted" style="margin-bottom:14px;">No product yet.</div>
-          <a class="btn primary" href="../activate.html">REGISTER NOW</a>
-        `;
+        $("msg").textContent = "No product yet.";
+        $("cards").innerHTML = `<a class="btn primary" href="../activate.html"><i class="fa-solid fa-plus"></i> ACTIVATE NEW</a>`;
         return;
       }
 
-      mount.innerHTML = items.map(row).join("");
+      $("msg").textContent = "";
+      $("cards").innerHTML = items.map(render).join("");
     }
 
     init();
