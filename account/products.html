@@ -19,16 +19,17 @@
           <div class="h1">My Products</div>
           <div class="muted">Your registered devices</div>
         </div>
-        <div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <a class="btn" href="/account/index.html"><i class="fas fa-chart-pie"></i> Dashboard</a>
           <a class="btn primary" href="/activate.html"><i class="fas fa-plus"></i> Activate New</a>
         </div>
       </div>
 
       <section class="card">
         <div id="list" class="list">
-            <div style="padding:40px; text-align:center;" class="muted">
-                <i class="fas fa-spinner fa-spin"></i> Loading...
-            </div>
+          <div style="padding:40px; text-align:center;" class="muted">
+            <i class="fas fa-spinner fa-spin"></i> Loading...
+          </div>
         </div>
       </section>
     </main>
@@ -38,54 +39,59 @@
     import { requireUser } from "/account/js/authGuard.js";
     import { supabase } from "/account/js/supabaseClient.js";
     import { renderNav } from "/account/js/uiNav.js";
+    import { displayNameFromActivation, fmtShortDate } from "/account/js/format.js";
 
     renderNav("products");
-    
+
     async function init() {
-        const user = await requireUser();
-        if (!user) return;
+      const user = await requireUser();
+      if (!user) return;
 
-        const listEl = document.getElementById("list");
+      const listEl = document.getElementById("list");
 
-        // [關鍵修正] 改用 payload 欄位
-        const { data: items, error } = await supabase
-          .from("activations")
-          .select("payload, activated_at")
-          .eq("user_id", user.id)
-          .order("activated_at", { ascending: false });
+      // ✅ 只讀 display_token
+      const { data: items, error } = await supabase
+        .from("activations")
+        .select("display_token, activated_at")
+        .eq("user_id", user.id)
+        .order("activated_at", { ascending: false });
 
-        if (error) {
-          listEl.innerHTML = `<div style="color:red; padding:20px;">Error: ${error.message}</div>`;
-          return;
-        }
+      if (error) {
+        console.error(error);
+        listEl.innerHTML = `<div style="color:#b91c1c; padding:20px;">Unable to load products: ${error.message}</div>`;
+        return;
+      }
 
-        if (!items?.length) {
-          listEl.innerHTML = `
-            <div class="row" style="flex-direction:column; text-align:center; padding:40px;">
-                <div style="font-size:2rem; color:var(--col-gold); margin-bottom:10px;"><i class="fas fa-box-open"></i></div>
-                <div style="font-weight:700;">No Products Found</div>
-                <a class="btn primary" href="/activate.html" style="margin-top:10px;">Register Now</a>
-            </div>
-          `;
-          return;
-        }
-
-        listEl.innerHTML = items.map(it => `
-          <div class="row">
-            <div style="display:flex; align-items:center; gap:16px;">
-              <div style="background:var(--col-dark); color:var(--col-gold); width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center;">
-                <i class="fas fa-lightbulb"></i>
-              </div>
-              <div>
-                <div style="font-weight:700; color:var(--col-dark); font-family:var(--font-serif);">${it.payload}</div>
-                <div class="muted" style="font-size:0.8rem;">Activated: ${new Date(it.activated_at).toLocaleDateString()}</div>
-              </div>
-            </div>
-            <div class="badge">Active</div>
+      if (!items?.length) {
+        listEl.innerHTML = `
+          <div class="row" style="flex-direction:column; text-align:center; padding:40px;">
+            <div style="font-size:2rem; color:var(--col-gold); margin-bottom:10px;"><i class="fas fa-box-open"></i></div>
+            <div style="font-weight:900; font-family:var(--font-serif);">No Products Found</div>
+            <div class="muted" style="margin-top:6px;">Activate your first product to see it here.</div>
+            <a class="btn primary" href="/activate.html" style="margin-top:14px;">Activate Now</a>
           </div>
-        `).join("");
+        `;
+        return;
+      }
+
+      listEl.innerHTML = items.map(it => `
+        <div class="row">
+          <div style="display:flex; align-items:center; gap:16px;">
+            <div style="background:var(--col-dark); color:var(--col-gold); width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center;">
+              <i class="fas fa-lightbulb"></i>
+            </div>
+            <div>
+              <div style="font-weight:900; color:var(--col-dark); font-family:var(--font-serif);">
+                ${displayNameFromActivation(it)}
+              </div>
+              <div class="muted" style="font-size:0.85rem;">Activated: ${fmtShortDate(it.activated_at)}</div>
+            </div>
+          </div>
+          <div class="badge">Active</div>
+        </div>
+      `).join("");
     }
-    
+
     init();
   </script>
 </body>
