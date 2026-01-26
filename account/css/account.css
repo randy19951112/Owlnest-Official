@@ -1,6 +1,5 @@
 /* account/css/account.css */
 
-/* ===== 主題變數 (保持不變) ===== */
 :root{
   --bg: #faefcf;
   --col-dark: #455169;
@@ -12,13 +11,11 @@
   --card: rgba(255,255,255,.86);
   --shadow: 0 18px 45px rgba(0,0,0,.06);
   --r-xl: 28px;
-  --r-md: 16px;
-  --pad: 26px;
   --sidebar-w: 300px;
 }
 
 *{ box-sizing:border-box; }
-html, body{ height:100%; overflow-x: hidden; }
+html,body{ height:100%; overflow-x: hidden; }
 body{
   margin:0;
   background: var(--bg);
@@ -26,99 +23,88 @@ body{
   font-family: "Manrope", sans-serif;
 }
 
-/* 佈局架構 */
-.wrap{ display:flex; min-height:100vh; width: 100%; }
+/* ===== 電腦版佈局 (維持原樣) ===== */
+.wrap{ display:flex; min-height:100vh; }
 
-/* 側邊欄 (電腦版) */
 .sidebar{
   width: var(--sidebar-w);
-  flex-shrink: 0;
-  padding: var(--pad);
-  border-right: 1px solid var(--col-line);
-  background: rgba(255,255,255,.3);
-  backdrop-filter: blur(10px);
+  padding: 22px 18px;
+  background: rgba(255,255,255,.52);
+  border-right: 1px solid rgba(69,81,105,.08);
+  position: sticky; top:0; height:100vh; overflow:auto;
 }
 
-/* 主內容區 */
-.main{
-  flex-grow: 1;
-  padding: 40px var(--pad);
-  min-width: 0;
+.main{ flex:1; padding: 34px 42px; max-width: 1200px; }
+
+.topbar{
+  display:flex; align-items:flex-start; justify-content:space-between;
+  gap: 18px; padding-bottom: 24px; margin-bottom: 24px;
+  border-bottom: 1px solid var(--col-line);
 }
 
-/* 手機版抽屜式選單控制 */
+.h1{
+  font-family: "Playfair Display", serif;
+  font-weight: 700; font-size: 56px; line-height: 1.1; color: var(--col-ink);
+}
+
+.actions{ display:flex; gap: 10px; flex-wrap: wrap; }
+
+/* ===== 按鈕系統 ===== */
+.btn{
+  display:inline-flex; align-items:center; gap:8px; padding:10px 18px;
+  border-radius: 999px; font-weight: 800; font-size: 13px;
+  text-decoration:none; cursor:pointer; border: 1px solid var(--col-line);
+  background: white; transition: 0.2s;
+}
+.btn.primary{ background: var(--col-dark); color: white; border: none; }
+
+/* ===== 手機版抽屜元件 ===== */
 .drawerBackdrop{
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.3);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity .25s ease;
-  z-index: 40;
+  position: fixed; inset: 0; background: rgba(0,0,0,.4);
+  opacity: 0; pointer-events: none; transition: 0.25s; z-index: 40;
 }
-.drawerBackdrop.active{ opacity: 1; pointer-events: auto; }
+.drawerBtn{
+  display:none; width:44px; height:44px; align-items:center; justify-content:center;
+  background:white; border:1px solid var(--col-line); border-radius:12px; cursor:pointer;
+}
 
-.drawerBtn{ display: none; }
-
-/* 響應式修正 (手機版) */
+/* =========================================================
+   手機版響應式深度修正 (Mobile Fix)
+   ========================================================= */
 @media (max-width: 860px){
-  .drawerBtn{
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    background: white;
-    border: 1px solid var(--col-line);
-    border-radius: 12px;
-    cursor: pointer;
-    margin-right: 15px;
-  }
-  
+  /* 1. 修正 Sidebar 隱藏邏輯 */
   .sidebar{
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    width: 280px;
-    transform: translateX(-100%);
+    position: fixed; top: 0; left: 0; height: 100vh;
+    width: 280px; transform: translateX(-100%);
     transition: transform .3s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 50;
-    background: var(--bg);
+    z-index: 100; background: var(--bg);
   }
+  body.nav-open .sidebar{ transform: translateX(0); }
+  body.nav-open .drawerBackdrop{ opacity: 1; pointer-events: auto; }
+
+  /* 2. 修正主內容與溢出 */
+  .main{ padding: 20px 16px; width: 100%; }
   
-  .sidebar.open{ transform: translateX(0); }
-  
-  .main{
-    padding: 20px !important;
-    margin-left: 0 !important;
-    width: 100% !important;
-  }
-  
+  /* 3. 修正 Topbar (標題與按鈕不再擠壓) */
   .topbar{
-    display: flex !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
+    flex-direction: column; align-items: flex-start;
+    gap: 16px; border-bottom: none; padding-bottom: 10px;
   }
+  .topbar-head{
+    display: flex; align-items: center; gap: 12px; width: 100%;
+  }
+  .drawerBtn{ display: flex; flex-shrink: 0; }
+  .h1{ font-size: 28px; } /* 手機版標題大幅縮小 */
 
-  /* 調整卡片在手機上的排版 */
-  .orderRow, .pCard, .prodCard {
-    flex-direction: column !important;
-    align-items: stretch !important;
-    gap: 15px !important;
+  /* 4. 按鈕列修正：在手機上排列整齊 */
+  .actions{
+    width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
   }
-  
-  .orderRight, .pRight, .actionsRow {
-    width: 100% !important;
-    margin-top: 10px;
-  }
-  
-  .btn { width: 100%; justify-content: center; }
+  .actions .btn{ justify-content: center; padding: 12px 10px; font-size: 11px; }
+  /* 如果有三個按鈕，讓最後一個佔滿整行 */
+  .actions .btn:last-child:nth-child(odd) { grid-column: span 2; }
+
+  /* 5. 卡片內 Grid 修正 */
+  .grid { flex-direction: column; gap: 16px; }
+  .col-7, .col-5, .col-12 { width: 100% !important; }
 }
-
-/* 其餘 UI 組件樣式保持你原本的設定... */
-.card{ background: var(--card); border: 1px solid var(--col-line); border-radius: var(--r-xl); padding: var(--pad); box-shadow: var(--shadow); }
-.topbar{ display:flex; align-items:center; justify-content:space-between; margin-bottom:30px; }
-.h1{ font-size:32px; font-weight:800; color:var(--col-ink); font-family:"Playfair Display", serif; }
-.navItem{ display:flex; align-items:center; gap:12px; padding:14px 18px; text-decoration:none; color:var(--col-muted); border-radius:var(--r-md); transition: .2s; font-weight:600; }
-.navItem.active{ background:white; color:var(--col-ink); box-shadow: var(--shadow-sm); }
