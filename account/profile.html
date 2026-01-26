@@ -9,11 +9,41 @@
 </head>
 <body>
   <div class="wrap">
+    <!-- 側邊欄 -->
     <aside class="sidebar">
-      <div id="nav" style="display:flex; flex-direction:column; height:100%;"></div>
+      <div class="p-8 border-b border-brand-dark/5 flex justify-center">
+        <!-- Logo -->
+        <a href="/index.html" class="flex items-center gap-2 group">
+             <img src="/logo.png" alt="Owlnest Logo" class="h-8 w-auto brightness-0 opacity-80 transition group-hover:opacity-100">
+             <span class="font-serif text-xl font-bold tracking-widest text-brand-dark group-hover:text-brand-gold transition">Owlnest</span>
+        </a>
+      </div>
+      <nav class="flex-grow p-6 space-y-2" id="sidebar-nav"></nav>
+      <div class="p-6 border-t border-brand-dark/5">
+        <button id="logout-btn" class="flex items-center gap-3 px-4 py-3 w-full text-left text-xs uppercase tracking-widest font-bold text-brand-dark/50 hover:text-brand-gold hover:bg-brand-cream/50 rounded transition">
+            <i class="fas fa-sign-out-alt"></i> Sign Out
+        </button>
+      </div>
     </aside>
 
-    <main class="main">
+    <!-- Mobile Header -->
+    <header class="lg:hidden fixed top-0 left-0 w-full z-30 px-6 py-4 flex justify-between items-center bg-brand-cream/90 backdrop-blur-md border-b border-brand-dark/5">
+      <div class="flex items-center gap-2">
+         <img src="/logo.png" class="h-8 w-auto brightness-0 opacity-80">
+         <span class="font-serif text-lg font-bold tracking-widest text-brand-dark">Owlnest</span>
+      </div>
+      <button onclick="toggleMobileMenu()" class="text-brand-dark text-2xl focus:outline-none"><i class="fas fa-bars"></i></button>
+    </header>
+    
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="fixed inset-0 z-40 bg-brand-dark text-brand-cream lg:hidden flex flex-col pt-20 px-8">
+        <button onclick="toggleMobileMenu()" class="absolute top-4 right-6 text-2xl text-brand-gold"><i class="fas fa-times"></i></button>
+        <nav class="flex flex-col gap-6 text-lg font-serif" id="mobile-nav-items"></nav>
+        <button id="mobile-logout-btn" class="mt-auto mb-10 text-sm uppercase tracking-widest font-bold text-brand-gold border-t border-white/10 pt-6">Sign Out</button>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main flex-grow lg:ml-64 p-6 md:p-12 pt-24 lg:pt-12 w-full transition-all">
       <div class="topbar">
         <div>
           <div class="h1">Profile & Security</div>
@@ -22,12 +52,12 @@
       </div>
 
       <div class="grid">
-        <!-- Personal Info -->
+        <!-- Personal Info Form -->
         <section class="card col-8">
           <div class="h1">Personal Info</div>
           
           <div class="label">Email Address</div>
-          <input class="input" id="email" disabled style="background:#f5f5f5; cursor:not-allowed;" />
+          <input class="input" id="email" disabled style="background:#f5f5f5; cursor:not-allowed; opacity:0.6;" />
           <div class="muted" style="font-size:0.75rem; margin-top:4px;">Email cannot be changed directly for security reasons.</div>
 
           <div class="label">Full Name</div>
@@ -38,18 +68,20 @@
 
           <div style="margin-top:24px; display:flex; gap:12px; align-items:center;">
             <button class="btn primary" id="btnSave"><i class="fas fa-save"></i> Save Changes</button>
-            <span class="muted" id="msg"></span>
+            <span class="muted" id="msg" style="font-size:0.9rem; font-weight:bold;"></span>
           </div>
         </section>
 
-        <!-- Security -->
+        <!-- Security / Password Reset -->
         <section class="card col-4">
           <div class="h1">Security</div>
           
-          <div style="background:rgba(212, 175, 55, 0.1); padding:16px; border-radius:8px; border:1px solid rgba(212, 175, 55, 0.3); margin-top:20px;">
-            <div style="font-weight:700; color:var(--col-dark); margin-bottom:8px;"><i class="fas fa-key"></i> Password</div>
-            <div class="muted" style="margin-bottom:16px;">Send a password reset link to your email address.</div>
-            <button class="btn" id="btnReset" style="width:100%;">Reset Password</button>
+          <div style="background:rgba(212, 175, 55, 0.1); padding:20px; border-radius:12px; border:1px solid rgba(212, 175, 55, 0.3); margin-top:10px;">
+            <div style="font-weight:700; color:var(--col-dark); margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+                <i class="fas fa-key text-brand-gold"></i> Password
+            </div>
+            <div class="muted" style="margin-bottom:16px; line-height:1.5;">Send a password reset link to your registered email address.</div>
+            <button class="btn" id="btnReset" style="width:100%; border-color:var(--col-gold); color:var(--col-dark);">Reset Password</button>
             <div class="muted" style="margin-top:10px; font-size:0.8rem; text-align:center;" id="resetMsg"></div>
           </div>
         </section>
@@ -58,73 +90,101 @@
   </div>
 
   <script type="module">
-    import { requireUser } from "/account/js/authGuard.js";
+    import { requireUser, signOut } from "/account/js/authGuard.js";
     import { supabase } from "/account/js/supabaseClient.js";
     import { renderNav } from "/account/js/uiNav.js";
 
-    renderNav("profile");
-    const user = await requireUser();
-    if (!user) return;
+    window.toggleMobileMenu = function() { document.getElementById('mobile-menu').classList.toggle('open'); }
 
-    const emailEl = document.getElementById("email");
-    const nameEl = document.getElementById("full_name");
-    const phoneEl = document.getElementById("phone");
-    const msgEl = document.getElementById("msg");
-    const resetMsgEl = document.getElementById("resetMsg");
+    // Init Logic
+    async function init() {
+        // 1. Render Sidebar
+        renderNav("profile");
 
-    // Load profile data
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("email, full_name, phone")
-      .eq("id", user.id)
-      .single();
+        // 2. Auth Check
+        const user = await requireUser();
+        if (!user) return;
 
-    emailEl.value = profile?.email || user.email || "";
-    nameEl.value = profile?.full_name || "";
-    phoneEl.value = profile?.phone || "";
+        // 3. Bind Logout
+        document.getElementById('logout-btn')?.addEventListener('click', signOut);
+        document.getElementById('mobile-logout-btn')?.addEventListener('click', signOut);
 
-    // Save Changes
-    document.getElementById("btnSave").addEventListener("click", async () => {
-      const btn = document.getElementById("btnSave");
-      btn.textContent = "Saving...";
-      btn.classList.add("disabled");
+        const emailEl = document.getElementById("email");
+        const nameEl = document.getElementById("full_name");
+        const phoneEl = document.getElementById("phone");
+        const msgEl = document.getElementById("msg");
+        const resetMsgEl = document.getElementById("resetMsg");
 
-      const { error: upErr } = await supabase
-        .from("profiles")
-        .update({
-          full_name: nameEl.value.trim() || null,
-          phone: phoneEl.value.trim() || null
-        })
-        .eq("id", user.id);
+        // 4. Load Profile Data
+        const { data: profile, error: loadErr } = await supabase
+          .from("profiles")
+          .select("email, full_name, phone")
+          .eq("id", user.id)
+          .single();
 
-      btn.textContent = "Save Changes";
-      btn.classList.remove("disabled");
+        if (loadErr && loadErr.code !== 'PGRST116') { // PGRST116 means no rows found (new user), which is fine
+             console.error("Profile load error:", loadErr);
+        }
 
-      if (upErr) {
-        msgEl.textContent = "Error: " + upErr.message;
-        msgEl.style.color = "red";
-      } else {
-        msgEl.textContent = "Saved Successfully";
-        msgEl.style.color = "green";
-        setTimeout(() => (msgEl.textContent = ""), 2500);
-      }
-    });
+        // Fill form
+        emailEl.value = user.email || ""; 
+        if (profile) {
+            nameEl.value = profile.full_name || "";
+            phoneEl.value = profile.phone || "";
+        }
 
-    // Reset Password
-    document.getElementById("btnReset").addEventListener("click", async () => {
-      resetMsgEl.textContent = "Sending...";
-      const email = user.email;
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: location.origin + "/account/profile.html"
-      });
-      if (error) {
-         resetMsgEl.textContent = "Error: " + error.message;
-         resetMsgEl.style.color = "red";
-      } else {
-         resetMsgEl.textContent = "Reset link sent to your email.";
-         resetMsgEl.style.color = "green";
-      }
-    });
+        // 5. Save Changes
+        document.getElementById("btnSave").addEventListener("click", async () => {
+          const btn = document.getElementById("btnSave");
+          btn.textContent = "Saving...";
+          btn.classList.add("disabled");
+          msgEl.textContent = "";
+
+          const updates = {
+              id: user.id, // Primary Key for upsert
+              email: user.email, // Ensure email is kept
+              full_name: nameEl.value.trim() || null,
+              phone: phoneEl.value.trim() || null,
+              updated_at: new Date()
+          };
+
+          // Use upsert instead of update to handle new users without profile row
+          const { error: upErr } = await supabase
+            .from("profiles")
+            .upsert(updates);
+
+          btn.textContent = "Save Changes";
+          btn.classList.remove("disabled");
+
+          if (upErr) {
+            console.error("Save error:", upErr);
+            msgEl.textContent = "Failed: " + upErr.message;
+            msgEl.style.color = "red";
+          } else {
+            msgEl.textContent = "Saved Successfully!";
+            msgEl.style.color = "green";
+            setTimeout(() => (msgEl.textContent = ""), 3000);
+          }
+        });
+
+        // 6. Reset Password
+        document.getElementById("btnReset").addEventListener("click", async () => {
+          resetMsgEl.textContent = "Sending...";
+          const email = user.email;
+          const { error } = await supabase.auth.resetPasswordForEmail(email, {
+            redirectTo: window.location.origin + "/account/profile.html"
+          });
+          if (error) {
+             resetMsgEl.textContent = "Error: " + error.message;
+             resetMsgEl.style.color = "red";
+          } else {
+             resetMsgEl.textContent = "Reset link sent to your email.";
+             resetMsgEl.style.color = "green";
+          }
+        });
+    }
+
+    init();
   </script>
 </body>
 </html>
