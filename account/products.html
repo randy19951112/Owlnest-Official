@@ -4,27 +4,32 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="/account/css/account.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <title>Account · My Products</title>
 </head>
 <body>
   <div class="wrap">
     <aside class="sidebar">
-      <div id="nav"></div>
+      <div id="nav" style="display:flex; flex-direction:column; height:100%;"></div>
     </aside>
 
     <main class="main">
       <div class="topbar">
         <div>
           <div class="h1">My Products</div>
-          <div class="muted">Your registered devices</div>
+          <div class="muted">Manage your registered Owlnest devices</div>
         </div>
         <div>
-          <a class="btn primary" href="/activate.html">Activate new product</a>
+          <a class="btn primary" href="/activate.html"><i class="fas fa-plus"></i> Activate New</a>
         </div>
       </div>
 
       <section class="card">
-        <div id="list" class="list">Loading…</div>
+        <div id="list" class="list">
+            <div style="padding:40px; text-align:center;" class="muted">
+                <i class="fas fa-spinner fa-spin"></i> Loading...
+            </div>
+        </div>
       </section>
     </main>
   </div>
@@ -33,7 +38,6 @@
     import { requireUser } from "/account/js/authGuard.js";
     import { supabase } from "/account/js/supabaseClient.js";
     import { renderNav } from "/account/js/uiNav.js";
-    import { fmtDate, displayNameFromActivation } from "/account/js/format.js";
 
     renderNav("products");
     const user = await requireUser();
@@ -41,25 +45,25 @@
 
     const listEl = document.getElementById("list");
 
+    // 注意：這裡假設您的 table 欄位是 payload 和 activated_at
     const { data: items, error } = await supabase
       .from("activations")
-      .select("display_token, activated_at")
+      .select("payload, activated_at")
       .eq("user_id", user.id)
       .order("activated_at", { ascending: false });
 
     if (error) {
-      listEl.textContent = "Failed to load products: " + error.message;
+      listEl.innerHTML = `<div style="color:red; padding:20px;">Error: ${error.message}</div>`;
       return;
     }
 
     if (!items?.length) {
       listEl.innerHTML = `
-        <div class="row">
-          <div>
-            <div style="font-weight:700;">You haven’t registered a product yet</div>
-            <div class="muted">Activate your Sleep Aid Lamp to see it here.</div>
-          </div>
-          <div><a class="btn primary" href="/activate.html">Activate</a></div>
+        <div class="row" style="flex-direction:column; text-align:center; padding:40px;">
+            <div style="font-size:2rem; color:var(--col-gold); margin-bottom:10px;"><i class="fas fa-box-open"></i></div>
+            <div style="font-weight:700; font-size:1.1rem;">No Products Found</div>
+            <div class="muted" style="margin-bottom:20px;">You haven’t registered any products yet.</div>
+            <a class="btn primary" href="/activate.html">Activate Your First Product</a>
         </div>
       `;
       return;
@@ -67,14 +71,18 @@
 
     listEl.innerHTML = items.map(it => `
       <div class="row">
-        <div>
-          <div style="font-weight:800;">${displayNameFromActivation(it)}</div>
-          <div class="muted">Activated: ${fmtDate(it.activated_at)}</div>
+        <div style="display:flex; align-items:center; gap:16px;">
+          <div style="background:var(--col-dark); color:var(--col-gold); width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center;">
+            <i class="fas fa-lightbulb"></i>
+          </div>
+          <div>
+            <div style="font-weight:700; color:var(--col-dark); font-family:var(--font-serif); letter-spacing:0.05em;">${it.payload}</div>
+            <div class="muted" style="font-size:0.8rem;">Activated on ${new Date(it.activated_at).toLocaleDateString()}</div>
+          </div>
         </div>
-        <div class="badge">Active</div>
+        <div class="badge"><i class="fas fa-check-circle" style="margin-right:4px;"></i> Active</div>
       </div>
     `).join("");
   </script>
 </body>
 </html>
-
