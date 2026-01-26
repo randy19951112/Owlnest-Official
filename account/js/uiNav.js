@@ -1,12 +1,12 @@
-import { signOut } from "/account/js/authGuard.js";
+import { signOut } from "./authGuard.js";
 
 const NAV = [
-  { key: "dashboard", href: "/account/index.html", icon: "fa-solid fa-chart-pie", label: "Dashboard" },
-  { key: "products",  href: "/account/products.html", icon: "fa-solid fa-box", label: "My Products" },
-  { key: "orders",    href: "/account/orders.html", icon: "fa-solid fa-receipt", label: "Orders" },
-  { key: "support",   href: "/account/support.html", icon: "fa-solid fa-headset", label: "Warranty & Support" },
-  { key: "profile",   href: "/account/profile.html", icon: "fa-solid fa-user", label: "Profile & Security" },
-  { key: "settings",  href: "/account/settings.html", icon: "fa-solid fa-gear", label: "Settings" },
+  { key: "dashboard", href: "./index.html", icon: "fa-solid fa-chart-pie", label: "Dashboard" },
+  { key: "products",  href: "./products.html", icon: "fa-solid fa-box", label: "My Products" },
+  { key: "orders",    href: "./orders.html", icon: "fa-solid fa-receipt", label: "Orders" },
+  { key: "support",   href: "./support.html", icon: "fa-solid fa-headset", label: "Warranty & Support" },
+  { key: "profile",   href: "./profile.html", icon: "fa-solid fa-user", label: "Profile & Security" },
+  { key: "settings",  href: "./settings.html", icon: "fa-solid fa-gear", label: "Settings" },
 ];
 
 function ensureMobileDrawerWiring() {
@@ -38,12 +38,8 @@ function ensureTopbarToggle() {
 
   // left area (title container)
   const left = topbar.children?.[0];
-  if (left && !left.classList.contains("topbarLeft")) {
-    left.classList.add("topbarLeft");
-  }
-  if (left && !left.classList.contains("topbarTitle")) {
-    left.classList.add("topbarTitle");
-  }
+  if (left && !left.classList.contains("topbarLeft")) left.classList.add("topbarLeft");
+  if (left && !left.classList.contains("topbarTitle")) left.classList.add("topbarTitle");
 
   // inject toggle button (mobile only via CSS)
   if (!document.getElementById("navToggle") && left) {
@@ -66,7 +62,7 @@ export function renderNav(activeKey = "dashboard") {
 
   mount.innerHTML = `
     <div class="brand">
-      <img src="/logo.png" alt="Owlnest" />
+      <img src="../logo.png" alt="Owlnest" />
       <div class="name">Owlnest</div>
     </div>
 
@@ -80,7 +76,7 @@ export function renderNav(activeKey = "dashboard") {
     </div>
 
     <div class="navBottom">
-      <a class="navItem" href="/index.html">
+      <a class="navItem" href="../index.html">
         <i class="fa-solid fa-arrow-left"></i>
         <span>Back to Home</span>
       </a>
