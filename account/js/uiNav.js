@@ -13,28 +13,25 @@ export function renderNav(activeKey = "dashboard") {
   const mount = document.getElementById("nav");
   if (!mount) return;
 
-  // 1. 渲染導覽選單內容
+  // 1. 渲染內容
   mount.innerHTML = `
     <div class="brand">
-      <img src="../logo.png" alt="Owlnest" style="height:32px;" />
-      <div class="name" style="font-weight:900; font-size:20px; color:#1f2a39;">Owlnest</div>
+      <img src="../logo.png" alt="Owlnest" />
+      <div class="name">Owlnest</div>
     </div>
-
-    <div class="nav" style="display:flex; flex-direction:column; gap:6px; flex-grow:1;">
+    <div class="nav">
       ${NAV.map(it => `
         <a class="navItem ${it.key === activeKey ? "active" : ""}" href="${it.href}">
-          <i class="${it.icon}" style="width:20px;"></i>
+          <i class="${it.icon}"></i>
           <span>${it.label}</span>
         </a>
       `).join("")}
     </div>
-
-    <div class="navBottom" style="margin-top:40px; border-top:1px solid rgba(0,0,0,0.05); padding-top:20px;">
+    <div class="navBottom">
       <a class="navItem" href="../index.html">
         <i class="fa-solid fa-arrow-left"></i>
         <span>Back to Home</span>
       </a>
-
       <button class="navItem" id="navSignOut" type="button"
         style="width:100%; background:transparent; border:0; text-align:left; cursor:pointer; font-family:inherit;">
         <i class="fa-solid fa-right-from-bracket"></i>
@@ -43,45 +40,35 @@ export function renderNav(activeKey = "dashboard") {
     </div>
   `;
 
-  // 2. 登出事件綁定
+  // 2. 綁定登出邏輯
   const btnSignOut = document.getElementById("navSignOut");
   if (btnSignOut) {
     btnSignOut.onclick = async () => {
-      if(confirm("Are you sure you want to sign out?")) {
-        await signOut();
-      }
+      if(confirm("Sign out now?")) await signOut();
     };
   }
 
-  // 3. 手機版 Drawer 控制邏輯
-  const sidebar = document.querySelector('.sidebar');
+  // 3. 核心修正：自動處理手機版 Drawer 切換
   const backdrop = document.getElementById('drawerBackdrop');
+  const toggleMenu = () => document.body.classList.toggle('nav-open');
+
+  // 在 Topbar 插入按鈕並綁定
   const topbar = document.querySelector('.topbar');
+  if (topbar && !document.querySelector('.drawerBtn')) {
+    // 包裹標題區塊以利排版
+    const titleDiv = topbar.querySelector('div:first-child');
+    const headerWrapper = document.createElement('div');
+    headerWrapper.className = 'topbar-head';
+    
+    const menuBtn = document.createElement('button');
+    menuBtn.className = 'drawerBtn';
+    menuBtn.innerHTML = '<i class="fa-solid fa-bars"></i>';
+    menuBtn.onclick = toggleMenu;
 
-  if (sidebar && backdrop && topbar) {
-    // 如果尚未存在漢堡按鈕，則創建一個
-    if (!document.querySelector('.drawerBtn')) {
-      const toggleBtn = document.createElement('button');
-      toggleBtn.className = 'drawerBtn';
-      toggleBtn.innerHTML = '<i class="fa-solid fa-bars"></i>';
-      
-      // 將按鈕插入到 topbar 的最前面
-      topbar.prepend(toggleBtn);
-
-      const toggleMenu = () => {
-        sidebar.classList.toggle('open');
-        backdrop.classList.toggle('active');
-      };
-
-      toggleBtn.onclick = toggleMenu;
-      backdrop.onclick = toggleMenu;
-
-      // 點擊導覽項目後自動關閉選單 (手機版體驗更好)
-      mount.querySelectorAll('.navItem').forEach(item => {
-        item.addEventListener('click', () => {
-          if (window.innerWidth <= 860) toggleMenu();
-        });
-      });
-    }
+    topbar.prepend(headerWrapper);
+    headerWrapper.appendChild(menuBtn);
+    headerWrapper.appendChild(titleDiv);
   }
+
+  if (backdrop) backdrop.onclick = toggleMenu;
 }
