@@ -297,3 +297,120 @@ body{
   .formGrid{ grid-template-columns: 1fr; }
   .formGrid .full{ grid-column: auto; }
 }
+/* =========================================================
+   BUTTON SYSTEM — OWLNEST (Luxury hierarchy)
+========================================================= */
+
+:root{
+  --btn-radius: 999px;
+
+  /* Brand */
+  --red-main: #8C2B2B;
+  --red-dark: #6F1F1F;
+  --red-soft: #F3E6E6;
+
+  --ink-main: #455169;
+  --ink-dark: #2F3A4E;
+
+  --gold-soft: rgba(212,175,55,.45);
+}
+
+/* Base */
+.btn{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 18px;
+  border-radius: var(--btn-radius);
+  font-weight:800;
+  font-size:14px;
+  letter-spacing:.04em;
+  border:1px solid transparent;
+  cursor:pointer;
+  transition: 
+    background .18s ease,
+    color .18s ease,
+    border-color .18s ease,
+    box-shadow .18s ease,
+    transform .08s ease;
+}
+
+.btn i{ font-size:14px; }
+
+/* Pressed */
+.btn:active{
+  transform: translateY(1px);
+}
+
+/* =========================================================
+   PRIMARY — 最重要（Activate / Save / Buy）
+========================================================= */
+.btn.primary{
+  background: linear-gradient(180deg, #8C2B2B, #6F1F1F);
+  color:#fff;
+  border-color: rgba(212,175,55,.55);
+  box-shadow: 
+    0 6px 18px rgba(140,43,43,.25),
+    inset 0 0 0 1px rgba(255,255,255,.12);
+}
+
+.btn.primary:hover{
+  background: linear-gradient(180deg, #9E3434, #7A2323);
+  box-shadow: 
+    0 10px 26px rgba(140,43,43,.32),
+    0 0 0 3px rgba(212,175,55,.25);
+}
+
+/* =========================================================
+   SECONDARY — 一般操作（Open / View / Edit）
+========================================================= */
+.btn.secondary{
+  background: rgba(255,255,255,.85);
+  color: var(--ink-main);
+  border:1px solid rgba(69,81,105,.25);
+}
+
+.btn.secondary:hover{
+  background: #fff;
+  color: var(--ink-dark);
+  border-color: rgba(69,81,105,.45);
+  box-shadow: 0 6px 16px rgba(69,81,105,.15);
+}
+
+/* =========================================================
+   DANGER — 危險操作（Sign out / Delete）
+========================================================= */
+.btn.danger{
+  background: transparent;
+  color: var(--red-main);
+  border:1px solid rgba(140,43,43,.35);
+}
+
+.btn.danger:hover{
+  background: var(--red-soft);
+  border-color: var(--red-main);
+  box-shadow: 0 6px 16px rgba(140,43,43,.18);
+}
+
+/* =========================================================
+   GHOST — 次要、不干擾
+========================================================= */
+.btn.ghost{
+  background: transparent;
+  color: var(--ink-main);
+  border:1px dashed rgba(69,81,105,.25);
+}
+
+.btn.ghost:hover{
+  background: rgba(255,255,255,.6);
+  border-style: solid;
+}
+
+/* =========================================================
+   DISABLED
+========================================================= */
+.btn:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+  box-shadow:none;
+}
