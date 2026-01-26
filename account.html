@@ -38,6 +38,11 @@
     #snipcart { --color-modal-bg: #faefcf; --color-button-primary: #D4AF37; --color-button-primary-hover: #c5a02f; --color-button-primary-text: #455169; }
   </style>
 </head>
+<script>
+  document.getElementById("goDashboard")?.addEventListener("click", () => {
+    window.location.href = "/account/index.html";
+  });
+</script>
 
 <body class="bg-brand-cream text-brand-dark min-h-screen font-sans flex flex-col">
 
@@ -258,3 +263,4 @@
   </script>
 </body>
 </html>
+
