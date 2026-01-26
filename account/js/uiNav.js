@@ -49,25 +49,20 @@ export function renderNav(activeKey = "dashboard") {
   }
 
   // 3. 核心修正：自動處理手機版 Drawer 切換
+  // [Fix] 不再包裹標題區塊，避免破壞電腦版 Flex 結構
   const backdrop = document.getElementById('drawerBackdrop');
   const toggleMenu = () => document.body.classList.toggle('nav-open');
 
-  // 在 Topbar 插入按鈕並綁定
   const topbar = document.querySelector('.topbar');
+  // 確保 topbar 存在且尚未插入過按鈕
   if (topbar && !document.querySelector('.drawerBtn')) {
-    // 包裹標題區塊以利排版
-    const titleDiv = topbar.querySelector('div:first-child');
-    const headerWrapper = document.createElement('div');
-    headerWrapper.className = 'topbar-head';
-    
     const menuBtn = document.createElement('button');
     menuBtn.className = 'drawerBtn';
     menuBtn.innerHTML = '<i class="fa-solid fa-bars"></i>';
     menuBtn.onclick = toggleMenu;
 
-    topbar.prepend(headerWrapper);
-    headerWrapper.appendChild(menuBtn);
-    headerWrapper.appendChild(titleDiv);
+    // 直接插入到最前面，不更動原本的標題 Div 結構
+    topbar.prepend(menuBtn);
   }
 
   if (backdrop) backdrop.onclick = toggleMenu;
