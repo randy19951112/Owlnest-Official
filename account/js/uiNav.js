@@ -1,11 +1,17 @@
+/**
+ * 生成側邊導覽列 HTML
+ * @param {string} activeKey - 當前頁面的 key (dashboard, products, etc.)
+ */
 export function renderNav(activeKey) {
   const navContainer = document.getElementById("nav");
   if (!navContainer) return;
 
+  // 輔助函式：生成連結
+  // [修正] 強制使用絕對路徑，避免相對路徑在不同層級失效
   const item = (key, href, text, iconClass, extra = "") => {
     const isActive = key === activeKey ? "active" : "";
     const isDisabled = href ? "" : "disabled";
-    // 確保 href 是絕對路徑 /account/...
+    // 確保 href 是以 /account/ 開頭的絕對路徑
     const link = href ? (href.startsWith('/') ? href : `/account/${href}`) : "javascript:void(0)";
     
     return `
@@ -17,7 +23,8 @@ export function renderNav(activeKey) {
     `;
   };
 
-  // 生成 HTML (Logo 使用絕對路徑 /logo2.png)
+  // 生成 HTML
+  // 注意：Logo 路徑使用絕對路徑 /logo2.png 確保在任何子目錄都能讀取
   navContainer.innerHTML = `
     <div class="brand">
       <a href="/index.html" style="display:flex; align-items:center; gap:12px;">
@@ -45,7 +52,8 @@ export function renderNav(activeKey) {
     </div>
   `;
 
-  // 手機版選單
+  // 手機版漢堡選單邏輯 (簡單版)
+  // 如果螢幕小於 920px，我們在 body 插入一個 mobile header
   if (window.innerWidth <= 920 && !document.getElementById('mobile-header')) {
     const mobileHeader = document.createElement('div');
     mobileHeader.id = 'mobile-header';
