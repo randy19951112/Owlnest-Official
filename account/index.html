@@ -7,7 +7,23 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
   <title>Account · Dashboard</title>
+
+  <style>
+    /* 內卡片：讓白底卡片裡再有層級 */
+    .innerCard{
+      margin-top:14px;
+      padding:14px 16px;
+      border-radius:18px;
+      border:1px solid rgba(0,0,0,.06);
+      background: rgba(255,255,255,.72);
+    }
+    .kpiRow{ display:flex; align-items:flex-end; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+    .kpiNum{ font-size:54px; font-weight:950; line-height:1; color:var(--col-gold); }
+    .kpiLabel{ opacity:.75; }
+    .innerLine{ height:1px; background:rgba(0,0,0,.06); margin:14px 0; }
+  </style>
 </head>
+
 <body>
   <div class="wrap">
     <aside class="sidebar"><div id="nav"></div></aside>
@@ -26,17 +42,25 @@
       </div>
 
       <div class="grid">
+        <!-- ✅ 改成：外卡片 + 內卡片（層級更清楚） -->
         <section class="card col-7">
           <div class="cardTitle">My Products</div>
           <div class="cardSub">Registered devices</div>
 
-          <div style="font-size:46px; font-weight:900; color:var(--col-gold);" id="count">-</div>
+          <div class="innerCard">
+            <div class="kpiRow">
+              <div>
+                <div class="kpiLabel">Total</div>
+                <div class="kpiNum" id="count">-</div>
+              </div>
 
-          <div style="margin-top:16px;" class="muted">Latest registration</div>
-          <div style="margin-top:6px; font-weight:900; font-size:18px;" id="latest">-</div>
+              <a class="btn primary" href="../activate.html"><i class="fas fa-plus"></i> ACTIVATE NEW</a>
+            </div>
 
-          <div style="margin-top:14px;">
-            <a class="btn primary" href="../activate.html"><i class="fas fa-plus"></i> ACTIVATE NEW</a>
+            <div class="innerLine"></div>
+
+            <div class="kpiLabel">Latest registration</div>
+            <div style="margin-top:6px; font-weight:900; font-size:18px;" id="latest">-</div>
           </div>
         </section>
 
@@ -113,7 +137,7 @@
       }
 
       const items = data || [];
-      document.getElementById("count").textContent = items.length ? String(items.length) : "0";
+      document.getElementById("count").textContent = String(items.length || 0);
       document.getElementById("latest").textContent = items.length ? showLatest(items[0]) : "-";
     }
 
