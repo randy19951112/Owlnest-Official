@@ -1,7 +1,0 @@
-# ✅ 讓 /account 與 /account/ 進入真正的 dashboard
-/account   /account/index.html   301
-/account/  /account/index.html   301
-
-# ⚠️ 重要：不要再有這種規則（會把整個 /account 都打回 account.html）
-# /account/*  /account.html  200
-# /*          /index.html    200   (如果你有 SPA 才需要，且會影響很多頁)
