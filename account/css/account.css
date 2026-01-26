@@ -13,7 +13,7 @@
 
 body {
   margin: 0;
-  background-color: var(--col-cream); /* 背景改為奶油米 */
+  background-color: var(--col-cream);
   color: var(--col-dark);
   font-family: var(--font-sans);
 }
@@ -80,7 +80,7 @@ a {
   border-radius: 8px;
   font-size: 0.95rem;
   font-weight: 500;
-  color: rgba(250, 239, 207, 0.6); /* 未選中顏色 */
+  color: rgba(250, 239, 207, 0.6);
 }
 .nav a:hover {
   color: var(--col-gold);
@@ -216,7 +216,7 @@ a {
   justify-content: space-between;
   align-items: center;
   padding: 16px;
-  background: rgba(250, 239, 207, 0.3); /* 淺奶油色背景 */
+  background: rgba(250, 239, 207, 0.3);
   border-radius: 12px;
   border: 1px solid rgba(69, 81, 105, 0.05);
 }
@@ -258,13 +258,13 @@ a {
 @media (max-width: 920px) {
   .wrap { grid-template-columns: 1fr; }
   .sidebar { 
-    display: none; /* 手機版預設隱藏側邊欄，改用漢堡選單(待實作) */
+    display: none; /* 手機版預設隱藏側邊欄 */
   }
-  .main { padding: 20px; padding-top: 80px; } /* 留空間給手機 Header */
+  .main { padding: 20px; padding-top: 80px; }
   .grid { grid-template-columns: 1fr; }
   .col-6, .col-8 { grid-column: span 12; }
   
-  /* 簡單的手機版 Header 模擬 */
+  /* 手機版 Header */
   .mobile-header {
     display: flex;
     justify-content: space-between;
