@@ -507,3 +507,8 @@ button { font-family: inherit; border: none; background: none; cursor: pointer; 
 }
 .nav-item.active,
 .nav-item.active * { color: #FAEFD6; }
+/* [Fix] Dark card should stay dark on hover */
+.std-card.card-dark:hover {
+  background: var(--col-dark);
+  border-color: transparent; /* 保持無邊框感 */
+}
