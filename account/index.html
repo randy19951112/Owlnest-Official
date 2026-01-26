@@ -19,7 +19,9 @@
           <div class="h1">Dashboard</div>
           <div class="muted" id="hello">Loading…</div>
         </div>
-        <div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <a class="btn" href="/account/products.html"><i class="fas fa-box-open"></i> My Products</a>
+          <a class="btn" href="/account/profile.html"><i class="fas fa-user-circle"></i> Profile</a>
           <button class="btn" id="btnSignOut" type="button"><i class="fas fa-sign-out-alt"></i> Sign out</button>
         </div>
       </div>
@@ -27,42 +29,49 @@
       <div class="grid">
         <section class="card col-6">
           <div class="h1">My Products</div>
-          <div class="muted">Registered Devices</div>
-          <div style="font-size:36px; font-weight:800; margin-top:12px; font-family:var(--font-serif); color:var(--col-gold);" id="productCount">-</div>
+          <div class="muted">Registered devices</div>
+          <div class="kpi" id="productCount">-</div>
 
-          <div class="muted" style="margin-top:20px;">Latest Registration</div>
-          <div style="margin-top:8px; font-weight:600;" id="latestProduct">-</div>
+          <div class="muted" style="margin-top:18px;">Latest registration</div>
+          <div style="margin-top:8px; font-weight:700;" id="latestProduct">-</div>
 
-          <div style="margin-top:20px;">
-            <a class="btn primary" href="/account/products.html">View All</a>
+          <div style="margin-top:18px;">
+            <a class="btn primary" href="/activate.html"><i class="fas fa-plus"></i> Activate New</a>
           </div>
         </section>
 
         <section class="card col-6">
           <div class="h1">Quick Actions</div>
-          <div class="list" style="margin-top:20px;">
+          <div class="list" style="margin-top:14px;">
             <div class="row">
               <div>
-                <div style="font-weight:700; color:var(--col-dark);">
-                  <i class="fas fa-plus-circle" style="color:var(--col-gold); margin-right:8px;"></i>
-                  Activate New Product
-                </div>
-                <div class="muted" style="font-size:0.8rem; margin-top:4px;">Got a new lamp? Add it here.</div>
+                <div style="font-weight:800;"><i class="fas fa-qrcode" style="color:var(--col-gold); margin-right:8px;"></i>Verify product</div>
+                <div class="muted" style="font-size:.85rem; margin-top:4px;">Check authenticity before activation</div>
               </div>
-              <div><a class="btn primary" href="/activate.html">Activate</a></div>
+              <div><a class="btn primary" href="/verify.html">Verify</a></div>
             </div>
 
             <div class="row">
               <div>
-                <div style="font-weight:700; color:var(--col-dark);">
-                  <i class="fas fa-user-edit" style="color:var(--col-gold); margin-right:8px;"></i>
-                  Update Profile
-                </div>
-                <div class="muted" style="font-size:0.8rem; margin-top:4px;">Change name or phone.</div>
+                <div style="font-weight:800;"><i class="fas fa-user-pen" style="color:var(--col-gold); margin-right:8px;"></i>Update profile</div>
+                <div class="muted" style="font-size:.85rem; margin-top:4px;">Name / phone / security</div>
               </div>
-              <div><a class="btn" href="/account/profile.html">Edit</a></div>
+              <div><a class="btn" href="/account/profile.html">Open</a></div>
+            </div>
+
+            <div class="row">
+              <div>
+                <div style="font-weight:800;"><i class="fas fa-headset" style="color:var(--col-gold); margin-right:8px;"></i>Support</div>
+                <div class="muted" style="font-size:.85rem; margin-top:4px;">Warranty & Support coming soon</div>
+              </div>
+              <div><a class="btn" href="/account/support.html">View</a></div>
             </div>
           </div>
+        </section>
+
+        <section class="card col-12">
+          <div class="h1">Notice</div>
+          <div class="muted">We will never show your product key in Member Center. You will only see a display code like “Sleep Aid Lamp 48291374”.</div>
         </section>
       </div>
     </main>
@@ -72,33 +81,25 @@
     import { requireUser, signOut } from "/account/js/authGuard.js";
     import { renderNav } from "/account/js/uiNav.js";
     import { supabase } from "/account/js/supabaseClient.js";
-    import { displayNameFromActivation } from "/account/js/format.js";
+    import { displayNameFromActivation, fmtShortDate } from "/account/js/format.js";
+
+    renderNav("dashboard");
 
     const helloEl = document.getElementById("hello");
     const productCountEl = document.getElementById("productCount");
     const latestProductEl = document.getElementById("latestProduct");
-    const btnSignOut = document.getElementById("btnSignOut");
-
-    function formatDate(iso) {
-      if (!iso) return "";
-      try {
-        return new Date(iso).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
-      } catch { return ""; }
-    }
 
     async function loadDashboard(user) {
-      const who = user?.email || "Member";
-      if (helloEl) helloEl.textContent = `Welcome back, ${who}`;
+      helloEl.textContent = user?.email ? `Welcome back, ${user.email}` : "Welcome back";
 
-      // 1) Count
       const { count, error: countErr } = await supabase
         .from("activations")
-        .select("id", { count: "exact" })   // 取消 head:true，避免某些情況 count 取不到
+        .select("id", { count: "exact", head: true })
         .eq("user_id", user.id);
 
-      if (!countErr && productCountEl) productCountEl.textContent = String(count ?? 0);
+      productCountEl.textContent = countErr ? "-" : String(count ?? 0);
 
-      // 2) Latest (✅ 只拿 display_token，不拿 payload)
+      // ✅ 只讀 display_token
       const { data: latest, error: latestErr } = await supabase
         .from("activations")
         .select("display_token, activated_at")
@@ -108,38 +109,33 @@
         .maybeSingle();
 
       if (latestErr) {
-        console.error("latestErr:", latestErr);
-        if (latestProductEl) latestProductEl.textContent = "Unable to load latest registration.";
+        console.error(latestErr);
+        latestProductEl.textContent = "-";
         return;
       }
 
       if (!latest) {
-        if (latestProductEl) latestProductEl.textContent = "No products yet";
+        latestProductEl.textContent = "No products yet";
         return;
       }
 
-      if (latestProductEl) {
-        latestProductEl.innerHTML = `
-          <span style="color:var(--col-dark);">${displayNameFromActivation(latest)}</span>
-          <span class="muted" style="font-size:0.8em; margin-left:8px;">(${formatDate(latest.activated_at)})</span>
-        `;
-      }
+      latestProductEl.innerHTML = `
+        <span>${displayNameFromActivation(latest)}</span>
+        <span class="muted" style="margin-left:8px; font-size:.85em;">(${fmtShortDate(latest.activated_at)})</span>
+      `;
     }
 
     async function main() {
-      renderNav("dashboard");
       const user = await requireUser();
       if (!user) return;
 
-      btnSignOut?.addEventListener("click", async () => {
-        try { await signOut(); } catch (e) { console.error("signOut error:", e); }
-      });
+      document.getElementById("btnSignOut")?.addEventListener("click", signOut);
 
       try {
         await loadDashboard(user);
       } catch (e) {
-        console.error("dashboard error:", e);
-        if (helloEl) helloEl.textContent = "Dashboard failed to load.";
+        console.error(e);
+        helloEl.textContent = "Dashboard failed to load.";
       }
     }
 
