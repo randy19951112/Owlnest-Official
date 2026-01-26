@@ -4,7 +4,6 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="/account/css/account.css" />
-  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <title>Account · Dashboard</title>
 </head>
@@ -26,7 +25,6 @@
       </div>
 
       <div class="grid">
-        <!-- Card 1: Products Summary -->
         <section class="card col-6">
           <div class="h1">My Products</div>
           <div class="muted">Registered Devices</div>
@@ -36,17 +34,19 @@
           <div style="margin-top:8px; font-weight:600;" id="latestProduct">-</div>
 
           <div style="margin-top:20px;">
-             <a class="btn primary" href="/account/products.html">View All</a>
+            <a class="btn primary" href="/account/products.html">View All</a>
           </div>
         </section>
 
-        <!-- Card 2: Quick Actions -->
         <section class="card col-6">
           <div class="h1">Quick Actions</div>
           <div class="list" style="margin-top:20px;">
             <div class="row">
               <div>
-                <div style="font-weight:700; color:var(--col-dark);"><i class="fas fa-plus-circle" style="color:var(--col-gold); margin-right:8px;"></i>Activate New Product</div>
+                <div style="font-weight:700; color:var(--col-dark);">
+                  <i class="fas fa-plus-circle" style="color:var(--col-gold); margin-right:8px;"></i>
+                  Activate New Product
+                </div>
                 <div class="muted" style="font-size:0.8rem; margin-top:4px;">Got a new lamp? Add it here.</div>
               </div>
               <div><a class="btn primary" href="/activate.html">Activate</a></div>
@@ -54,7 +54,10 @@
 
             <div class="row">
               <div>
-                <div style="font-weight:700; color:var(--col-dark);"><i class="fas fa-user-edit" style="color:var(--col-gold); margin-right:8px;"></i>Update Profile</div>
+                <div style="font-weight:700; color:var(--col-dark);">
+                  <i class="fas fa-user-edit" style="color:var(--col-gold); margin-right:8px;"></i>
+                  Update Profile
+                </div>
                 <div class="muted" style="font-size:0.8rem; margin-top:4px;">Change name or phone.</div>
               </div>
               <div><a class="btn" href="/account/profile.html">Edit</a></div>
@@ -69,6 +72,7 @@
     import { requireUser, signOut } from "/account/js/authGuard.js";
     import { renderNav } from "/account/js/uiNav.js";
     import { supabase } from "/account/js/supabaseClient.js";
+    import { displayNameFromActivation } from "/account/js/format.js";
 
     const helloEl = document.getElementById("hello");
     const productCountEl = document.getElementById("productCount");
@@ -84,30 +88,40 @@
 
     async function loadDashboard(user) {
       const who = user?.email || "Member";
-      helloEl.textContent = `Welcome back, ${who}`;
+      if (helloEl) helloEl.textContent = `Welcome back, ${who}`;
 
+      // 1) Count
       const { count, error: countErr } = await supabase
         .from("activations")
-        .select("id", { count: "exact", head: true })
+        .select("id", { count: "exact" })   // 取消 head:true，避免某些情況 count 取不到
         .eq("user_id", user.id);
 
-      if (!countErr) productCountEl.textContent = String(count ?? 0);
+      if (!countErr && productCountEl) productCountEl.textContent = String(count ?? 0);
 
-      // [關鍵修正] 使用 payload 欄位
+      // 2) Latest (✅ 只拿 display_token，不拿 payload)
       const { data: latest, error: latestErr } = await supabase
         .from("activations")
-        .select("payload, activated_at") 
+        .select("display_token, activated_at")
         .eq("user_id", user.id)
         .order("activated_at", { ascending: false })
         .limit(1)
         .maybeSingle();
 
+      if (latestErr) {
+        console.error("latestErr:", latestErr);
+        if (latestProductEl) latestProductEl.textContent = "Unable to load latest registration.";
+        return;
+      }
+
       if (!latest) {
-        latestProductEl.textContent = "No products yet";
-      } else {
+        if (latestProductEl) latestProductEl.textContent = "No products yet";
+        return;
+      }
+
+      if (latestProductEl) {
         latestProductEl.innerHTML = `
-            <span style="color:var(--col-dark);">${latest.payload}</span>
-            <span class="muted" style="font-size:0.8em; margin-left:8px;">(${formatDate(latest.activated_at)})</span>
+          <span style="color:var(--col-dark);">${displayNameFromActivation(latest)}</span>
+          <span class="muted" style="font-size:0.8em; margin-left:8px;">(${formatDate(latest.activated_at)})</span>
         `;
       }
     }
@@ -117,13 +131,16 @@
       const user = await requireUser();
       if (!user) return;
 
-      if (btnSignOut) {
-        btnSignOut.addEventListener("click", async () => {
-          try { await signOut(); } catch (e) { console.error("signOut error:", e); }
-        });
-      }
+      btnSignOut?.addEventListener("click", async () => {
+        try { await signOut(); } catch (e) { console.error("signOut error:", e); }
+      });
 
-      await loadDashboard(user);
+      try {
+        await loadDashboard(user);
+      } catch (e) {
+        console.error("dashboard error:", e);
+        if (helloEl) helloEl.textContent = "Dashboard failed to load.";
+      }
     }
 
     main();
