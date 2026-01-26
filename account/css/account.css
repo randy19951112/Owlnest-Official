@@ -414,3 +414,72 @@ body{
   cursor:not-allowed;
   box-shadow:none;
 }
+/* =========================
+   Mobile drawer sidebar
+========================= */
+
+/* Backdrop */
+.drawerBackdrop{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.28);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .18s ease;
+  z-index: 40;
+}
+
+/* Drawer toggle button (in topbar) */
+.drawerBtn{
+  display:none;
+}
+
+/* Desktop keeps as-is */
+@media (min-width: 861px){
+  .drawerBackdrop{ display:none; }
+}
+
+/* Mobile layout */
+@media (max-width: 860px){
+  /* Keep main content full width and do NOT stack sidebar on top */
+  .wrap{
+    flex-direction: row;
+  }
+
+  /* Sidebar becomes off-canvas drawer */
+  .sidebar{
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: min(86vw, 340px);
+    transform: translateX(-110%);
+    transition: transform .22s ease;
+    z-index: 50;
+    border-right: 1px solid rgba(69,81,105,.10);
+    box-shadow: 12px 0 30px rgba(0,0,0,.12);
+    background: rgba(255,255,255,.86);
+    backdrop-filter: blur(10px);
+  }
+
+  /* Main becomes full width */
+  .main{
+    max-width: 100%;
+    width: 100%;
+    padding: 22px 16px;
+  }
+
+  /* Show drawer button on mobile */
+  .drawerBtn{
+    display:inline-flex;
+  }
+
+  /* When open */
+  body.nav-open .sidebar{
+    transform: translateX(0);
+  }
+  body.nav-open .drawerBackdrop{
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
