@@ -505,3 +505,5 @@ button { font-family: inherit; border: none; background: none; cursor: pointer; 
 .sidebar .nav-item:visited{
   color: var(--col-dark) !important;
 }
+.nav-item.active,
+.nav-item.active * { color: #FAEFD6; }
