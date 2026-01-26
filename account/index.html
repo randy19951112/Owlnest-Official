@@ -62,45 +62,23 @@
     </main>
   </div>
 
-  <script type="module">
-    import { requireUser } from "/account/js/authGuard.js";
-    import { supabase } from "/account/js/supabaseClient.js";
-    import { renderNav } from "/account/js/uiNav.js";
-    import { fmtDate, displayNameFromActivation } from "/account/js/format.js";
+ <script type="module">
+  import { requireUser, signOut } from "/account/js/authGuard.js";
+  import { renderNav } from "/account/js/uiNav.js";
+  import { supabase } from "/account/js/supabaseClient.js";
 
-    renderNav("dashboard");
+  async function main() {
     const user = await requireUser();
     if (!user) return;
 
-    // hello
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("full_name,email")
-      .eq("id", user.id)
-      .single();
+    renderNav("dashboard");
 
-    document.getElementById("hello").textContent =
-      "Hi, " + (profile?.full_name || profile?.email || user.email);
+    // 你原本 dashboard 的 query 全部放這裡
+    // ...
+  }
 
-    // count
-    const { count: productCount } = await supabase
-      .from("activations")
-      .select("*", { count: "exact", head: true })
-      .eq("user_id", user.id);
+  main();
+</script>
 
-    document.getElementById("productCount").textContent = productCount ?? 0;
-
-    // latest
-    const { data: latest } = await supabase
-      .from("activations")
-      .select("display_token, activated_at")
-      .eq("user_id", user.id)
-      .order("activated_at", { ascending: false })
-      .limit(1);
-
-    const item = latest?.[0];
-    document.getElementById("latestProduct").textContent =
-      item ? `${displayNameFromActivation(item)} · ${fmtDate(item.activated_at)}` : "-";
-  </script>
 </body>
 </html>
