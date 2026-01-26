@@ -1,16 +1,30 @@
 <!doctype html>
-<html lang="zh-Hant">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="/account/css/account.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <title>Account · Dashboard</title>
 </head>
 <body>
+
+  <!-- Mobile header -->
+  <div class="mbar">
+    <div class="mleft">
+      <button class="iconbtn" id="menuBtn" aria-label="Open menu"><i class="fa-solid fa-bars"></i></button>
+      <a class="mbrand" href="/index.html" aria-label="Back to home">
+        <img src="/account/img/logo.png" alt="Owlnest" onerror="this.style.display='none'">
+        <span>Owlnest</span>
+      </a>
+    </div>
+    <div class="mtitle">Dashboard</div>
+  </div>
+  <div class="overlay" id="overlay"></div>
+
   <div class="wrap">
     <aside class="sidebar">
-      <div id="nav" style="display:flex; flex-direction:column; height:100%;"></div>
+      <div id="nav"></div>
     </aside>
 
     <main class="main">
@@ -19,50 +33,49 @@
           <div class="h1">Dashboard</div>
           <div class="muted" id="hello">Loading…</div>
         </div>
-        <div style="display:flex; gap:10px; flex-wrap:wrap;">
-          <a class="btn" href="/account/products.html"><i class="fas fa-box-open"></i> My Products</a>
-          <a class="btn" href="/account/profile.html"><i class="fas fa-user-circle"></i> Profile</a>
-          <button class="btn" id="btnSignOut" type="button"><i class="fas fa-sign-out-alt"></i> Sign out</button>
+        <div>
+          <a class="btn" href="/account/products.html"><i class="fa-solid fa-box"></i> My Products</a>
+          <a class="btn" href="/account/profile.html"><i class="fa-solid fa-user"></i> Profile</a>
+          <button class="btn" id="signOutBtn"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out</button>
         </div>
       </div>
 
       <div class="grid">
         <section class="card col-6">
-          <div class="h1">My Products</div>
+          <div class="h1" style="font-size:26px;">My Products</div>
           <div class="muted">Registered devices</div>
-          <div class="kpi" id="productCount">-</div>
+          <div style="font-size:28px; font-weight:800; margin-top:6px;" id="productCount">-</div>
+          <div class="muted" style="margin-top:10px;">Latest registration</div>
+          <div style="margin-top:6px;" id="latestProduct">-</div>
 
-          <div class="muted" style="margin-top:18px;">Latest registration</div>
-          <div style="margin-top:8px; font-weight:700;" id="latestProduct">-</div>
-
-          <div style="margin-top:18px;">
-            <a class="btn primary" href="/activate.html"><i class="fas fa-plus"></i> Activate New</a>
+          <div style="margin-top:14px;">
+            <a class="btn primary" href="/activate.html"><i class="fa-solid fa-plus"></i> Activate New</a>
           </div>
         </section>
 
         <section class="card col-6">
-          <div class="h1">Quick Actions</div>
-          <div class="list" style="margin-top:14px;">
+          <div class="h1" style="font-size:26px;">Quick Actions</div>
+          <div class="list" style="margin-top:10px;">
             <div class="row">
               <div>
-                <div style="font-weight:800;"><i class="fas fa-qrcode" style="color:var(--col-gold); margin-right:8px;"></i>Verify product</div>
-                <div class="muted" style="font-size:.85rem; margin-top:4px;">Check authenticity before activation</div>
+                <div style="font-weight:800;"><i class="fa-solid fa-qrcode" style="color:var(--accent); margin-right:8px;"></i> Verify product</div>
+                <div class="muted">Check authenticity before activation</div>
               </div>
               <div><a class="btn primary" href="/verify.html">Verify</a></div>
             </div>
 
             <div class="row">
               <div>
-                <div style="font-weight:800;"><i class="fas fa-user-pen" style="color:var(--col-gold); margin-right:8px;"></i>Update profile</div>
-                <div class="muted" style="font-size:.85rem; margin-top:4px;">Name / phone / security</div>
+                <div style="font-weight:800;"><i class="fa-solid fa-user-pen" style="color:var(--accent); margin-right:8px;"></i> Update profile</div>
+                <div class="muted">Name / phone / security</div>
               </div>
               <div><a class="btn" href="/account/profile.html">Open</a></div>
             </div>
 
             <div class="row">
               <div>
-                <div style="font-weight:800;"><i class="fas fa-headset" style="color:var(--col-gold); margin-right:8px;"></i>Support</div>
-                <div class="muted" style="font-size:.85rem; margin-top:4px;">Warranty & Support coming soon</div>
+                <div style="font-weight:800;"><i class="fa-solid fa-headset" style="color:var(--accent); margin-right:8px;"></i> Support</div>
+                <div class="muted">Warranty & Support coming soon</div>
               </div>
               <div><a class="btn" href="/account/support.html">View</a></div>
             </div>
@@ -70,76 +83,92 @@
         </section>
 
         <section class="card col-12">
-          <div class="h1">Notice</div>
+          <div class="h1" style="font-size:26px;">Notice</div>
           <div class="muted">We will never show your product key in Member Center. You will only see a display code like “Sleep Aid Lamp 48291374”.</div>
         </section>
       </div>
     </main>
   </div>
 
+  <script>
+    (function(){
+      const btn = document.getElementById('menuBtn');
+      const overlay = document.getElementById('overlay');
+      const sidebar = document.querySelector('.sidebar');
+
+      function closeMenu(){
+        sidebar?.classList.remove('open');
+        overlay?.classList.remove('show');
+      }
+      function toggleMenu(){
+        sidebar?.classList.toggle('open');
+        overlay?.classList.toggle('show');
+      }
+
+      btn?.addEventListener('click', toggleMenu);
+      overlay?.addEventListener('click', closeMenu);
+      window.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeMenu(); });
+
+      // Close drawer when clicking any nav link
+      document.addEventListener('click', (e)=>{
+        const a = e.target.closest('.sidebar a');
+        if(a) closeMenu();
+      });
+    })();
+  </script>
+
   <script type="module">
     import { requireUser, signOut } from "/account/js/authGuard.js";
     import { renderNav } from "/account/js/uiNav.js";
     import { supabase } from "/account/js/supabaseClient.js";
-    import { displayNameFromActivation, fmtShortDate } from "/account/js/format.js";
-
-    renderNav("dashboard");
-
-    const helloEl = document.getElementById("hello");
-    const productCountEl = document.getElementById("productCount");
-    const latestProductEl = document.getElementById("latestProduct");
-
-    async function loadDashboard(user) {
-      helloEl.textContent = user?.email ? `Welcome back, ${user.email}` : "Welcome back";
-
-      const { count, error: countErr } = await supabase
-        .from("activations")
-        .select("id", { count: "exact", head: true })
-        .eq("user_id", user.id);
-
-      productCountEl.textContent = countErr ? "-" : String(count ?? 0);
-
-      // ✅ 只讀 display_token
-      const { data: latest, error: latestErr } = await supabase
-        .from("activations")
-        .select("display_token, activated_at")
-        .eq("user_id", user.id)
-        .order("activated_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-
-      if (latestErr) {
-        console.error(latestErr);
-        latestProductEl.textContent = "-";
-        return;
-      }
-
-      if (!latest) {
-        latestProductEl.textContent = "No products yet";
-        return;
-      }
-
-      latestProductEl.innerHTML = `
-        <span>${displayNameFromActivation(latest)}</span>
-        <span class="muted" style="margin-left:8px; font-size:.85em;">(${fmtShortDate(latest.activated_at)})</span>
-      `;
-    }
+    import { fmtDateShort } from "/account/js/format.js";
 
     async function main() {
       const user = await requireUser();
       if (!user) return;
 
-      document.getElementById("btnSignOut")?.addEventListener("click", signOut);
+      renderNav("dashboard");
 
+      const hello = document.getElementById("hello");
+      if (hello) hello.textContent = `Welcome back, ${user.email ?? ""}`;
+
+      const signOutBtn = document.getElementById("signOutBtn");
+      signOutBtn?.addEventListener("click", async () => {
+        await signOut();
+        window.location.href = "/member-login.html";
+      });
+
+      // Load activations summary
       try {
-        await loadDashboard(user);
+        const { data, error } = await supabase
+          .from("activations")
+          .select("display_token, activated_at")
+          .order("activated_at", { ascending: false });
+
+        if (error) throw error;
+
+        const countEl = document.getElementById("productCount");
+        const latestEl = document.getElementById("latestProduct");
+
+        const count = data?.length ?? 0;
+        if (countEl) countEl.textContent = String(count);
+
+        if (!data || data.length === 0) {
+          if (latestEl) latestEl.textContent = "-";
+        } else {
+          const latest = data[0];
+          const code = (latest.display_token ?? "").toString().trim();
+          const label = code ? `Sleep Aid Lamp ${code}` : "Registered";
+          const date = latest.activated_at ? fmtDateShort(latest.activated_at) : "";
+          if (latestEl) latestEl.innerHTML = `<b>${label}</b> <span class="muted">${date ? `(${date})` : ""}</span>`;
+        }
       } catch (e) {
-        console.error(e);
-        helloEl.textContent = "Dashboard failed to load.";
+        console.warn("Dashboard load failed:", e);
       }
     }
 
     main();
   </script>
+
 </body>
 </html>
