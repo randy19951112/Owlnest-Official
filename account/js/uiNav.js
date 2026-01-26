@@ -7,10 +7,13 @@ export function renderNav(activeKey) {
   if (!navContainer) return;
 
   // 輔助函式：生成連結
+  // [修正] 強制使用絕對路徑，避免相對路徑在不同層級失效
   const item = (key, href, text, iconClass, extra = "") => {
     const isActive = key === activeKey ? "active" : "";
     const isDisabled = href ? "" : "disabled";
-    const link = href || "javascript:void(0)";
+    // 確保 href 是以 /account/ 開頭的絕對路徑
+    const link = href ? (href.startsWith('/') ? href : `/account/${href}`) : "javascript:void(0)";
+    
     return `
       <a class="${isActive} ${isDisabled}" href="${link}">
         <i class="${iconClass}"></i>
@@ -24,14 +27,16 @@ export function renderNav(activeKey) {
   // 注意：Logo 路徑使用絕對路徑 /logo2.png 確保在任何子目錄都能讀取
   navContainer.innerHTML = `
     <div class="brand">
-      <img src="/logo2.png" alt="Logo">
-      <span>Owlnest</span>
+      <a href="/index.html" style="display:flex; align-items:center; gap:12px;">
+          <img src="/logo2.png" alt="Logo">
+          <span>Owlnest</span>
+      </a>
     </div>
     
     <div class="nav">
-      ${item("dashboard", "/account/index.html", "Dashboard", "fas fa-chart-pie")}
-      ${item("products", "/account/products.html", "My Products", "fas fa-box-open")}
-      ${item("profile", "/account/profile.html", "Profile", "fas fa-user-circle")}
+      ${item("dashboard", "index.html", "Dashboard", "fas fa-chart-pie")}
+      ${item("products", "products.html", "My Products", "fas fa-box-open")}
+      ${item("profile", "profile.html", "Profile", "fas fa-user-circle")}
       
       <div style="height:1px; background:rgba(255,255,255,0.1); margin:10px 0;"></div>
       
