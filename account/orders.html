@@ -21,6 +21,9 @@
     .items { display:grid; gap:10px; margin-top:10px; }
     .item { display:flex; justify-content:space-between; gap:12px; padding:10px 12px; border-radius:14px; border:1px solid rgba(0,0,0,.06); background:rgba(255,255,255,.9); }
     .muted2 { opacity:.7; }
+
+    .emptyBox { margin-top:14px; padding:18px; border-radius:18px; border:1px dashed rgba(0,0,0,.12); background:rgba(255,255,255,.6); display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+    .emptyLeft { display:flex; flex-direction:column; gap:6px; }
   </style>
 </head>
 
@@ -34,7 +37,10 @@
           <div class="h1">Orders</div>
           <div class="muted">Purchase history</div>
         </div>
+
         <div class="actions">
+          <!-- ✅ 加回 SHOP -->
+          <a class="btn primary" href="../index.html#section-3"><i class="fa-solid fa-bag-shopping"></i> SHOP</a>
           <a class="btn" href="./index.html"><i class="fas fa-chart-pie"></i> DASHBOARD</a>
         </div>
       </div>
@@ -45,6 +51,15 @@
 
         <div id="msg" class="muted" style="margin-top:10px;">Loading...</div>
         <div id="list" style="margin-top:14px; display:grid; gap:12px;"></div>
+
+        <!-- ✅ 空狀態 CTA（有些人只看卡片內） -->
+        <div id="empty" class="emptyBox" style="display:none;">
+          <div class="emptyLeft">
+            <div style="font-weight:900;">No orders yet</div>
+            <div class="muted2">Head to shop and start your sleep ritual ✨</div>
+          </div>
+          <a class="btn primary" href="../index.html#section-3"><i class="fa-solid fa-bag-shopping"></i> SHOP</a>
+        </div>
       </section>
     </main>
   </div>
@@ -77,10 +92,8 @@
     }
 
     function normalizeItems(items){
-      // Snipcart items sometimes: [{name, quantity, totalPrice, price}, ...]
       if (!items) return [];
       if (Array.isArray(items)) return items;
-      // sometimes items may be object with "items"
       if (Array.isArray(items.items)) return items.items;
       return [];
     }
@@ -91,7 +104,6 @@
       const total = money(o.total);
       const items = normalizeItems(o.items);
       const count = items.reduce((acc, it) => acc + Number(it.quantity || 1), 0);
-
       const detailsId = `details_${idx}`;
 
       return `
@@ -144,8 +156,6 @@
       const email = (user.email || "").toLowerCase().trim();
       $("msg").textContent = "Loading...";
 
-      // orders table schema from your webhook:
-      // id, user_email, total, items, created_at
       const { data, error } = await supabase
         .from("orders")
         .select("id, user_email, total, items, created_at")
@@ -155,6 +165,7 @@
       if (error){
         $("msg").textContent = "Unable to load orders: " + (error.message || "error");
         $("list").innerHTML = "";
+        $("empty").style.display = "none";
         return;
       }
 
@@ -162,10 +173,12 @@
       if (!orders.length){
         $("msg").textContent = "No order history found.";
         $("list").innerHTML = "";
+        $("empty").style.display = "flex";   // ✅ 顯示卡片內 SHOP
         return;
       }
 
       $("msg").textContent = "";
+      $("empty").style.display = "none";
       $("list").innerHTML = orders.map(renderOrder).join("");
 
       document.addEventListener("click", (e) => {
