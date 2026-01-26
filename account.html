@@ -89,9 +89,9 @@
         <span class="text-xs font-bold text-brand-gold uppercase tracking-[0.2em] block mb-2">Member Center</span>
         <h1 class="text-3xl md:text-4xl font-serif text-brand-dark">Overview</h1>
       </div>
-      <!-- [新增] 進入完整後台按鈕 (Desktop) -->
-      <a href="/account/index.html" class="hidden md:flex items-center gap-2 bg-brand-dark text-white px-6 py-3 rounded shadow hover:bg-brand-gold hover:text-brand-dark transition text-sm font-bold uppercase tracking-wide">
-          <span>Go to Full Dashboard</span> <i class="fas fa-arrow-right"></i>
+      <!-- [關鍵更新] 電腦版：醒目的「進入完整後台」按鈕 -->
+      <a href="/account/index.html" class="hidden md:flex items-center gap-3 bg-brand-dark text-white px-6 py-3 rounded shadow hover:bg-brand-gold hover:text-brand-dark transition text-sm font-bold uppercase tracking-wide group">
+          <span>Enter Member Center</span> <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
       </a>
     </div>
 
@@ -99,6 +99,7 @@
 
     <div class="grid md:grid-cols-3 gap-8">
       <div class="md:col-span-1 space-y-8">
+        <!-- Profile Card -->
         <div class="bg-white p-8 rounded-lg shadow-sm border border-brand-dark/5 relative overflow-hidden group">
           <div class="absolute top-0 right-0 w-20 h-20 bg-brand-gold/10 rounded-bl-full -mr-10 -mt-10 transition group-hover:scale-110"></div>
           <h2 class="text-xs font-bold text-brand-dark/40 uppercase tracking-[0.2em] mb-6">Profile</h2>
@@ -109,7 +110,8 @@
               <p id="user-email" class="font-bold text-brand-dark text-sm truncate">Checking...</p>
             </div>
           </div>
-          <!-- [新增] 手機版也顯示完整後台按鈕 -->
+          
+          <!-- [關鍵更新] 手機版：醒目的「進入完整後台」按鈕 -->
           <a href="/account/index.html" class="block w-full text-center bg-brand-dark text-white py-3 rounded transition duration-300 text-sm font-bold uppercase tracking-wide hover:bg-brand-gold hover:text-brand-dark shadow-lg">
              Go to Dashboard
           </a>
@@ -123,20 +125,22 @@
       </div>
 
       <div class="md:col-span-2 space-y-8">
-        <!-- Products Preview -->
+        <!-- Products Preview (移除 Manage All 連結) -->
         <div class="bg-white p-8 rounded-lg shadow-sm border border-brand-dark/5 min-h-[200px]">
           <div class="flex items-center justify-between mb-6">
-            <h2 class="text-xs font-bold text-brand-dark/40 uppercase tracking-[0.2em]">My Products</h2>
+            <h2 class="text-xs font-bold text-brand-dark/40 uppercase tracking-[0.2em]">My Products (Preview)</h2>
+            <span class="w-8 h-1 bg-brand-gold rounded-full"></span>
           </div>
           <ul id="product-list" class="space-y-4">
-            <li class="text-center py-10 text-brand-dark/40 font-light text-sm italic bg-brand-cream/30 rounded border border-dashed border-brand-dark/10">Loading...</li>
+            <li class="text-center py-10 text-brand-dark/40 font-light text-sm italic bg-brand-cream/30 rounded border border-dashed border-brand-dark/10">Loading products...</li>
           </ul>
         </div>
 
-        <!-- Orders Preview -->
+        <!-- Orders Preview (移除 View History 連結) -->
         <div class="bg-white p-8 rounded-lg shadow-sm border border-brand-dark/5">
           <div class="flex items-center justify-between mb-6">
-            <h2 class="text-xs font-bold text-brand-dark/40 uppercase tracking-[0.2em]">Orders</h2>
+            <h2 class="text-xs font-bold text-brand-dark/40 uppercase tracking-[0.2em]">Recent Orders</h2>
+             <span class="w-8 h-1 bg-brand-dark/10 rounded-full"></span>
           </div>
           <div class="overflow-x-auto">
             <table class="w-full text-left text-sm">
@@ -144,7 +148,7 @@
                 <tr><th class="pb-3 pl-2">ID</th><th class="pb-3">Date</th><th class="pb-3">Total</th></tr>
               </thead>
               <tbody id="order-list">
-                <tr><td colspan="3" class="py-8 text-center text-brand-dark/40 italic">Loading...</td></tr>
+                <tr><td colspan="3" class="py-8 text-center text-brand-dark/40 italic">Loading orders...</td></tr>
               </tbody>
             </table>
           </div>
