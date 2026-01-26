@@ -5,63 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="./css/account.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
-  <title>Account · Orders</title>
-
-  <style>
-    .orderRow { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:16px; border:1px solid rgba(0,0,0,.06); border-radius:16px; background:rgba(255,255,255,.9); }
-    .orderLeft { display:flex; flex-direction:column; gap:6px; min-width:0; }
-    .orderId { font-weight:900; letter-spacing:.02em; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
-    .orderMeta { display:flex; gap:10px; flex-wrap:wrap; }
-    .pill { display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; font-size:12px; border:1px solid rgba(0,0,0,.08); background:rgba(0,0,0,.02); }
-    .orderRight { display:flex; align-items:center; gap:10px; flex-shrink:0; }
-    .toggleBtn { border:0; background:transparent; cursor:pointer; font-weight:900; color:var(--col-dark); }
-    .details { margin-top:10px; padding:14px; border-radius:16px; border:1px solid rgba(0,0,0,.06); background:rgba(255,255,255,.7); display:none; }
-    .details.open { display:block; }
-    .items { display:grid; gap:10px; margin-top:10px; }
-    .item { display:flex; justify-content:space-between; gap:12px; padding:10px 12px; border-radius:14px; border:1px solid rgba(0,0,0,.06); background:rgba(255,255,255,.9); }
-    .muted2 { opacity:.7; }
-
-    .emptyBox { margin-top:14px; padding:18px; border-radius:18px; border:1px dashed rgba(0,0,0,.12); background:rgba(255,255,255,.6); display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
-    .emptyLeft { display:flex; flex-direction:column; gap:6px; }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <title>Owlnest · Orders</title>
 </head>
-
-<body>
-  <div class="drawerBackdrop" id="drawerBackdrop"></div>
+<body class="page-orders">
   <div class="wrap">
     <aside class="sidebar"><div id="nav"></div></aside>
 
     <main class="main">
       <div class="topbar">
         <div>
-          <div class="h1">Orders</div>
-          <div class="muted">Purchase history</div>
-        </div>
-
-        <div class="actions">
-          <!-- ✅ 加回 SHOP -->
-          <a class="btn primary" href="../index.html#section-3"><i class="fa-solid fa-bag-shopping"></i> SHOP</a>
-          <a class="btn" href="./index.html"><i class="fas fa-chart-pie"></i> DASHBOARD</a>
+          <h1 class="text-h1">Orders</h1>
+          <div class="text-sub">Track your purchase history</div>
         </div>
       </div>
 
-      <section class="card">
-        <div class="cardTitle">Recent Orders</div>
-        <div class="cardSub">Synced from checkout (Snipcart webhook)</div>
+      <div id="msg" class="text-sub"></div>
+      
+      <div id="empty" class="std-card hidden settings-empty">
+         <i class="fa-solid fa-basket-shopping icon-large"></i>
+         <div class="text-bold">No orders yet</div>
+         <div class="text-sub mb-4">Explore our products and start your journey.</div>
+         <a href="../index.html" class="btn primary">Shop Now</a>
+      </div>
 
-        <div id="msg" class="muted" style="margin-top:10px;">Loading...</div>
-        <div id="list" style="margin-top:14px; display:grid; gap:12px;"></div>
-
-        <!-- ✅ 空狀態 CTA（有些人只看卡片內） -->
-        <div id="empty" class="emptyBox" style="display:none;">
-          <div class="emptyLeft">
-            <div style="font-weight:900;">No orders yet</div>
-            <div class="muted2">Head to shop and start your sleep ritual ✨</div>
-          </div>
-          <a class="btn primary" href="../index.html#section-3"><i class="fa-solid fa-bag-shopping"></i> SHOP</a>
-        </div>
-      </section>
+      <div id="list" class="mt-2"></div>
     </main>
   </div>
 
@@ -69,82 +37,29 @@
     import { requireUser } from "./js/authGuard.js";
     import { supabase } from "./js/supabaseClient.js";
     import { renderNav } from "./js/uiNav.js";
+    import { fmtDateTime } from "./js/format.js";
 
     renderNav("orders");
 
-    const $ = (id) => document.getElementById(id);
-
-    function money(n){
-      const num = Number(n);
-      if (Number.isNaN(num)) return "-";
-      return new Intl.NumberFormat(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(num);
-    }
-
-    function shortId(id){
-      const s = String(id || "");
-      if (s.length <= 10) return s;
-      return s.slice(0,8) + "..." + s.slice(-4);
-    }
-
-    function safeText(s){
-      return (s ?? "").toString().replace(/[&<>"']/g, (m) => ({
-        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-      }[m]));
-    }
-
-    function normalizeItems(items){
-      if (!items) return [];
-      if (Array.isArray(items)) return items;
-      if (Array.isArray(items.items)) return items.items;
-      return [];
-    }
-
-    function renderOrder(o, idx){
-      const id = safeText(o.id);
-      const created = o.created_at ? new Date(o.created_at).toLocaleString() : "-";
-      const total = money(o.total);
-      const items = normalizeItems(o.items);
-      const count = items.reduce((acc, it) => acc + Number(it.quantity || 1), 0);
-      const detailsId = `details_${idx}`;
-
+    function renderOrder(o){
+      const dateStr = fmtDateTime(o.created_at);
+      const totalStr = new Intl.NumberFormat('en-US', { style:'currency', currency:'USD' }).format(o.total || 0);
+      
       return `
-        <div>
-          <div class="orderRow">
-            <div class="orderLeft">
-              <div class="orderId">${shortId(id)}</div>
-              <div class="orderMeta">
-                <span class="pill"><i class="fa-regular fa-calendar"></i> <span class="muted2">${safeText(created)}</span></span>
-                <span class="pill"><i class="fa-solid fa-box"></i> <span class="muted2">${count || 0} items</span></span>
-              </div>
-            </div>
-
-            <div class="orderRight">
-              <span class="pill"><i class="fa-solid fa-dollar-sign"></i> <span style="font-weight:900;">${total}</span></span>
-              <button class="toggleBtn" data-toggle="${detailsId}">
-                DETAILS <i class="fa-solid fa-chevron-down"></i>
-              </button>
-            </div>
+        <div class="list-row mt-2">
+          <div class="flex-grow min-w-0 row-left">
+             <div class="icon-circle gold">
+               <i class="fa-solid fa-receipt"></i>
+             </div>
+             <div class="min-w-0">
+               <div class="text-mono break-word text-bold">#${o.id.slice(0,8).toUpperCase()}</div>
+               <div class="text-sub text-xs">${dateStr}</div>
+             </div>
           </div>
-
-          <div class="details" id="${detailsId}">
-            <div class="muted2">Order ID: <span style="font-family: ui-monospace, monospace;">${id}</span></div>
-            <div class="items">
-              ${items.length ? items.map(it => {
-                const name = safeText(it.name || it.title || "Item");
-                const qty = Number(it.quantity || 1);
-                const price = it.totalPrice ?? it.price ?? it.unitPrice ?? null;
-                const priceTxt = price == null ? "-" : money(price);
-                return `
-                  <div class="item">
-                    <div>
-                      <div style="font-weight:900;">${name}</div>
-                      <div class="muted2" style="font-size:12px;">Qty: ${qty}</div>
-                    </div>
-                    <div style="font-weight:900; font-family: ui-monospace, monospace;">${priceTxt}</div>
-                  </div>
-                `;
-              }).join("") : `<div class="muted2">No item details available.</div>`}
-            </div>
+          
+          <div class="row-right">
+             <div class="text-bold mr-2">${totalStr}</div>
+             <button class="btn btn-sm">Details</button>
           </div>
         </div>
       `;
@@ -155,45 +70,30 @@
       if (!user) return;
 
       const email = (user.email || "").toLowerCase().trim();
-      $("msg").textContent = "Loading...";
+      const msgEl = document.getElementById("msg");
+      msgEl.textContent = "Loading...";
 
       const { data, error } = await supabase
         .from("orders")
-        .select("id, user_email, total, items, created_at")
+        .select("*")
         .eq("user_email", email)
         .order("created_at", { ascending: false });
 
       if (error){
-        $("msg").textContent = "Unable to load orders: " + (error.message || "error");
-        $("list").innerHTML = "";
-        $("empty").style.display = "none";
+        msgEl.textContent = "Error: " + error.message;
         return;
       }
 
       const orders = data || [];
       if (!orders.length){
-        $("msg").textContent = "No order history found.";
-        $("list").innerHTML = "";
-        $("empty").style.display = "flex";   // ✅ 顯示卡片內 SHOP
+        msgEl.classList.add("hidden");
+        document.getElementById("empty").classList.remove("hidden");
         return;
       }
 
-      $("msg").textContent = "";
-      $("empty").style.display = "none";
-      $("list").innerHTML = orders.map(renderOrder).join("");
-
-      document.addEventListener("click", (e) => {
-        const btn = e.target.closest("[data-toggle]");
-        if (!btn) return;
-        const id = btn.getAttribute("data-toggle");
-        const box = document.getElementById(id);
-        if (!box) return;
-        box.classList.toggle("open");
-        const icon = btn.querySelector("i");
-        if (icon) icon.className = box.classList.contains("open") ? "fa-solid fa-chevron-up" : "fa-solid fa-chevron-down";
-      });
+      msgEl.classList.add("hidden");
+      document.getElementById("list").innerHTML = orders.map(renderOrder).join("");
     }
-
     init();
   </script>
 </body>
