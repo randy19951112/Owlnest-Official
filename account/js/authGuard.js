@@ -1,99 +1,88 @@
-// /account/js/uiNav.js
 import { signOut } from "/account/js/authGuard.js";
 
-function ensureOverlay() {
-  let overlay = document.querySelector(".nav-overlay");
-  if (!overlay) {
+function qs(sel, root = document){ return root.querySelector(sel); }
+
+function openDrawer(sidebar, overlay){
+  sidebar.classList.add("open");
+  overlay.classList.add("show");
+}
+
+function closeDrawer(sidebar, overlay){
+  sidebar.classList.remove("open");
+  overlay.classList.remove("show");
+}
+
+export function renderNav(activeKey){
+  const navMount = document.getElementById("nav");
+  if (!navMount) return;
+
+  // 找到 sidebar 容器
+  const sidebar = navMount.closest(".sidebar") || qs(".sidebar");
+  sidebar?.setAttribute("id", "sidebar");
+
+  // overlay（沒有就注入）
+  let overlay = document.getElementById("sidebarOverlay");
+  if (!overlay){
     overlay = document.createElement("div");
-    overlay.className = "nav-overlay";
+    overlay.id = "sidebarOverlay";
+    overlay.className = "sidebarOverlay";
     document.body.appendChild(overlay);
   }
-  overlay.addEventListener("click", () => document.body.classList.remove("nav-open"));
-}
 
-function ensureTopbarToggle() {
-  const topbar = document.querySelector(".topbar");
-  if (!topbar) return;
-
-  // 把 topbar 右側容器加上 class，讓 CSS 能做手機排版
-  const right = topbar.querySelector(":scope > div:last-child");
-  if (right && !right.classList.contains("topbarActions")) right.classList.add("topbarActions");
-
-  // 在左側標題區塞一顆漢堡按鈕（只在手機顯示，CSS 控制）
-  const left = topbar.querySelector(":scope > div:first-child") || topbar;
-  if (!document.getElementById("navToggle")) {
-    const btn = document.createElement("button");
-    btn.id = "navToggle";
-    btn.className = "iconbtn";
-    btn.type = "button";
-    btn.setAttribute("aria-label", "Open menu");
-    btn.innerHTML = `<i class="fa-solid fa-bars"></i>`;
-    btn.addEventListener("click", () => document.body.classList.add("nav-open"));
-    left.prepend(btn);
-  }
-}
-
-export function renderNav(active = "dashboard") {
-  ensureOverlay();
-  ensureTopbarToggle();
-
-  const navRoot = document.getElementById("nav");
-  if (!navRoot) return;
-
-  const items = [
-    { key: "dashboard", label: "Dashboard", href: "/account/index.html", icon: "fa-chart-pie" },
-    { key: "products",  label: "My Products", href: "/account/products.html", icon: "fa-box" },
-    { key: "orders",    label: "Orders", href: "/account/orders.html", icon: "fa-receipt" },
-    { key: "support",   label: "Warranty & Support", href: "/account/support.html", icon: "fa-headset" },
-    { key: "profile",   label: "Profile & Security", href: "/account/profile.html", icon: "fa-user-shield" },
-    { key: "settings",  label: "Settings", href: "/account/settings.html", icon: "fa-gear" },
-  ];
-
-  navRoot.innerHTML = `
-    <div class="navBrand">
-      <img src="/logo.png" alt="Owlnest" />
-      <div class="brandText">Owlnest</div>
-    </div>
-    <div class="navSep"></div>
-
-    <button class="navClose" id="navClose" type="button" aria-label="Close menu">
-      <i class="fa-solid fa-xmark"></i>
-    </button>
-
-    <div class="navList">
-      ${items.map(it => `
-        <a class="navlink ${it.key === active ? "active" : ""}" href="${it.href}">
-          <i class="fa-solid ${it.icon}"></i>
-          <span>${it.label}</span>
-        </a>
-      `).join("")}
+  // nav HTML
+  navMount.innerHTML = `
+    <div class="brand">
+      <img src="/logo.png" alt="Owlnest">
+      <div>
+        <div class="t">Owlnest</div>
+        <div class="sub">Member Center</div>
+      </div>
     </div>
 
-    <div class="navBottom">
-      <a href="/" class="">
-        <i class="fa-solid fa-arrow-left"></i>
-        <span>Back to Home</span>
-      </a>
+    <div class="nav">
+      <a class="${activeKey==="dashboard"?"active":""}" href="/account/index.html"><i class="fas fa-chart-pie"></i> Dashboard</a>
+      <a class="${activeKey==="products"?"active":""}" href="/account/products.html"><i class="fas fa-box"></i> My Products</a>
+      <a class="${activeKey==="orders"?"active":""}" href="/account/orders.html"><i class="fas fa-receipt"></i> Orders</a>
+      <a class="${activeKey==="support"?"active":""}" href="/account/support.html"><i class="fas fa-headset"></i> Warranty & Support</a>
+      <a class="${activeKey==="profile"?"active":""}" href="/account/profile.html"><i class="fas fa-user-shield"></i> Profile & Security</a>
+      <a class="${activeKey==="settings"?"active":""}" href="/account/settings.html"><i class="fas fa-gear"></i> Settings</a>
+    </div>
 
-      <button id="navSignOut" class="danger" type="button">
-        <i class="fa-solid fa-right-from-bracket"></i>
-        <span>Sign Out</span>
-      </button>
+    <div class="navDivider"></div>
+
+    <div class="navFooter">
+      <a href="/index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
+      <button id="btnSignOut"><i class="fas fa-right-from-bracket"></i> Sign Out</button>
     </div>
   `;
 
-  // Mobile close button
-  navRoot.querySelector("#navClose")?.addEventListener("click", () => {
-    document.body.classList.remove("nav-open");
-  });
-
-  // Close drawer after clicking any nav item (mobile UX)
-  navRoot.querySelectorAll("a.navlink").forEach(a => {
-    a.addEventListener("click", () => document.body.classList.remove("nav-open"));
-  });
-
   // Sign out
-  navRoot.querySelector("#navSignOut")?.addEventListener("click", async () => {
-    await signOut();
+  navMount.querySelector("#btnSignOut")?.addEventListener("click", signOut);
+
+  // Mobile: 在 topbar 左側塞一顆漢堡（沒有才塞）
+  const topbar = qs(".topbar");
+  if (topbar && !qs("#navToggleBtn", topbar)){
+    const btn = document.createElement("button");
+    btn.id = "navToggleBtn";
+    btn.className = "navToggle";
+    btn.type = "button";
+    btn.setAttribute("aria-label", "Open menu");
+    btn.innerHTML = `<i class="fas fa-bars"></i>`;
+    topbar.prepend(btn);
+
+    btn.addEventListener("click", () => openDrawer(sidebar, overlay));
+  }
+
+  // overlay click to close
+  overlay.addEventListener("click", () => closeDrawer(sidebar, overlay));
+
+  // 點 sidebar 裡任一連結就關起來（手機抽屜）
+  navMount.querySelectorAll("a").forEach(a => {
+    a.addEventListener("click", () => closeDrawer(sidebar, overlay));
+  });
+
+  // 視窗放大時強制關閉 drawer 狀態
+  window.addEventListener("resize", () => {
+    if (window.innerWidth > 1024) closeDrawer(sidebar, overlay);
   });
 }
