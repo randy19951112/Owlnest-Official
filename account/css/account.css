@@ -36,6 +36,7 @@ body{
 
 .main{ flex:1; padding: 34px 42px; max-width: 1200px; }
 
+/* [重要] 電腦版維持 Space-between，讓標題與 Actions 分居左右 */
 .topbar{
   display:flex; align-items:flex-start; justify-content:space-between;
   gap: 18px; padding-bottom: 24px; margin-bottom: 24px;
@@ -49,7 +50,6 @@ body{
 
 .actions{ display:flex; gap: 10px; flex-wrap: wrap; }
 
-/* ===== 按鈕系統 ===== */
 .btn{
   display:inline-flex; align-items:center; gap:8px; padding:10px 18px;
   border-radius: 999px; font-weight: 800; font-size: 13px;
@@ -58,21 +58,19 @@ body{
 }
 .btn.primary{ background: var(--col-dark); color: white; border: none; }
 
-/* ===== 手機版抽屜元件 ===== */
+/* ===== 手機版元件 (預設隱藏) ===== */
 .drawerBackdrop{
   position: fixed; inset: 0; background: rgba(0,0,0,.4);
   opacity: 0; pointer-events: none; transition: 0.25s; z-index: 40;
 }
-.drawerBtn{
-  display:none; width:44px; height:44px; align-items:center; justify-content:center;
-  background:white; border:1px solid var(--col-line); border-radius:12px; cursor:pointer;
-}
+/* [Fix] 電腦版絕對隱藏按鈕，避免佔位 */
+.drawerBtn{ display: none; }
 
 /* =========================================================
-   手機版響應式深度修正 (Mobile Fix)
+   手機版響應式修正 (Mobile Fix)
    ========================================================= */
 @media (max-width: 860px){
-  /* 1. 修正 Sidebar 隱藏邏輯 */
+  /* 1. Sidebar 變為抽屜 */
   .sidebar{
     position: fixed; top: 0; left: 0; height: 100vh;
     width: 280px; transform: translateX(-100%);
@@ -82,29 +80,40 @@ body{
   body.nav-open .sidebar{ transform: translateX(0); }
   body.nav-open .drawerBackdrop{ opacity: 1; pointer-events: auto; }
 
-  /* 2. 修正主內容與溢出 */
+  /* 2. Main 寬度與間距修正 */
   .main{ padding: 20px 16px; width: 100%; }
   
-  /* 3. 修正 Topbar (標題與按鈕不再擠壓) */
+  /* 3. Topbar 佈局修正：允許換行 */
   .topbar{
-    flex-direction: column; align-items: flex-start;
-    gap: 16px; border-bottom: none; padding-bottom: 10px;
+    flex-wrap: wrap; /* 關鍵：讓 Actions 可以換行到下面 */
+    align-items: center;
+    justify-content: flex-start; /* 靠左對齊 */
+    border-bottom: none; 
+    gap: 12px;
   }
-  .topbar-head{
-    display: flex; align-items: center; gap: 12px; width: 100%;
+  
+  /* 4. 顯示漢堡按鈕 */
+  .drawerBtn{
+    display: flex; align-items: center; justify-content: center;
+    width: 40px; height: 40px;
+    background: white; border: 1px solid var(--col-line);
+    border-radius: 12px; cursor: pointer;
+    flex-shrink: 0;
   }
-  .drawerBtn{ display: flex; flex-shrink: 0; }
-  .h1{ font-size: 28px; } /* 手機版標題大幅縮小 */
+  
+  .h1{ font-size: 28px; }
 
-  /* 4. 按鈕列修正：在手機上排列整齊 */
+  /* 5. Actions 強制換行並填滿 */
   .actions{
-    width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+    width: 100%; 
+    margin-top: 10px;
+    display: grid; grid-template-columns: 1fr 1fr; /* 雙欄排列 */
   }
-  .actions .btn{ justify-content: center; padding: 12px 10px; font-size: 11px; }
+  .actions .btn{ justify-content: center; }
   /* 如果有三個按鈕，讓最後一個佔滿整行 */
   .actions .btn:last-child:nth-child(odd) { grid-column: span 2; }
 
-  /* 5. 卡片內 Grid 修正 */
+  /* 6. 卡片內容單欄化 */
   .grid { flex-direction: column; gap: 16px; }
   .col-7, .col-5, .col-12 { width: 100% !important; }
 }
