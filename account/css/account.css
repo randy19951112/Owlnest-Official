@@ -1,13 +1,12 @@
 /* account/css/account.css */
 
+/* ===== 基礎變數 (保持不變) ===== */
 :root{
   --bg: #faefcf;
   --col-dark: #455169;
   --col-ink: #1f2a39;
   --col-muted: rgba(69,81,105,.70);
-  --col-soft: rgba(69,81,105,.10);
   --col-line: rgba(69,81,105,.14);
-  --col-gold: #D4AF37;
   --card: rgba(255,255,255,.86);
   --shadow: 0 18px 45px rgba(0,0,0,.06);
   --r-xl: 28px;
@@ -15,7 +14,7 @@
 }
 
 *{ box-sizing:border-box; }
-html,body{ height:100%; overflow-x: hidden; }
+html,body{ height:100%; overflow-x: hidden; } /* 防止手機版橫向捲軸 */
 body{
   margin:0;
   background: var(--bg);
@@ -23,23 +22,33 @@ body{
   font-family: "Manrope", sans-serif;
 }
 
-/* ===== 電腦版佈局 (維持原樣) ===== */
+/* ===== 電腦版佈局 (Desktop Default) ===== */
 .wrap{ display:flex; min-height:100vh; }
 
 .sidebar{
   width: var(--sidebar-w);
+  flex-shrink: 0;
   padding: 22px 18px;
   background: rgba(255,255,255,.52);
   border-right: 1px solid rgba(69,81,105,.08);
+  /* 電腦版側邊欄固定 */
   position: sticky; top:0; height:100vh; overflow:auto;
 }
 
-.main{ flex:1; padding: 34px 42px; max-width: 1200px; }
+.main{ 
+  flex-grow: 1; 
+  padding: 34px 42px; 
+  min-width: 0; /* 防止內容撐開容器 */
+}
 
-/* [重要] 電腦版維持 Space-between，讓標題與 Actions 分居左右 */
+/* Topbar 電腦版：左右對齊 */
 .topbar{
-  display:flex; align-items:flex-start; justify-content:space-between;
-  gap: 18px; padding-bottom: 24px; margin-bottom: 24px;
+  display:flex; 
+  align-items:flex-start; 
+  justify-content:space-between;
+  gap: 18px; 
+  padding-bottom: 24px; 
+  margin-bottom: 24px;
   border-bottom: 1px solid var(--col-line);
 }
 
@@ -58,62 +67,73 @@ body{
 }
 .btn.primary{ background: var(--col-dark); color: white; border: none; }
 
-/* ===== 手機版元件 (預設隱藏) ===== */
+/* ===== 手機版元件 (預設隱藏，保護電腦版) ===== */
 .drawerBackdrop{
   position: fixed; inset: 0; background: rgba(0,0,0,.4);
   opacity: 0; pointer-events: none; transition: 0.25s; z-index: 40;
 }
-/* [Fix] 電腦版絕對隱藏按鈕，避免佔位 */
+/* 關鍵：電腦版絕對隱藏此按鈕 */
 .drawerBtn{ display: none; }
 
+
 /* =========================================================
-   手機版響應式修正 (Mobile Fix)
+   手機版專用修正 (Mobile Overrides)
    ========================================================= */
 @media (max-width: 860px){
-  /* 1. Sidebar 變為抽屜 */
+  /* 1. Sidebar 改為抽屜式 */
   .sidebar{
     position: fixed; top: 0; left: 0; height: 100vh;
     width: 280px; transform: translateX(-100%);
-    transition: transform .3s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 100; background: var(--bg);
+    transition: transform .3s ease;
+    z-index: 100; background: #faefcf; /* 手機版不透明背景 */
+    box-shadow: none; border-right: 1px solid rgba(0,0,0,0.1);
   }
-  body.nav-open .sidebar{ transform: translateX(0); }
+  body.nav-open .sidebar{ transform: translateX(0); box-shadow: 10px 0 40px rgba(0,0,0,0.2); }
   body.nav-open .drawerBackdrop{ opacity: 1; pointer-events: auto; }
 
-  /* 2. Main 寬度與間距修正 */
+  /* 2. Main 寬度修正 */
   .main{ padding: 20px 16px; width: 100%; }
-  
-  /* 3. Topbar 佈局修正：允許換行 */
+
+  /* 3. Topbar 修正：允許換行 */
   .topbar{
-    flex-wrap: wrap; /* 關鍵：讓 Actions 可以換行到下面 */
+    flex-wrap: wrap;       /* 允許內容換行 */
+    justify-content: flex-start;
     align-items: center;
-    justify-content: flex-start; /* 靠左對齊 */
-    border-bottom: none; 
     gap: 12px;
+    border-bottom: none;
   }
-  
+
   /* 4. 顯示漢堡按鈕 */
   .drawerBtn{
     display: flex; align-items: center; justify-content: center;
     width: 40px; height: 40px;
     background: white; border: 1px solid var(--col-line);
     border-radius: 12px; cursor: pointer;
-    flex-shrink: 0;
+    flex-shrink: 0; /* 防止被擠壓 */
   }
-  
-  .h1{ font-size: 28px; }
 
-  /* 5. Actions 強制換行並填滿 */
+  /* 5. 標題縮小 */
+  .h1{ font-size: 28px; line-height: 1.2; }
+
+  /* 6. 按鈕區：強制換行到下方並填滿 */
   .actions{
     width: 100%; 
-    margin-top: 10px;
-    display: grid; grid-template-columns: 1fr 1fr; /* 雙欄排列 */
+    order: 3; /* 強制排在最後 */
+    margin-top: 8px;
+    display: grid; 
+    grid-template-columns: 1fr 1fr; /* 雙欄排列 */
+    gap: 8px;
   }
-  .actions .btn{ justify-content: center; }
-  /* 如果有三個按鈕，讓最後一個佔滿整行 */
-  .actions .btn:last-child:nth-child(odd) { grid-column: span 2; }
+  
+  /* 如果只有一個按鈕或單數個，讓最後一個佔滿 */
+  .actions .btn{ justify-content: center; width: 100%; }
+  .actions .btn:last-child:nth-child(odd) { grid-column: 1 / -1; }
 
-  /* 6. 卡片內容單欄化 */
-  .grid { flex-direction: column; gap: 16px; }
+  /* 7. 卡片與列表修正 */
+  .grid { display: flex; flex-direction: column; gap: 16px; }
   .col-7, .col-5, .col-12 { width: 100% !important; }
+  
+  /* 訂單與產品卡片垂直排列 */
+  .orderRow, .prodCard, .pCard { flex-direction: column; align-items: stretch; gap: 12px; }
+  .orderRight, .pRight, .actionsRow { width: 100%; margin-top: 4px; display: flex; justify-content: space-between; }
 }
