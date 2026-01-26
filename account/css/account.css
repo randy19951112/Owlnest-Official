@@ -236,3 +236,64 @@ body{
   .topbar{ flex-direction:column; align-items:flex-start; }
   .actions{ justify-content:flex-start; }
 }
+/* ===== Form (fix "squeezed inputs") ===== */
+.formGrid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 18px;
+  margin-top: 12px;
+}
+
+.formGrid .full{
+  grid-column: 1 / -1;
+}
+
+.field{
+  display:flex;
+  flex-direction:column;
+  gap: 8px;
+}
+
+.field label{
+  font-weight: 800;
+  color: var(--col-dark);
+}
+
+.field .help{
+  font-size: 13px;
+  color: var(--col-muted);
+  font-weight: 700;
+  margin-top: -2px;
+}
+
+.field input,
+.field select,
+.field textarea{
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(69,81,105,.18);
+  background: rgba(255,255,255,.80);
+  color: var(--col-ink);
+  font-weight: 700;
+  outline: none;
+}
+
+.field input[readonly]{
+  background: rgba(69,81,105,.06);
+  border-color: rgba(69,81,105,.12);
+  color: rgba(69,81,105,.85);
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus{
+  border-color: rgba(212,175,55,.55);
+  box-shadow: 0 0 0 3px rgba(212,175,55,.18);
+}
+
+/* Small screens: 1 column */
+@media (max-width: 860px){
+  .formGrid{ grid-template-columns: 1fr; }
+  .formGrid .full{ grid-column: auto; }
+}
