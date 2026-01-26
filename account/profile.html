@@ -5,13 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="/account/css/account.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <title>Account · Profile & Security</title>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+  <title>Account · Profile</title>
 </head>
 <body>
   <div class="wrap">
-    <aside class="sidebar">
-      <div id="nav" style="display:flex; flex-direction:column; height:100%;"></div>
-    </aside>
+    <aside class="sidebar"><div id="nav"></div></aside>
 
     <main class="main">
       <div class="topbar">
@@ -19,15 +18,16 @@
           <div class="h1">Profile & Security</div>
           <div class="muted">Manage your personal information</div>
         </div>
-        <div style="display:flex; gap:10px; flex-wrap:wrap;">
-          <a class="btn" href="/account/index.html"><i class="fas fa-chart-pie"></i> Dashboard</a>
-          <button class="btn" id="btnSignOut" type="button"><i class="fas fa-sign-out-alt"></i> Sign out</button>
+        <div class="actions">
+          <a class="btn" href="/account/index.html"><i class="fas fa-chart-pie"></i> DASHBOARD</a>
+          <button class="btn" id="btnTopSignOut"><i class="fas fa-right-from-bracket"></i> SIGN OUT</button>
         </div>
       </div>
 
       <div class="grid">
         <section class="card col-8">
-          <div class="h1">Personal Info</div>
+          <div class="cardTitle">Personal Info</div>
+          <div class="cardSub">Name / phone are stored in Supabase user metadata.</div>
 
           <div class="label">Email</div>
           <input class="input" id="email" disabled />
@@ -36,38 +36,22 @@
           <input class="input" id="full_name" placeholder="Your name" />
 
           <div class="label">Phone</div>
-          <input class="input" id="phone" placeholder="Phone number" />
+          <input class="input" id="phone" placeholder="+886..." />
 
-          <div style="margin-top:18px; display:flex; align-items:center; gap:12px;">
-            <button class="btn primary" id="btnSave" type="button"><i class="fas fa-save"></i> Save</button>
+          <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+            <button class="btn primary" id="btnSave"><i class="fas fa-save"></i> SAVE</button>
             <span class="muted" id="msg"></span>
-          </div>
-
-          <div class="hr"></div>
-          <div class="muted" style="font-size:.9rem; line-height:1.7;">
-            Note: name/phone are stored in Supabase <b>user metadata</b>.
           </div>
         </section>
 
-        <section class="card col-4">
-          <div class="h1">Security</div>
+        <section class="card col-4" style="background:var(--card2);">
+          <div class="cardTitle">Security</div>
+          <div class="cardSub">Password reset link will be sent to your email.</div>
 
-          <div class="row" style="flex-direction:column; align-items:stretch; gap:10px;">
-            <div style="font-weight:900;"><i class="fas fa-key" style="color:var(--col-gold); margin-right:8px;"></i>Password reset</div>
-            <div class="muted" style="font-size:.9rem; line-height:1.6;">
-              Send a password reset link to your email.
-            </div>
-            <button class="btn" id="btnReset" type="button" style="border-color: var(--col-gold);">
-              <i class="fas fa-paper-plane"></i> Send reset link
-            </button>
-            <div class="muted" id="resetMsg" style="font-size:.85rem;"></div>
-          </div>
-
-          <div class="hr"></div>
-
-          <div class="muted" style="font-size:.9rem; line-height:1.7;">
-            If you used magic link login, you can also request a new link from the login page.
-          </div>
+          <button class="btn" id="btnReset" style="width:100%; justify-content:center;">
+            <i class="fas fa-key"></i> SEND RESET LINK
+          </button>
+          <div class="small" id="resetMsg" style="margin-top:10px;"></div>
         </section>
       </div>
     </main>
@@ -80,58 +64,48 @@
 
     renderNav("profile");
 
-    const emailEl = document.getElementById("email");
-    const nameEl = document.getElementById("full_name");
-    const phoneEl = document.getElementById("phone");
-    const msgEl = document.getElementById("msg");
-    const resetMsgEl = document.getElementById("resetMsg");
-
-    function setMsg(text, ok = true) {
-      msgEl.textContent = text || "";
-      msgEl.style.color = ok ? "rgba(69,81,105,.70)" : "#b91c1c";
-    }
-
-    async function init() {
+    async function init(){
       const user = await requireUser();
       if (!user) return;
 
-      document.getElementById("btnSignOut")?.addEventListener("click", signOut);
+      document.getElementById("btnTopSignOut").addEventListener("click", signOut);
+
+      const emailEl = document.getElementById("email");
+      const nameEl = document.getElementById("full_name");
+      const phoneEl = document.getElementById("phone");
+      const msgEl = document.getElementById("msg");
+      const resetMsgEl = document.getElementById("resetMsg");
 
       emailEl.value = user.email || "";
-      nameEl.value = (user.user_metadata?.full_name || "");
-      phoneEl.value = (user.user_metadata?.phone || "");
+      nameEl.value = user.user_metadata?.full_name || "";
+      phoneEl.value = user.user_metadata?.phone || "";
 
-      document.getElementById("btnSave")?.addEventListener("click", async () => {
-        setMsg("Saving...");
+      document.getElementById("btnSave").addEventListener("click", async () => {
+        msgEl.textContent = "Saving...";
+        const full_name = nameEl.value.trim();
+        const phone = phoneEl.value.trim();
+
         const { error } = await supabase.auth.updateUser({
-          data: {
-            full_name: nameEl.value.trim() || null,
-            phone: phoneEl.value.trim() || null
-          }
+          data: { full_name, phone }
         });
-        if (error) {
-          console.error(error);
-          setMsg("Failed: " + error.message, false);
-        } else {
-          setMsg("Saved.");
-          setTimeout(() => setMsg(""), 2500);
+
+        if (error){
+          msgEl.textContent = "Save failed: " + error.message;
+          return;
         }
+        msgEl.textContent = "Saved ✅";
       });
 
-      document.getElementById("btnReset")?.addEventListener("click", async () => {
+      document.getElementById("btnReset").addEventListener("click", async () => {
         resetMsgEl.textContent = "Sending...";
-        resetMsgEl.style.color = "rgba(69,81,105,.70)";
         const { error } = await supabase.auth.resetPasswordForEmail(user.email, {
           redirectTo: window.location.origin + "/member-login.html"
         });
-        if (error) {
-          console.error(error);
-          resetMsgEl.textContent = "Error: " + error.message;
-          resetMsgEl.style.color = "#b91c1c";
-        } else {
-          resetMsgEl.textContent = "Reset link sent. Please check your email.";
-          resetMsgEl.style.color = "rgba(69,81,105,.70)";
+        if (error){
+          resetMsgEl.textContent = "Failed: " + error.message;
+          return;
         }
+        resetMsgEl.textContent = "Reset link sent. Please check your inbox.";
       });
     }
 
