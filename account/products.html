@@ -1,16 +1,30 @@
 <!doctype html>
-<html lang="zh-Hant">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="/account/css/account.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <title>Account · My Products</title>
 </head>
 <body>
+
+  <!-- Mobile header -->
+  <div class="mbar">
+    <div class="mleft">
+      <button class="iconbtn" id="menuBtn" aria-label="Open menu"><i class="fa-solid fa-bars"></i></button>
+      <a class="mbrand" href="/index.html" aria-label="Back to home">
+        <img src="/account/img/logo.png" alt="Owlnest" onerror="this.style.display='none'">
+        <span>Owlnest</span>
+      </a>
+    </div>
+    <div class="mtitle">My Products</div>
+  </div>
+  <div class="overlay" id="overlay"></div>
+
   <div class="wrap">
     <aside class="sidebar">
-      <div id="nav" style="display:flex; flex-direction:column; height:100%;"></div>
+      <div id="nav"></div>
     </aside>
 
     <main class="main">
@@ -19,80 +33,109 @@
           <div class="h1">My Products</div>
           <div class="muted">Your registered devices</div>
         </div>
-        <div style="display:flex; gap:10px; flex-wrap:wrap;">
-          <a class="btn" href="/account/index.html"><i class="fas fa-chart-pie"></i> Dashboard</a>
-          <a class="btn primary" href="/activate.html"><i class="fas fa-plus"></i> Activate New</a>
+        <div>
+          <a class="btn" href="/account/index.html"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+          <a class="btn primary" href="/activate.html"><i class="fa-solid fa-plus"></i> Activate New</a>
+          <button class="btn" id="signOutBtn"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out</button>
         </div>
       </div>
 
-      <section class="card">
-        <div id="list" class="list">
-          <div style="padding:40px; text-align:center;" class="muted">
-            <i class="fas fa-spinner fa-spin"></i> Loading...
-          </div>
+      <section class="card col-12">
+        <div class="list" id="list">
+          <div class="muted">Loading…</div>
         </div>
       </section>
     </main>
   </div>
 
+  <script>
+    (function(){
+      const btn = document.getElementById('menuBtn');
+      const overlay = document.getElementById('overlay');
+      const sidebar = document.querySelector('.sidebar');
+
+      function closeMenu(){
+        sidebar?.classList.remove('open');
+        overlay?.classList.remove('show');
+      }
+      function toggleMenu(){
+        sidebar?.classList.toggle('open');
+        overlay?.classList.toggle('show');
+      }
+
+      btn?.addEventListener('click', toggleMenu);
+      overlay?.addEventListener('click', closeMenu);
+      window.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeMenu(); });
+      document.addEventListener('click', (e)=>{
+        const a = e.target.closest('.sidebar a');
+        if(a) closeMenu();
+      });
+    })();
+  </script>
+
   <script type="module">
-    import { requireUser } from "/account/js/authGuard.js";
-    import { supabase } from "/account/js/supabaseClient.js";
+    import { requireUser, signOut } from "/account/js/authGuard.js";
     import { renderNav } from "/account/js/uiNav.js";
-    import { displayNameFromActivation, fmtShortDate } from "/account/js/format.js";
+    import { supabase } from "/account/js/supabaseClient.js";
+    import { fmtDateLong } from "/account/js/format.js";
 
-    renderNav("products");
-
-    async function init() {
+    async function main() {
       const user = await requireUser();
       if (!user) return;
 
-      const listEl = document.getElementById("list");
+      renderNav("products");
 
-      // ✅ 只讀 display_token
-      const { data: items, error } = await supabase
+      document.getElementById("signOutBtn")?.addEventListener("click", async () => {
+        await signOut();
+        window.location.href = "/member-login.html";
+      });
+
+      const list = document.getElementById("list");
+      if (!list) return;
+
+      const { data, error } = await supabase
         .from("activations")
         .select("display_token, activated_at")
-        .eq("user_id", user.id)
         .order("activated_at", { ascending: false });
 
       if (error) {
-        console.error(error);
-        listEl.innerHTML = `<div style="color:#b91c1c; padding:20px;">Unable to load products: ${error.message}</div>`;
+        list.innerHTML = `<div class="muted">Failed to load.</div>`;
         return;
       }
 
-      if (!items?.length) {
-        listEl.innerHTML = `
-          <div class="row" style="flex-direction:column; text-align:center; padding:40px;">
-            <div style="font-size:2rem; color:var(--col-gold); margin-bottom:10px;"><i class="fas fa-box-open"></i></div>
-            <div style="font-weight:900; font-family:var(--font-serif);">No Products Found</div>
-            <div class="muted" style="margin-top:6px;">Activate your first product to see it here.</div>
-            <a class="btn primary" href="/activate.html" style="margin-top:14px;">Activate Now</a>
-          </div>
-        `;
-        return;
-      }
-
-      listEl.innerHTML = items.map(it => `
-        <div class="row">
-          <div style="display:flex; align-items:center; gap:16px;">
-            <div style="background:var(--col-dark); color:var(--col-gold); width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center;">
-              <i class="fas fa-lightbulb"></i>
-            </div>
+      if (!data || data.length === 0) {
+        list.innerHTML = `
+          <div class="row">
             <div>
-              <div style="font-weight:900; color:var(--col-dark); font-family:var(--font-serif);">
-                ${displayNameFromActivation(it)}
-              </div>
-              <div class="muted" style="font-size:0.85rem;">Activated: ${fmtShortDate(it.activated_at)}</div>
+              <div style="font-weight:800;">No devices yet</div>
+              <div class="muted">Activate your first device to see it here.</div>
             </div>
-          </div>
-          <div class="badge">Active</div>
-        </div>
-      `).join("");
+            <div><a class="btn primary" href="/activate.html"><i class="fa-solid fa-plus"></i> Activate</a></div>
+          </div>`;
+        return;
+      }
+
+      list.innerHTML = data.map((x) => {
+        const code = (x.display_token ?? "").toString().trim();
+        const label = code ? `Sleep Aid Lamp ${code}` : "Active device";
+        const date = x.activated_at ? fmtDateLong(x.activated_at) : "";
+        return `
+          <div class="row">
+            <div class="left" style="display:flex; align-items:center; gap:12px;">
+              <div style="width:44px; height:44px; border-radius:999px; background:var(--btn); color:white; display:flex; align-items:center; justify-content:center;">
+                <i class="fa-solid fa-lightbulb"></i>
+              </div>
+              <div>
+                <div style="font-weight:800;">${label}</div>
+                <div class="muted">Activated: ${date}</div>
+              </div>
+            </div>
+            <div><span class="badge" style="background:rgba(201,162,39,.18); color:var(--ink); border-color:rgba(201,162,39,.35);">Active</span></div>
+          </div>`;
+      }).join("");
     }
 
-    init();
+    main();
   </script>
 </body>
 </html>
