@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="/account/css/account.css" />
+  <link rel="stylesheet" href="./css/account.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
-  <title>Account · My Products</title>
+  <title>Account · Products</title>
 </head>
 <body>
   <div class="wrap">
@@ -16,47 +16,53 @@
       <div class="topbar">
         <div>
           <div class="h1">My Products</div>
-          <div class="muted">Your registered devices</div>
+          <div class="muted">Registered devices</div>
         </div>
         <div class="actions">
-          <a class="btn" href="/account/index.html"><i class="fas fa-chart-pie"></i> DASHBOARD</a>
-          <a class="btn primary" href="/activate.html"><i class="fas fa-plus"></i> ACTIVATE NEW</a>
+          <a class="btn" href="./index.html"><i class="fas fa-chart-pie"></i> DASHBOARD</a>
+          <a class="btn primary" href="../activate.html"><i class="fas fa-plus"></i> ACTIVATE NEW</a>
         </div>
       </div>
 
       <section class="card">
-        <div id="list">
-          <div class="muted" style="padding:40px; text-align:center;">
-            <i class="fas fa-spinner fa-spin"></i> Loading...
-          </div>
+        <div id="list" class="list">
+          <div class="muted">Loading...</div>
         </div>
       </section>
     </main>
   </div>
 
   <script type="module">
-    import { requireUser } from "/account/js/authGuard.js";
-    import { supabase } from "/account/js/supabaseClient.js";
-    import { renderNav } from "/account/js/uiNav.js";
+    import { requireUser } from "./js/authGuard.js";
+    import { supabase } from "./js/supabaseClient.js";
+    import { renderNav } from "./js/uiNav.js";
 
     renderNav("products");
 
-    function renderRow(it){
-      const token = (it?.display_token ?? "").toString().trim();
-      const title = token ? `Sleep Aid Lamp ${token}` : "Registered";
-      const d = it?.activated_at ? new Date(it.activated_at).toLocaleDateString() : "-";
+    function escapeHtml(s){
+      return (s ?? "").toString().replace(/[&<>"']/g, m => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+      }[m]));
+    }
+
+    function fmtDate(s){
+      try { return new Date(s).toLocaleString(); } catch(e){ return "-"; }
+    }
+
+    function row(item){
+      const token = escapeHtml(item.display_token || "");
+      const date = escapeHtml(fmtDate(item.activated_at));
+      const name = token ? `Sleep Aid Lamp ${token}` : "Sleep Aid Lamp";
+
       return `
-        <div class="row">
-          <div style="display:flex; align-items:center; gap:14px;">
-            <div style="width:42px;height:42px;border-radius:50%;background:var(--col-dark);color:var(--col-gold);display:flex;align-items:center;justify-content:center;">
-              <i class="fas fa-lightbulb"></i>
-            </div>
-            <div>
-              <div style="font-weight:900; font-family:var(--font-serif); font-size:18px;">${title}</div>
-              <div class="small">Activated: ${d}</div>
-            </div>
+        <div class="item">
+          <div class="itemLeft">
+            <div class="itemTitle">${name}</div>
+            <div class="itemSub muted">Activated: ${date}</div>
           </div>
-          <div class="badge">Active</div>
+          <div class="itemRight">
+            <span class="badge">Active</span>
+          </div>
         </div>
       `;
     }
@@ -65,8 +71,7 @@
       const user = await requireUser();
       if (!user) return;
 
-      const listEl = document.getElementById("list");
-
+      const mount = document.getElementById("list");
       const { data, error } = await supabase
         .from("activations")
         .select("display_token, activated_at")
@@ -74,26 +79,20 @@
         .order("activated_at", { ascending:false });
 
       if (error){
-        listEl.innerHTML = `<div style="color:#b00020; padding:18px; font-weight:900;">Error: ${error.message}</div>`;
+        mount.innerHTML = `<div class="muted">Unable to load.</div>`;
         return;
       }
 
       const items = data || [];
       if (!items.length){
-        listEl.innerHTML = `
-          <div style="padding:40px; text-align:center;">
-            <div style="font-size:34px; color:var(--col-gold);"><i class="fas fa-box-open"></i></div>
-            <div style="font-weight:900; margin-top:10px;">No Products Found</div>
-            <div class="muted" style="margin-top:6px;">Activate your first device to see it here.</div>
-            <div style="margin-top:14px;">
-              <a class="btn primary" href="/activate.html">REGISTER NOW</a>
-            </div>
-          </div>
+        mount.innerHTML = `
+          <div class="muted" style="margin-bottom:14px;">No product yet.</div>
+          <a class="btn primary" href="../activate.html">REGISTER NOW</a>
         `;
         return;
       }
 
-      listEl.innerHTML = items.map(renderRow).join("");
+      mount.innerHTML = items.map(row).join("");
     }
 
     init();
