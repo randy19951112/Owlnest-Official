@@ -8,11 +8,24 @@
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
   <title>Account · Profile</title>
 
+  <!-- 只為這一頁補：兩欄表單 Grid（不影響其他頁） -->
   <style>
-    .twoCol { display:grid; grid-template-columns: 1fr 1fr; gap:14px; }
-    @media (max-width: 980px){ .twoCol{ grid-template-columns:1fr; } }
-    .msgOk { color: var(--col-gold); font-weight: 800; }
-    .msgErr { opacity:.8; }
+    .formGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 18px;
+      margin-top: 12px;
+    }
+    .formGrid .full{ grid-column: 1 / -1; }
+    .field{ display:flex; flex-direction:column; gap:6px; }
+    .field .label{
+      margin: 0;
+      opacity: .70;
+    }
+    @media (max-width: 640px){
+      .formGrid{ grid-template-columns: 1fr; }
+      .formGrid .full{ grid-column:auto; }
+    }
   </style>
 </head>
 
@@ -26,64 +39,79 @@
           <div class="h1">Profile & Security</div>
           <div class="muted">Manage your personal information</div>
         </div>
+
+        <!-- 右上角只留 Sign out（移除 Dashboard） -->
         <div class="actions">
-          <a class="btn" href="./index.html"><i class="fas fa-chart-pie"></i> DASHBOARD</a>
-          <button class="btn" id="btnTopSignOut"><i class="fas fa-right-from-bracket"></i> SIGN OUT</button>
+          <button class="btn" id="btnTopSignOut" type="button">
+            <i class="fa-solid fa-right-from-bracket"></i> SIGN OUT
+          </button>
         </div>
       </div>
 
       <div class="grid">
-        <section class="card col-8">
+        <!-- Personal Info -->
+        <section class="card col-7">
           <div class="cardTitle">Personal Info</div>
           <div class="cardSub">Your info is used for support and order matching.</div>
 
-          <div class="label">Email</div>
-          <input class="input" id="email" disabled />
+          <div class="formGrid">
+            <div class="field full">
+              <div class="label">Email</div>
+              <input class="input" id="email" type="email" disabled />
+            </div>
 
-          <div class="twoCol">
-            <div>
+            <div class="field">
               <div class="label">Full Name</div>
-              <input class="input" id="full_name" placeholder="Your name" />
+              <input class="input" id="full_name" type="text" placeholder="Your name" />
             </div>
-            <div>
+
+            <div class="field">
               <div class="label">Phone</div>
-              <input class="input" id="phone" placeholder="+886..." />
+              <input class="input" id="phone" type="tel" placeholder="+886..." />
             </div>
-          </div>
 
-          <div class="twoCol">
-            <div>
+            <div class="field">
               <div class="label">Country</div>
-              <input class="input" id="country" placeholder="Taiwan" />
+              <input class="input" id="country" type="text" placeholder="Country" />
             </div>
-            <div>
+
+            <div class="field">
               <div class="label">City</div>
-              <input class="input" id="city" placeholder="Taipei" />
+              <input class="input" id="city" type="text" placeholder="City" />
             </div>
-          </div>
 
-          <div class="label">Address line 1</div>
-          <input class="input" id="addr1" placeholder="Street / Building / Room" />
+            <div class="field full">
+              <div class="label">Address line 1</div>
+              <input class="input" id="addr1" type="text" placeholder="Street / Building / Room" />
+            </div>
 
-          <div class="label">Address line 2</div>
-          <input class="input" id="addr2" placeholder="Optional" />
+            <div class="field full">
+              <div class="label">Address line 2</div>
+              <input class="input" id="addr2" type="text" placeholder="Optional" />
+            </div>
 
-          <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
-            <button class="btn primary" id="btnSave"><i class="fas fa-save"></i> SAVE</button>
-            <span class="muted" id="msg"></span>
+            <div class="field full" style="margin-top:6px;">
+              <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+                <button class="btn primary" id="btnSave" type="button">
+                  <i class="fa-solid fa-floppy-disk"></i> SAVE
+                </button>
+                <span class="muted" id="msg"></span>
+              </div>
+            </div>
           </div>
         </section>
 
-        <section class="card col-4" style="background:var(--card2);">
+        <!-- Security -->
+        <section class="card col-5" style="background:var(--card2);">
           <div class="cardTitle">Security</div>
           <div class="cardSub">Send password reset link to your email.</div>
 
-          <button class="btn" id="btnReset" style="width:100%; justify-content:center;">
-            <i class="fas fa-key"></i> SEND RESET LINK
+          <button class="btn" id="btnReset" type="button" style="width:100%; justify-content:center;">
+            <i class="fa-solid fa-key"></i> SEND RESET LINK
           </button>
-          <div class="small" id="resetMsg" style="margin-top:10px;"></div>
 
-          <div style="margin-top:14px;" class="small">
+          <div class="small" id="resetMsg" style="margin-top:10px;"></div>
+          <div class="small" style="margin-top:12px; opacity:.65;">
             Tip: after you reset, login again and you’ll be back here.
           </div>
         </section>
@@ -98,117 +126,74 @@
 
     renderNav("profile");
 
-    const $ = (id) => document.getElementById(id);
-
-    function setMsg(text, ok=false){
-      const el = $("msg");
-      el.textContent = text || "";
-      el.className = ok ? "msgOk" : "msgErr";
-    }
-
-    function pick(meta, k){
-      return meta && typeof meta === "object" ? (meta[k] ?? "") : "";
-    }
-
-    async function tryLoadFromProfilesTable(user){
-      // If you have a `profiles` table, we prefer it.
-      // Expected columns: id (uuid), email, full_name, phone, country, city, addr1, addr2
-      try{
-        const { data, error } = await supabase
-          .from("profiles")
-          .select("full_name, phone, country, city, addr1, addr2")
-          .eq("id", user.id)
-          .maybeSingle();
-
-        if (error) return { ok:false };
-        if (!data) return { ok:true, data:null };
-        return { ok:true, data };
-      }catch(e){
-        return { ok:false };
-      }
-    }
-
-    async function trySaveToProfilesTable(user, payload){
-      try{
-        const row = { id: user.id, email: (user.email || "").toLowerCase(), ...payload, updated_at: new Date().toISOString() };
-        const { error } = await supabase.from("profiles").upsert(row);
-        if (error) return { ok:false, error };
-        return { ok:true };
-      }catch(e){
-        return { ok:false, error: e };
-      }
-    }
+    function safeStr(v){ return (v ?? "").toString(); }
 
     async function init(){
       const user = await requireUser();
       if (!user) return;
 
-      $("btnTopSignOut").addEventListener("click", signOut);
+      // Top sign out
+      document.getElementById("btnTopSignOut")?.addEventListener("click", signOut);
 
-      // base
-      $("email").value = user.email || "";
+      // Bind fields
+      const emailEl = document.getElementById("email");
+      const nameEl  = document.getElementById("full_name");
+      const phoneEl = document.getElementById("phone");
+      const countryEl = document.getElementById("country");
+      const cityEl = document.getElementById("city");
+      const addr1El = document.getElementById("addr1");
+      const addr2El = document.getElementById("addr2");
+      const msgEl = document.getElementById("msg");
+      const resetMsgEl = document.getElementById("resetMsg");
 
-      // 1) try profiles table
-      const fromProfiles = await tryLoadFromProfilesTable(user);
+      emailEl.value = safeStr(user.email);
 
-      if (fromProfiles.ok && fromProfiles.data){
-        $("full_name").value = fromProfiles.data.full_name || "";
-        $("phone").value     = fromProfiles.data.phone || "";
-        $("country").value   = fromProfiles.data.country || "";
-        $("city").value      = fromProfiles.data.city || "";
-        $("addr1").value     = fromProfiles.data.addr1 || "";
-        $("addr2").value     = fromProfiles.data.addr2 || "";
-      } else {
-        // 2) fallback to auth metadata
-        const meta = user.user_metadata || {};
-        $("full_name").value = pick(meta, "full_name");
-        $("phone").value     = pick(meta, "phone");
-        $("country").value   = pick(meta, "country");
-        $("city").value      = pick(meta, "city");
-        $("addr1").value     = pick(meta, "addr1");
-        $("addr2").value     = pick(meta, "addr2");
-      }
+      // 這裡統一用 user_metadata 存（最省事、最不會炸）
+      const md = user.user_metadata || {};
+      nameEl.value = safeStr(md.full_name);
+      phoneEl.value = safeStr(md.phone);
+      countryEl.value = safeStr(md.country);
+      cityEl.value = safeStr(md.city);
+      addr1El.value = safeStr(md.addr1);
+      addr2El.value = safeStr(md.addr2);
 
-      $("btnSave").addEventListener("click", async () => {
-        setMsg("Saving...");
+      // Save
+      document.getElementById("btnSave").addEventListener("click", async () => {
+        msgEl.textContent = "Saving...";
 
         const payload = {
-          full_name: $("full_name").value.trim(),
-          phone: $("phone").value.trim(),
-          country: $("country").value.trim(),
-          city: $("city").value.trim(),
-          addr1: $("addr1").value.trim(),
-          addr2: $("addr2").value.trim(),
+          full_name: nameEl.value.trim(),
+          phone: phoneEl.value.trim(),
+          country: countryEl.value.trim(),
+          city: cityEl.value.trim(),
+          addr1: addr1El.value.trim(),
+          addr2: addr2El.value.trim(),
         };
 
-        // Prefer profiles table if it exists
-        const savedProfiles = await trySaveToProfilesTable(user, payload);
-
-        if (savedProfiles.ok){
-          setMsg("Saved ✅", true);
-          return;
-        }
-
-        // fallback: store in auth metadata
         const { error } = await supabase.auth.updateUser({ data: payload });
+
         if (error){
-          setMsg("Save failed: " + (error.message || "error"));
+          msgEl.textContent = "Save failed: " + error.message;
           return;
         }
-        setMsg("Saved ✅", true);
+        msgEl.textContent = "Saved ✅";
+        setTimeout(() => { if (msgEl.textContent === "Saved ✅") msgEl.textContent = ""; }, 2500);
       });
 
-      $("btnReset").addEventListener("click", async () => {
-        $("resetMsg").textContent = "Sending...";
-        const { error } = await supabase.auth.resetPasswordForEmail(user.email, {
-          // after reset, user will go to login page
-          redirectTo: window.location.origin + "/member-login.html"
-        });
+      // Reset password link
+      document.getElementById("btnReset").addEventListener("click", async () => {
+        resetMsgEl.textContent = "Sending...";
+
+        // 讓 reset flow 回到同站的 member-login.html（支援子路徑）
+        const redirectTo = new URL("../member-login.html", window.location.href).toString();
+
+        const { error } = await supabase.auth.resetPasswordForEmail(user.email, { redirectTo });
+
         if (error){
-          $("resetMsg").textContent = "Failed: " + error.message;
+          resetMsgEl.textContent = "Failed: " + error.message;
           return;
         }
-        $("resetMsg").textContent = "Reset link sent. Please check your inbox.";
+        resetMsgEl.textContent = "Reset link sent. Please check your inbox.";
       });
     }
 
