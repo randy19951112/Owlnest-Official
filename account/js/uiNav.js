@@ -1,58 +1,41 @@
 export function renderNav(activeKey) {
-  const navContainer = document.getElementById("nav");
-  if (!navContainer) return;
+  const nav = document.getElementById('sidebar-nav');
+  const mobileNav = document.getElementById('mobile-nav-items');
+  
+  if (!nav) return;
 
-  const item = (key, href, text, iconClass, extra = "") => {
-    const isActive = key === activeKey ? "active" : "";
-    const isDisabled = href ? "" : "disabled";
-    const link = href || "javascript:void(0)";
-    return `
-      <a class="${isActive} ${isDisabled}" href="${link}">
-        <i class="${iconClass}"></i>
-        <span>${text}</span>
-        ${extra}
-      </a>
-    `;
-  };
+  // 定義選單項目 (使用絕對路徑 /account/...)
+  const menuItems = [
+      { key: 'dashboard', label: 'Dashboard', icon: 'fas fa-chart-pie', link: '/account/index.html' },
+      { key: 'products', label: 'My Products', icon: 'fas fa-box-open', link: '/account/products.html' },
+      { key: 'orders', label: 'Orders', icon: 'fas fa-receipt', link: '/account/orders.html' },
+      { key: 'profile', label: 'Profile', icon: 'fas fa-user-circle', link: '/account/profile.html' },
+      { key: 'support', label: 'Support', icon: 'fas fa-headset', link: '/account/support.html' },
+  ];
 
-  // 生成側邊欄 HTML
-  navContainer.innerHTML = `
-    <div class="brand">
-      <img src="/logo2.png" alt="Logo">
-      <span>Owlnest</span>
-    </div>
-    
-    <div class="nav">
-      ${item("dashboard", "/account/index.html", "Dashboard", "fas fa-chart-pie")}
-      ${item("products", "/account/products.html", "My Products", "fas fa-box-open")}
-      ${item("profile", "/account/profile.html", "Profile", "fas fa-user-circle")}
+  let html = '';
+  menuItems.forEach(item => {
+      const activeClass = (item.key === activeKey) 
+          ? 'bg-brand-cream text-brand-dark font-bold shadow-sm' 
+          : 'text-gray-400 hover:text-brand-gold hover:bg-white/5';
       
-      <div style="height:1px; background:rgba(255,255,255,0.1); margin:10px 0;"></div>
-      
-      ${item("orders", null, "Orders", "fas fa-receipt", "<small>Phase 2</small>")}
-      ${item("support", null, "Support", "fas fa-headset", "<small>Phase 3</small>")}
-      ${item("settings", null, "Settings", "fas fa-cog", "<small>Phase 3</small>")}
-    </div>
-    
-    <div style="margin-top: auto; padding-top: 20px;">
-        <a href="/index.html" class="" style="opacity: 0.6; font-size: 0.9em;">
-            <i class="fas fa-arrow-left"></i> Back to Home
-        </a>
-    </div>
-  `;
+      html += `
+          <a href="${item.link}" class="flex items-center gap-3 px-4 py-3 rounded-lg transition ${activeClass}">
+              <i class="${item.icon} w-5 text-center"></i>
+              <span class="text-sm uppercase tracking-widest">${item.label}</span>
+          </a>
+      `;
+  });
 
-  // 手機版漢堡選單 (簡單生成)
-  if (window.innerWidth <= 920 && !document.getElementById('mobile-header')) {
-    const mobileHeader = document.createElement('div');
-    mobileHeader.id = 'mobile-header';
-    mobileHeader.className = 'mobile-header';
-    mobileHeader.innerHTML = `
-        <div style="display:flex;align-items:center;gap:10px;">
-            <img src="/logo2.png" style="height:24px;">
-            <span style="font-family:'Playfair Display';font-weight:700;">Owlnest</span>
-        </div>
-        <a href="/index.html" style="font-size:0.8rem; opacity:0.8;">Home</a>
-    `;
-    document.body.prepend(mobileHeader);
+  nav.innerHTML = html;
+  
+  // Render Mobile Nav (手機版選單)
+  if (mobileNav) {
+      let mHtml = '';
+      menuItems.forEach(item => {
+          const mActive = (item.key === activeKey) ? 'text-brand-gold' : 'text-white hover:text-brand-gold';
+          mHtml += `<a href="${item.link}" class="${mActive}">${item.label}</a>`;
+      });
+      mobileNav.innerHTML = mHtml;
   }
 }
