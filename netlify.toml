@@ -1,19 +1,20 @@
-[[redirects]]
-from = "/account"
-to = "/account/index.html"
-status = 301
-
-[[redirects]]
-from = "/account/"
-to = "/account/index.html"
-status = 301
 [build]
   publish = "."
   functions = "netlify/functions"
 
-# 確保 API 路徑正確
+# 讓 /account 與 /account/ 都進 dashboard
+[[redirects]]
+  from = "/account"
+  to = "/account/index.html"
+  status = 301
+
+[[redirects]]
+  from = "/account/"
+  to = "/account/index.html"
+  status = 301
+
+# API functions
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
-
   status = 200
