@@ -1,3 +1,12 @@
+[[redirects]]
+from = "/account"
+to = "/account/index.html"
+status = 301
+
+[[redirects]]
+from = "/account/"
+to = "/account/index.html"
+status = 301
 [build]
   publish = "."
   functions = "netlify/functions"
@@ -6,4 +15,5 @@
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
+
   status = 200
