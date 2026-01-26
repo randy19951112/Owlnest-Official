@@ -1,12 +1,7 @@
-/**
- * 生成側邊導覽列 HTML
- * @param {string} activeKey - 當前頁面的 key (dashboard, products, etc.)
- */
 export function renderNav(activeKey) {
   const navContainer = document.getElementById("nav");
   if (!navContainer) return;
 
-  // 輔助函式：生成連結
   const item = (key, href, text, iconClass, extra = "") => {
     const isActive = key === activeKey ? "active" : "";
     const isDisabled = href ? "" : "disabled";
@@ -20,8 +15,7 @@ export function renderNav(activeKey) {
     `;
   };
 
-  // 生成 HTML
-  // 注意：Logo 路徑使用絕對路徑 /logo2.png 確保在任何子目錄都能讀取
+  // 生成側邊欄 HTML
   navContainer.innerHTML = `
     <div class="brand">
       <img src="/logo2.png" alt="Logo">
@@ -47,8 +41,7 @@ export function renderNav(activeKey) {
     </div>
   `;
 
-  // 手機版漢堡選單邏輯 (簡單版)
-  // 如果螢幕小於 920px，我們在 body 插入一個 mobile header
+  // 手機版漢堡選單 (簡單生成)
   if (window.innerWidth <= 920 && !document.getElementById('mobile-header')) {
     const mobileHeader = document.createElement('div');
     mobileHeader.id = 'mobile-header';
