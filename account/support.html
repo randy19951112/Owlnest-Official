@@ -1,16 +1,67 @@
-<!doctype html><html lang="zh-Hant"><head>
-<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
-<link rel="stylesheet" href="/account/css/account.css"/><title>Account · Support</title></head>
-<body><div class="wrap">
-<aside class="sidebar"><div id="nav"></div></aside>
-<main class="main">
-  <div class="topbar"><div><div class="h1">Warranty & Support</div><div class="muted">Phase 3</div></div></div>
-  <section class="card"><div class="muted">Coming soon.</div></section>
-</main></div>
-<script type="module">
-  import { requireUser } from "/account/js/authGuard.js";
-  import { renderNav } from "/account/js/uiNav.js";
-  renderNav("support");
-  await requireUser();
-</script></body></html>
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/account/css/account.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <title>Account · Warranty & Support</title>
+</head>
+<body>
+  <div class="wrap">
+    <aside class="sidebar">
+      <div id="nav" style="display:flex; flex-direction:column; height:100%;"></div>
+    </aside>
 
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <div class="h1">Warranty & Support</div>
+          <div class="muted">Get help, request warranty service</div>
+        </div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <a class="btn" href="/account/index.html"><i class="fas fa-chart-pie"></i> Dashboard</a>
+        </div>
+      </div>
+
+      <div class="grid">
+        <section class="card col-6">
+          <div class="h1">Contact</div>
+          <div class="muted">Email us and we will reply within 1–2 business days.</div>
+          <div style="margin-top:16px; font-weight:800;">owlnestpq2025@gmail.com</div>
+          <div style="margin-top:16px;">
+            <a class="btn primary" href="mailto:owlnestpq2025@gmail.com"><i class="fas fa-envelope"></i> Email Support</a>
+          </div>
+        </section>
+
+        <section class="card col-6">
+          <div class="h1">Support tickets</div>
+          <div class="muted">Phase 3 will add ticket submission + tracking here.</div>
+          <div style="margin-top:16px;">
+            <span class="badge">Coming soon</span>
+          </div>
+        </section>
+
+        <section class="card col-12">
+          <div class="h1">Tips</div>
+          <div class="muted" style="line-height:1.7;">
+            When contacting support, please include:
+            <ul style="margin:10px 0 0 18px; color:rgba(69,81,105,.75);">
+              <li>Your display code (e.g. Sleep Aid Lamp 48291374)</li>
+              <li>Purchase date (if available)</li>
+              <li>A short description + photo/video if applicable</li>
+            </ul>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script type="module">
+    import { requireUser } from "/account/js/authGuard.js";
+    import { renderNav } from "/account/js/uiNav.js";
+    renderNav("support");
+    await requireUser();
+  </script>
+</body>
+</html>
