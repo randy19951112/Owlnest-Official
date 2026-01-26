@@ -1,51 +1,99 @@
-import { supabase } from "./supabaseClient.js";
+// /account/js/uiNav.js
+import { signOut } from "/account/js/authGuard.js";
 
-/**
- * 讓 /account 任何頁都能吃 Supabase 的 magic link / OAuth 回跳參數
- */
-async function handleAuthRedirectParams() {
-  try {
-    const url = new URL(window.location.href);
+function ensureOverlay() {
+  let overlay = document.querySelector(".nav-overlay");
+  if (!overlay) {
+    overlay = document.createElement("div");
+    overlay.className = "nav-overlay";
+    document.body.appendChild(overlay);
+  }
+  overlay.addEventListener("click", () => document.body.classList.remove("nav-open"));
+}
 
-    // OAuth / PKCE code flow
-    if (url.searchParams.get("code")) {
-      await supabase.auth.exchangeCodeForSession(url.searchParams.get("code"));
-      url.searchParams.delete("code");
-      window.history.replaceState({}, document.title, url.pathname + (url.search ? url.search : ""));
-      return;
-    }
+function ensureTopbarToggle() {
+  const topbar = document.querySelector(".topbar");
+  if (!topbar) return;
 
-    // Email OTP / recovery flow
-    const token_hash = url.searchParams.get("token_hash");
-    const type = url.searchParams.get("type");
-    if (token_hash && type) {
-      await supabase.auth.verifyOtp({ token_hash, type });
-      url.searchParams.delete("token_hash");
-      url.searchParams.delete("type");
-      window.history.replaceState({}, document.title, url.pathname + (url.search ? url.search : ""));
-    }
-  } catch (e) {
-    console.warn("Auth redirect handling failed:", e);
+  // 把 topbar 右側容器加上 class，讓 CSS 能做手機排版
+  const right = topbar.querySelector(":scope > div:last-child");
+  if (right && !right.classList.contains("topbarActions")) right.classList.add("topbarActions");
+
+  // 在左側標題區塞一顆漢堡按鈕（只在手機顯示，CSS 控制）
+  const left = topbar.querySelector(":scope > div:first-child") || topbar;
+  if (!document.getElementById("navToggle")) {
+    const btn = document.createElement("button");
+    btn.id = "navToggle";
+    btn.className = "iconbtn";
+    btn.type = "button";
+    btn.setAttribute("aria-label", "Open menu");
+    btn.innerHTML = `<i class="fa-solid fa-bars"></i>`;
+    btn.addEventListener("click", () => document.body.classList.add("nav-open"));
+    left.prepend(btn);
   }
 }
 
-function loginRedirect(nextUrl) {
-  const next = encodeURIComponent(nextUrl || (window.location.pathname + window.location.search));
-  window.location.href = `/member-login.html?next=${next}`;
-}
+export function renderNav(active = "dashboard") {
+  ensureOverlay();
+  ensureTopbarToggle();
 
-export async function requireUser() {
-  await handleAuthRedirectParams();
+  const navRoot = document.getElementById("nav");
+  if (!navRoot) return;
 
-  const { data, error } = await supabase.auth.getUser();
-  if (error || !data?.user) {
-    loginRedirect(window.location.pathname + window.location.search);
-    return null;
-  }
-  return data.user;
-}
+  const items = [
+    { key: "dashboard", label: "Dashboard", href: "/account/index.html", icon: "fa-chart-pie" },
+    { key: "products",  label: "My Products", href: "/account/products.html", icon: "fa-box" },
+    { key: "orders",    label: "Orders", href: "/account/orders.html", icon: "fa-receipt" },
+    { key: "support",   label: "Warranty & Support", href: "/account/support.html", icon: "fa-headset" },
+    { key: "profile",   label: "Profile & Security", href: "/account/profile.html", icon: "fa-user-shield" },
+    { key: "settings",  label: "Settings", href: "/account/settings.html", icon: "fa-gear" },
+  ];
 
-export async function signOut() {
-  await supabase.auth.signOut();
-  window.location.href = "/index.html";
+  navRoot.innerHTML = `
+    <div class="navBrand">
+      <img src="/logo.png" alt="Owlnest" />
+      <div class="brandText">Owlnest</div>
+    </div>
+    <div class="navSep"></div>
+
+    <button class="navClose" id="navClose" type="button" aria-label="Close menu">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+
+    <div class="navList">
+      ${items.map(it => `
+        <a class="navlink ${it.key === active ? "active" : ""}" href="${it.href}">
+          <i class="fa-solid ${it.icon}"></i>
+          <span>${it.label}</span>
+        </a>
+      `).join("")}
+    </div>
+
+    <div class="navBottom">
+      <a href="/" class="">
+        <i class="fa-solid fa-arrow-left"></i>
+        <span>Back to Home</span>
+      </a>
+
+      <button id="navSignOut" class="danger" type="button">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        <span>Sign Out</span>
+      </button>
+    </div>
+  `;
+
+  // Mobile close button
+  navRoot.querySelector("#navClose")?.addEventListener("click", () => {
+    document.body.classList.remove("nav-open");
+  });
+
+  // Close drawer after clicking any nav item (mobile UX)
+  navRoot.querySelectorAll("a.navlink").forEach(a => {
+    a.addEventListener("click", () => document.body.classList.remove("nav-open"));
+  });
+
+  // Sign out
+  navRoot.querySelector("#navSignOut")?.addEventListener("click", async () => {
+    await signOut();
+  });
 }
