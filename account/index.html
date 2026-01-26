@@ -61,11 +61,6 @@
             </div>
           </div>
         </section>
-
-        <section class="card col-12">
-          <div class="h1">News & Updates</div>
-          <div class="muted">Welcome to the new Owlnest Member Center. More features coming soon.</div>
-        </section>
       </div>
     </main>
   </div>
@@ -100,7 +95,7 @@
 
       const { data: latest, error: latestErr } = await supabase
         .from("activations")
-        .select("payload, activated_at") // Note: changed display_token to payload based on your schema
+        .select("payload, activated_at")
         .eq("user_id", user.id)
         .order("activated_at", { ascending: false })
         .limit(1)
