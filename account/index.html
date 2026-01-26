@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="/account/css/account.css" />
+  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <title>Account · Dashboard</title>
 </head>
@@ -29,7 +30,7 @@
         <section class="card col-6">
           <div class="h1">My Products</div>
           <div class="muted">Registered Devices</div>
-          <div style="font-size:36px; font-weight:800; margin-top:12px; color:var(--col-gold);" id="productCount">-</div>
+          <div style="font-size:36px; font-weight:800; margin-top:12px; font-family:var(--font-serif); color:var(--col-gold);" id="productCount">-</div>
 
           <div class="muted" style="margin-top:20px;">Latest Registration</div>
           <div style="margin-top:8px; font-weight:600;" id="latestProduct">-</div>
@@ -92,9 +93,10 @@
 
       if (!countErr) productCountEl.textContent = String(count ?? 0);
 
+      // [關鍵修正] 使用 payload 欄位
       const { data: latest, error: latestErr } = await supabase
         .from("activations")
-        .select("payload, activated_at") // 修正：用 payload 欄位
+        .select("payload, activated_at") 
         .eq("user_id", user.id)
         .order("activated_at", { ascending: false })
         .limit(1)
