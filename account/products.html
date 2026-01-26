@@ -5,45 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="./css/account.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
-  <title>Account · Products</title>
-
-  <style>
-    .cards { display:grid; gap:12px; margin-top:14px; }
-    .pCard { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; padding:16px; border:1px solid rgba(0,0,0,.06); border-radius:18px; background:rgba(255,255,255,.92); }
-    .pLeft { display:flex; gap:12px; min-width:0; }
-    .bubble { width:44px; height:44px; border-radius:999px; display:flex; align-items:center; justify-content:center; background:rgba(212,175,55,.18); border:1px solid rgba(212,175,55,.35); color:var(--col-dark); flex-shrink:0; }
-    .pTitle { font-weight:900; font-size:16px; }
-    .sub { opacity:.7; font-size:12px; margin-top:4px; }
-    .badge2 { display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; font-size:12px; border:1px solid rgba(0,0,0,.08); background:rgba(0,0,0,.02); }
-    .pRight { display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <title>Owlnest · My Products</title>
 </head>
-
-<body>
-  <div class="drawerBackdrop" id="drawerBackdrop"></div>
+<body class="page-products">
   <div class="wrap">
     <aside class="sidebar"><div id="nav"></div></aside>
 
     <main class="main">
       <div class="topbar">
         <div>
-          <div class="h1">My Products</div>
-          <div class="muted">Registered devices</div>
+          <h1 class="text-h1">My Products</h1>
+          <div class="text-sub">Manage your registered devices</div>
         </div>
-        <div class="actions">
-          <a class="btn" href="./index.html"><i class="fas fa-chart-pie"></i> DASHBOARD</a>
-          <a class="btn primary" href="../activate.html"><i class="fas fa-plus"></i> ACTIVATE NEW</a>
+        <div class="topbar-actions">
+           <a href="../activate.html" class="btn primary"><i class="fa-solid fa-plus"></i> Activate New</a>
         </div>
       </div>
 
-      <section class="card">
-        <div class="cardTitle">Registered</div>
-        <div class="cardSub">Only display code is shown.</div>
-
-        <div id="msg" class="muted" style="margin-top:10px;">Loading...</div>
-        <div id="cards" class="cards"></div>
-      </section>
+      <div id="msg" class="text-sub mb-4"></div>
+      
+      <div id="cards" class="flex-column-gap-12">
+         <!-- Container for JS cards -->
+      </div>
     </main>
   </div>
 
@@ -51,43 +35,45 @@
     import { requireUser } from "./js/authGuard.js";
     import { supabase } from "./js/supabaseClient.js";
     import { renderNav } from "./js/uiNav.js";
+    import { fmtShortDate, displayNameFromActivation } from "./js/format.js";
 
     renderNav("products");
-    const $ = (id) => document.getElementById(id);
 
-    function safeText(s){
-      return (s ?? "").toString().replace(/[&<>"']/g, (m) => ({
-        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-      }[m]));
-    }
-
-    function render(a){
-      const token = (a.display_token ?? "").toString().trim();
-      const displayCode = token ? `Sleep Aid Lamp ${token}` : "Sleep Aid Lamp";
-      const activated = a.activated_at ? new Date(a.activated_at).toLocaleString() : "-";
-
+    function renderItem(item){
+      const displayCode = displayNameFromActivation(item);
+      const activated = fmtShortDate(item.activated_at);
+      
       return `
-        <div class="pCard">
-          <div class="pLeft">
-            <div class="bubble"><i class="fa-solid fa-box"></i></div>
-            <div style="min-width:0;">
-              <div class="pTitle">${safeText(displayCode)}</div>
-              <div class="sub">Activated: ${safeText(activated)}</div>
-              <div style="margin-top:8px;">
-                <span class="badge2"><i class="fa-solid fa-circle-check"></i> ACTIVE</span>
-              </div>
+        <div class="list-row mt-3">
+          <div class="flex-grow min-w-0 row-left">
+            <div class="icon-circle blue">
+               <i class="fa-solid fa-box"></i>
+            </div>
+            <div class="min-w-0">
+              <div class="break-word text-bold text-md">${safeText(displayCode)}</div>
+              <div class="text-sub text-xs">Activated: ${safeText(activated)}</div>
             </div>
           </div>
-          <div class="pRight">
-            <a class="btn" href="./support.html"><i class="fa-solid fa-headset"></i> SUPPORT</a>
+          
+          <div class="row-right">
+             <span class="badge active"><i class="fa-solid fa-check"></i> Active</span>
+             <a class="btn btn-sm" href="./support.html">Support</a>
           </div>
         </div>
       `;
     }
 
+    function safeText(str){
+      if(!str) return "";
+      return str.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
     async function init(){
       const user = await requireUser();
       if (!user) return;
+
+      const msgEl = document.getElementById("msg");
+      msgEl.textContent = "Loading...";
 
       const { data, error } = await supabase
         .from("activations")
@@ -96,19 +82,18 @@
         .order("activated_at", { ascending:false });
 
       if (error){
-        $("msg").textContent = "Unable to load: " + (error.message || "error");
+        msgEl.textContent = "Error: " + error.message;
         return;
       }
 
       const items = data || [];
       if (!items.length){
-        $("msg").textContent = "No product yet.";
-        $("cards").innerHTML = `<a class="btn primary" href="../activate.html"><i class="fa-solid fa-plus"></i> ACTIVATE NEW</a>`;
+        msgEl.textContent = "No products found.";
         return;
       }
 
-      $("msg").textContent = "";
-      $("cards").innerHTML = items.map(render).join("");
+      msgEl.textContent = "";
+      document.getElementById("cards").innerHTML = items.map(renderItem).join("");
     }
 
     init();
