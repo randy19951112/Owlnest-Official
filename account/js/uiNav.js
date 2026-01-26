@@ -11,7 +11,7 @@ export function renderNav(activeKey) {
   const item = (key, href, text, iconClass, extra = "") => {
     const isActive = key === activeKey ? "active" : "";
     const isDisabled = href ? "" : "disabled";
-    // 確保 href 是以 /account/ 開頭的絕對路徑
+    // 確保 href 是以 /account/ 開頭的絕對路徑，除非它是 null
     const link = href ? (href.startsWith('/') ? href : `/account/${href}`) : "javascript:void(0)";
     
     return `
@@ -40,9 +40,9 @@ export function renderNav(activeKey) {
       
       <div style="height:1px; background:rgba(255,255,255,0.1); margin:10px 0;"></div>
       
-      ${item("orders", null, "Orders", "fas fa-receipt", "<small>Phase 2</small>")}
-      ${item("support", null, "Support", "fas fa-headset", "<small>Phase 3</small>")}
-      ${item("settings", null, "Settings", "fas fa-cog", "<small>Phase 3</small>")}
+      ${item("orders", "orders.html", "Orders", "fas fa-receipt")}
+      ${item("support", "support.html", "Support", "fas fa-headset")}
+      ${item("settings", "settings.html", "Settings", "fas fa-cog")}
     </div>
     
     <div style="margin-top: auto; padding-top: 20px;">
