@@ -5,81 +5,44 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="./css/account.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
-  <title>Account · Warranty & Support</title>
-
-  <style>
-    .supportGrid { display:grid; grid-template-columns: 1.2fr .8fr; gap:16px; }
-    @media (max-width: 980px){ .supportGrid{ grid-template-columns:1fr; } }
-
-    .prodCard { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; padding:16px; border:1px solid rgba(0,0,0,.06); border-radius:18px; background:rgba(255,255,255,.92); }
-    .prodLeft { display:flex; gap:12px; min-width:0; }
-    .iconBubble { width:44px; height:44px; border-radius:999px; display:flex; align-items:center; justify-content:center; background:rgba(212,175,55,.18); border:1px solid rgba(212,175,55,.35); color:var(--col-dark); flex-shrink:0; }
-    .prodTitle { font-weight:900; font-size:16px; }
-    .sub { opacity:.7; font-size:12px; margin-top:4px; }
-    .badge2 { display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; font-size:12px; border:1px solid rgba(0,0,0,.08); background:rgba(0,0,0,.02); }
-    .actionsRow { display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
-    .stack { display:grid; gap:10px; margin-top:12px; }
-    .mini { font-size:12px; opacity:.8; }
-
-    .helpCard { background:var(--card2); border:1px solid rgba(0,0,0,.06); border-radius:18px; padding:16px; }
-    .helpLine { display:flex; justify-content:space-between; gap:10px; padding:10px 12px; border-radius:14px; background:rgba(255,255,255,.7); border:1px solid rgba(0,0,0,.06); }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <title>Owlnest · Support</title>
 </head>
-
-<body>
-  <div class="drawerBackdrop" id="drawerBackdrop"></div>
+<body class="page-support">
   <div class="wrap">
     <aside class="sidebar"><div id="nav"></div></aside>
 
     <main class="main">
       <div class="topbar">
         <div>
-          <div class="h1">Warranty & Support</div>
-          <div class="muted">Help center</div>
-        </div>
-        <div class="actions">
-          <a class="btn" href="./index.html"><i class="fas fa-chart-pie"></i> DASHBOARD</a>
+          <h1 class="text-h1">Support</h1>
+          <div class="text-sub">Warranty status & help</div>
         </div>
       </div>
 
-      <div class="supportGrid">
-        <section class="card">
-          <div class="cardTitle">Your Registered Products</div>
-          <div class="cardSub">We show only a display code, never your product key.</div>
+      <div class="support-grid">
+        <!-- Left: Product List -->
+        <div class="min-w-0">
+           <h2 class="text-h2">Your Devices</h2>
+           <div id="msg"></div>
+           <div id="list" class="mt-2"></div>
+        </div>
 
-          <div id="msg" class="muted" style="margin-top:10px;">Loading...</div>
-          <div id="list" class="stack"></div>
-        </section>
-
-        <aside class="helpCard">
-          <div class="cardTitle">Contact Support</div>
-          <div class="cardSub">Fastest way: email with product display code.</div>
-
-          <div class="stack">
-            <div class="helpLine">
-              <div>
-                <div style="font-weight:900;">Email</div>
-                <div class="mini">owlnestpq2025@gmail.com</div>
-              </div>
-              <a class="btn primary" href="mailto:owlnestpq2025@gmail.com?subject=Owlnest%20Support%20Request" style="align-self:center;">EMAIL</a>
-            </div>
-
-            <div class="helpLine">
-              <div>
-                <div style="font-weight:900;">What to include</div>
-                <div class="mini">Display code / issue / photo if any</div>
-              </div>
-            </div>
-
-            <div class="helpLine">
-              <div>
-                <div style="font-weight:900;">Warranty rule</div>
-                <div class="mini">Default: 12 months from activation date</div>
-              </div>
-            </div>
+        <!-- Right: FAQ Card -->
+        <div class="min-w-0">
+          <h2 class="text-h2">Quick Help</h2>
+          <div class="std-card">
+            <div class="text-bold"><i class="fa-solid fa-book-open"></i> User Manual</div>
+            <p class="text-sub">Download the latest guide for your sleep lamp.</p>
+            <button class="btn btn-block">Download PDF</button>
+            
+            <div class="separator"></div>
+            
+            <div class="text-bold"><i class="fa-solid fa-envelope"></i> Email Us</div>
+            <p class="text-sub">support@owlnest.com</p>
+            <a href="mailto:support@owlnest.com" class="btn primary btn-block">Contact Support</a>
           </div>
-        </aside>
+        </div>
       </div>
 
     </main>
@@ -89,78 +52,24 @@
     import { requireUser } from "./js/authGuard.js";
     import { supabase } from "./js/supabaseClient.js";
     import { renderNav } from "./js/uiNav.js";
+    import { displayNameFromActivation } from "./js/format.js";
 
     renderNav("support");
-    const $ = (id) => document.getElementById(id);
 
-    function safeText(s){
-      return (s ?? "").toString().replace(/[&<>"']/g, (m) => ({
-        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-      }[m]));
-    }
-
-    function addMonths(date, months){
-      const d = new Date(date);
-      const day = d.getDate();
-      d.setMonth(d.getMonth() + months);
-
-      // handle month rollover (e.g. Jan 31 + 1 month)
-      if (d.getDate() < day) d.setDate(0);
-      return d;
-    }
-
-    function fmt(d){
-      try { return new Date(d).toLocaleDateString(); } catch(_) { return "-"; }
-    }
-
-    function mailto(displayCode){
-      const subject = encodeURIComponent("Owlnest Warranty/Support Request");
-      const body = encodeURIComponent(
-`Hi Owlnest Support,
-
-My product display code: ${displayCode || "-"}
-
-Issue description:
-(please describe)
-
-Photos / videos:
-(optional)
-
-Thanks.`
-      );
-      return `mailto:owlnestpq2025@gmail.com?subject=${subject}&body=${body}`;
-    }
-
-    function renderActivation(a){
-      const token = (a.display_token ?? "").toString().trim();
-      const displayCode = token ? `Sleep Aid Lamp ${token}` : "Sleep Aid Lamp";
-      const activatedAt = a.activated_at ? new Date(a.activated_at) : null;
-
-      // Warranty: 12 months from activation
-      const warrantyEnd = activatedAt ? addMonths(activatedAt, 12) : null;
-      const now = new Date();
-      const isValid = warrantyEnd ? (now <= warrantyEnd) : false;
-
+    function renderItem(item){
+      const name = displayNameFromActivation(item);
       return `
-        <div class="prodCard">
-          <div class="prodLeft">
-            <div class="iconBubble"><i class="fa-solid fa-shield-heart"></i></div>
-            <div style="min-width:0;">
-              <div class="prodTitle">${safeText(displayCode)}</div>
-              <div class="sub">Activated: ${activatedAt ? safeText(activatedAt.toLocaleString()) : "-"}</div>
-              <div class="sub">Warranty until: ${warrantyEnd ? safeText(fmt(warrantyEnd)) : "-"}</div>
-              <div style="margin-top:8px;">
-                <span class="badge2">
-                  <i class="fa-solid ${isValid ? "fa-circle-check" : "fa-circle-xmark"}"></i>
-                  ${isValid ? "Warranty Active" : "Warranty Expired/Unknown"}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div class="actionsRow">
-            <a class="btn primary" href="${mailto(displayCode)}"><i class="fa-solid fa-envelope"></i> CONTACT</a>
-          </div>
+        <div class="list-row mt-2">
+           <div class="flex-grow min-w-0 row-left-sm">
+             <i class="fa-solid fa-shield-halved flex-shrink-0 icon-shield"></i>
+             <div class="min-w-0">
+               <div class="break-word text-bold">${name}</div>
+               <div class="badge active mt-1">Warranty Active</div>
+             </div>
+           </div>
+           <div class="row-right">
+             <a class="btn btn-sm" href="mailto:support@owlnest.com?subject=Support for ${name}">Get Help</a>
+           </div>
         </div>
       `;
     }
@@ -168,32 +77,24 @@ Thanks.`
     async function init(){
       const user = await requireUser();
       if (!user) return;
-
-      $("msg").textContent = "Loading...";
-
-      const { data, error } = await supabase
+      
+      const msgEl = document.getElementById("msg");
+      msgEl.textContent = "Loading...";
+      
+      const { data } = await supabase
         .from("activations")
         .select("display_token, activated_at")
-        .eq("user_id", user.id)
-        .order("activated_at", { ascending: false });
-
-      if (error){
-        $("msg").textContent = "Unable to load products: " + (error.message || "error");
-        $("list").innerHTML = "";
-        return;
-      }
-
+        .eq("user_id", user.id);
+        
       const items = data || [];
-      if (!items.length){
-        $("msg").textContent = "No registered product yet.";
-        $("list").innerHTML = `<a class="btn primary" href="../activate.html" style="width:max-content;"><i class="fa-solid fa-plus"></i> ACTIVATE NEW</a>`;
-        return;
+      if(!items.length) {
+         msgEl.textContent = "No registered devices.";
+         return;
       }
-
-      $("msg").textContent = "";
-      $("list").innerHTML = items.map(renderActivation).join("");
+      
+      msgEl.classList.add("hidden");
+      document.getElementById("list").innerHTML = items.map(renderItem).join("");
     }
-
     init();
   </script>
 </body>
