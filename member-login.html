@@ -124,7 +124,6 @@
   <div hidden id="snipcart" data-api-key="MmY2MWUwYjMtODI0Mi00NDQ1LTk4YWUtNTQ0NDgwODY5OGM0NjM5MDIzNDE2ODU0NDczMzQz"></div>
 
   <script>
-    // ✅ 已填入您提供的資訊
     const SUPABASE_URL = 'https://khoiplqugajmybmultzs.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_ic3b9TeYt7SuXxLIhLuyvA_FWHYVb0Z';
 
@@ -181,9 +180,12 @@
 
     function hideMessage() { msg.classList.add('hidden'); msg.innerHTML = ''; }
 
+    // ✅ 修正：不要再回 account.html
     function getNextUrl() {
       const params = new URLSearchParams(window.location.search);
-      return sessionStorage.getItem('redirect_after_login') || params.get('next') || (window.location.origin + '/account.html');
+      return sessionStorage.getItem('redirect_after_login')
+        || params.get('next')
+        || (window.location.origin + '/account/index.html');
     }
 
     async function handleEmailRedirectSession() {
@@ -234,7 +236,8 @@
         if (mode === 'register') {
           const { error } = await sb.auth.signUp({
             email, password,
-            options: { emailRedirectTo: window.location.origin + '/account.html' }
+            // ✅ 修正：驗證信回跳 /account/index.html（不再 account.html）
+            options: { emailRedirectTo: window.location.origin + '/account/index.html' }
           });
           if (error) throw error;
           showMessage('✅ Account created. Please check your email to verify.', 'ok');
