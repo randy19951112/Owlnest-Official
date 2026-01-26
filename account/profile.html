@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="/account/css/account.css" />
+  <link rel="stylesheet" href="./css/account.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
   <title>Account · Profile</title>
@@ -16,96 +16,85 @@
       <div class="topbar">
         <div>
           <div class="h1">Profile & Security</div>
-          <div class="muted">Manage your personal information</div>
+          <div class="muted" id="sub">Loading...</div>
         </div>
         <div class="actions">
-          <a class="btn" href="/account/index.html"><i class="fas fa-chart-pie"></i> DASHBOARD</a>
+          <a class="btn" href="./index.html"><i class="fas fa-chart-pie"></i> DASHBOARD</a>
           <button class="btn" id="btnTopSignOut"><i class="fas fa-right-from-bracket"></i> SIGN OUT</button>
         </div>
       </div>
 
-      <div class="grid">
-        <section class="card col-8">
-          <div class="cardTitle">Personal Info</div>
-          <div class="cardSub">Name / phone are stored in Supabase user metadata.</div>
-
-          <div class="label">Email</div>
-          <input class="input" id="email" disabled />
-
-          <div class="label">Full Name</div>
-          <input class="input" id="full_name" placeholder="Your name" />
-
-          <div class="label">Phone</div>
-          <input class="input" id="phone" placeholder="+886..." />
-
-          <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
-            <button class="btn primary" id="btnSave"><i class="fas fa-save"></i> SAVE</button>
-            <span class="muted" id="msg"></span>
+      <section class="card">
+        <div class="grid" style="grid-template-columns: 1fr; gap: 16px;">
+          <div>
+            <div class="cardTitle">Signed in</div>
+            <div class="muted" id="email">-</div>
           </div>
-        </section>
 
-        <section class="card col-4" style="background:var(--card2);">
-          <div class="cardTitle">Security</div>
-          <div class="cardSub">Password reset link will be sent to your email.</div>
+          <div class="navDivider"></div>
 
-          <button class="btn" id="btnReset" style="width:100%; justify-content:center;">
-            <i class="fas fa-key"></i> SEND RESET LINK
-          </button>
-          <div class="small" id="resetMsg" style="margin-top:10px;"></div>
-        </section>
-      </div>
+          <div>
+            <div class="cardTitle">Change password</div>
+            <div class="muted" style="margin-top:6px;">For security, choose a strong password.</div>
+
+            <div style="margin-top:14px; display:grid; gap:10px; max-width:420px;">
+              <input id="newpw" class="input" type="password" placeholder="New password" autocomplete="new-password" />
+              <input id="confpw" class="input" type="password" placeholder="Confirm password" autocomplete="new-password" />
+              <button id="btnSave" class="btn primary" type="button">UPDATE</button>
+              <div id="msg" class="muted" style="margin-top:6px;"></div>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
   </div>
 
   <script type="module">
-    import { requireUser, signOut } from "/account/js/authGuard.js";
-    import { supabase } from "/account/js/supabaseClient.js";
-    import { renderNav } from "/account/js/uiNav.js";
+    import { requireUser, signOut } from "./js/authGuard.js";
+    import { supabase } from "./js/supabaseClient.js";
+    import { renderNav } from "./js/uiNav.js";
 
     renderNav("profile");
+
+    const $ = (id) => document.getElementById(id);
+
+    function setMsg(text, ok=false){
+      const el = $("msg");
+      el.textContent = text || "";
+      el.style.color = ok ? "var(--col-gold)" : "rgba(255,255,255,0.7)";
+    }
 
     async function init(){
       const user = await requireUser();
       if (!user) return;
 
-      document.getElementById("btnTopSignOut").addEventListener("click", signOut);
+      $("sub").textContent = "Manage your account settings";
+      $("email").textContent = user.email || "-";
+      $("btnTopSignOut").addEventListener("click", signOut);
 
-      const emailEl = document.getElementById("email");
-      const nameEl = document.getElementById("full_name");
-      const phoneEl = document.getElementById("phone");
-      const msgEl = document.getElementById("msg");
-      const resetMsgEl = document.getElementById("resetMsg");
+      $("btnSave").addEventListener("click", async () => {
+        setMsg("");
+        const pw = $("newpw").value || "";
+        const cpw = $("confpw").value || "";
 
-      emailEl.value = user.email || "";
-      nameEl.value = user.user_metadata?.full_name || "";
-      phoneEl.value = user.user_metadata?.phone || "";
-
-      document.getElementById("btnSave").addEventListener("click", async () => {
-        msgEl.textContent = "Saving...";
-        const full_name = nameEl.value.trim();
-        const phone = phoneEl.value.trim();
-
-        const { error } = await supabase.auth.updateUser({
-          data: { full_name, phone }
-        });
-
-        if (error){
-          msgEl.textContent = "Save failed: " + error.message;
+        if (!pw || pw.length < 8) {
+          setMsg("Password must be at least 8 characters.");
           return;
         }
-        msgEl.textContent = "Saved ✅";
-      });
-
-      document.getElementById("btnReset").addEventListener("click", async () => {
-        resetMsgEl.textContent = "Sending...";
-        const { error } = await supabase.auth.resetPasswordForEmail(user.email, {
-          redirectTo: window.location.origin + "/member-login.html"
-        });
-        if (error){
-          resetMsgEl.textContent = "Failed: " + error.message;
+        if (pw !== cpw) {
+          setMsg("Passwords do not match.");
           return;
         }
-        resetMsgEl.textContent = "Reset link sent. Please check your inbox.";
+
+        const { error } = await supabase.auth.updateUser({ password: pw });
+        if (error){
+          setMsg(error.message || "Unable to update password.");
+          return;
+        }
+
+        $("newpw").value = "";
+        $("confpw").value = "";
+        setMsg("Password updated.", true);
       });
     }
 
