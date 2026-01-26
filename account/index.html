@@ -5,107 +5,59 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="./css/account.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
-  <title>Account · Dashboard</title>
-
-  <style>
-    /* 內卡片：讓白底卡片裡再有層級 */
-    .innerCard{
-      margin-top:14px;
-      padding:14px 16px;
-      border-radius:18px;
-      border:1px solid rgba(0,0,0,.06);
-      background: rgba(255,255,255,.72);
-    }
-    .kpiRow{ display:flex; align-items:flex-end; justify-content:space-between; gap:12px; flex-wrap:wrap; }
-    .kpiNum{ font-size:54px; font-weight:950; line-height:1; color:var(--col-gold); }
-    .kpiLabel{ opacity:.75; }
-    .innerLine{ height:1px; background:rgba(0,0,0,.06); margin:14px 0; }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <title>Owlnest · Dashboard</title>
 </head>
-
-<body>
-  <div class="drawerBackdrop" id="drawerBackdrop"></div>
+<body class="page-dashboard">
+  
   <div class="wrap">
     <aside class="sidebar"><div id="nav"></div></aside>
 
     <main class="main">
       <div class="topbar">
         <div>
-          <div class="h1">Dashboard</div>
-          <div class="muted" id="welcome">Loading...</div>
+          <h1 class="text-h1">Dashboard</h1>
+          <div class="text-sub" id="welcome">Welcome back</div>
         </div>
-        <div class="actions">
-          <a class="btn" href="./products.html"><i class="fas fa-box"></i> MY PRODUCTS</a>
-          <a class="btn" href="./profile.html"><i class="fas fa-user"></i> PROFILE</a>
-          <button class="btn" id="btnTopSignOut"><i class="fas fa-right-from-bracket"></i> SIGN OUT</button>
+        <div class="topbar-actions">
+           <!-- Global actions can go here -->
         </div>
       </div>
 
-      <div class="grid">
-        <!-- ✅ 改成：外卡片 + 內卡片（層級更清楚） -->
-        <section class="card col-7">
-          <div class="cardTitle">My Products</div>
-          <div class="cardSub">Registered devices</div>
-
-          <div class="innerCard">
-            <div class="kpiRow">
-              <div>
-                <div class="kpiLabel">Total</div>
-                <div class="kpiNum" id="count">-</div>
-              </div>
-
-              <a class="btn primary" href="../activate.html"><i class="fas fa-plus"></i> ACTIVATE NEW</a>
-            </div>
-
-            <div class="innerLine"></div>
-
-            <div class="kpiLabel">Latest registration</div>
-            <div style="margin-top:6px; font-weight:900; font-size:18px;" id="latest">-</div>
+      <div class="kpi-grid">
+        <!-- KPI Card 1 -->
+        <div class="std-card">
+          <div class="kpi-label text-mono">Activated Devices</div>
+          <div class="kpi-value" id="count">-</div>
+          <div class="w-fit">
+             <span class="badge active"><i class="fa-solid fa-check-circle"></i> System Normal</span>
           </div>
-        </section>
+        </div>
 
-        <section class="card col-5">
-          <div class="cardTitle">Quick Actions</div>
-          <div class="cardSub">Shortcuts</div>
-
-          <div class="row">
-            <div>
-              <div style="font-weight:900;"><i class="fas fa-qrcode" style="color:var(--col-gold);"></i> Verify product</div>
-              <div class="small">Check authenticity before activation</div>
-            </div>
-            <a class="btn primary" href="../verify.html">VERIFY</a>
-          </div>
-
-          <div class="row">
-            <div>
-              <div style="font-weight:900;"><i class="fas fa-user-pen" style="color:var(--col-gold);"></i> Update profile</div>
-              <div class="small">Name / phone / security</div>
-            </div>
-            <a class="btn" href="./profile.html">OPEN</a>
-          </div>
-
-          <div class="row">
-            <div>
-              <div style="font-weight:900;"><i class="fas fa-headset" style="color:var(--col-gold);"></i> Support</div>
-              <div class="small">Warranty & Support</div>
-            </div>
-            <a class="btn" href="./support.html">VIEW</a>
-          </div>
-        </section>
-
-        <section class="card col-12" style="background:var(--card2);">
-          <div class="cardTitle">Notice</div>
-          <div class="muted">
-            We will never show your product key in Member Center. You will only see a display code like “Sleep Aid Lamp 48291374”.
-          </div>
-        </section>
+        <!-- KPI Card 2 -->
+        <div class="std-card card-dark">
+          <div class="kpi-label text-mono kpi-label-muted">Latest Activity</div>
+          <div class="kpi-value-sm break-word" id="latest">-</div>
+          <a href="./products.html" class="btn btn-dark-outline btn-sm w-fit text-uppercase">Manage Products</a>
+        </div>
       </div>
+      
+      <div class="mt-4">
+        <h2 class="text-h2">Quick Actions</h2>
+        <div class="std-card quick-card">
+            <div>
+              <div class="text-bold">Need Help?</div>
+              <div class="text-sub">Contact our support team anytime.</div>
+            </div>
+            <a href="./support.html" class="btn primary">Get Support</a>
+        </div>
+      </div>
+
     </main>
   </div>
 
   <script type="module">
-    import { requireUser, signOut } from "./js/authGuard.js";
+    import { requireUser } from "./js/authGuard.js";
     import { supabase } from "./js/supabaseClient.js";
     import { renderNav } from "./js/uiNav.js";
 
@@ -113,9 +65,9 @@
 
     function showLatest(item){
       const token = (item?.display_token ?? "").toString().trim();
-      const name = token ? `Sleep Aid Lamp ${token}` : "Registered";
+      const name = token ? `Lamp ${token}` : "Registered";
       const d = item?.activated_at ? new Date(item.activated_at).toLocaleDateString() : "-";
-      return `${name}  (${d})`;
+      return `${name} (${d})`;
     }
 
     async function init(){
@@ -123,23 +75,16 @@
       if (!user) return;
 
       document.getElementById("welcome").textContent = `Welcome back, ${user.email || ""}`;
-      document.getElementById("btnTopSignOut").addEventListener("click", signOut);
 
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from("activations")
         .select("display_token, activated_at")
         .eq("user_id", user.id)
         .order("activated_at", { ascending:false });
 
-      if (error){
-        document.getElementById("count").textContent = "-";
-        document.getElementById("latest").textContent = "Unable to load";
-        return;
-      }
-
       const items = data || [];
       document.getElementById("count").textContent = String(items.length || 0);
-      document.getElementById("latest").textContent = items.length ? showLatest(items[0]) : "-";
+      document.getElementById("latest").textContent = items.length ? showLatest(items[0]) : "No devices yet";
     }
 
     init();
