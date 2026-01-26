@@ -1,16 +1,62 @@
-<!doctype html><html lang="zh-Hant"><head>
-<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
-<link rel="stylesheet" href="/account/css/account.css"/><title>Account · Settings</title></head>
-<body><div class="wrap">
-<aside class="sidebar"><div id="nav"></div></aside>
-<main class="main">
-  <div class="topbar"><div><div class="h1">Settings</div><div class="muted">Phase 3</div></div></div>
-  <section class="card"><div class="muted">Coming soon.</div></section>
-</main></div>
-<script type="module">
-  import { requireUser } from "/account/js/authGuard.js";
-  import { renderNav } from "/account/js/uiNav.js";
-  renderNav("settings");
-  await requireUser();
-</script></body></html>
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/account/css/account.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <title>Account · Settings</title>
+</head>
+<body>
+  <div class="wrap">
+    <aside class="sidebar">
+      <div id="nav" style="display:flex; flex-direction:column; height:100%;"></div>
+    </aside>
 
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <div class="h1">Settings</div>
+          <div class="muted">Notifications, address, account actions</div>
+        </div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <a class="btn" href="/account/index.html"><i class="fas fa-chart-pie"></i> Dashboard</a>
+        </div>
+      </div>
+
+      <div class="grid">
+        <section class="card col-6">
+          <div class="h1">Notifications</div>
+          <div class="muted">Phase 2 will add email notification preferences.</div>
+          <div style="margin-top:16px;"><span class="badge">Coming soon</span></div>
+        </section>
+
+        <section class="card col-6">
+          <div class="h1">Shipping Address</div>
+          <div class="muted">Phase 2 will let you save your address for faster checkout.</div>
+          <div style="margin-top:16px;"><span class="badge">Coming soon</span></div>
+        </section>
+
+        <section class="card col-12">
+          <div class="h1">Account</div>
+          <div class="muted" style="line-height:1.7;">
+            Delete account will be available after we finish data retention and support flow.
+          </div>
+          <div style="margin-top:16px;">
+            <button class="btn danger" type="button" disabled title="Coming soon">
+              <i class="fas fa-trash"></i> Delete account (coming soon)
+            </button>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script type="module">
+    import { requireUser } from "/account/js/authGuard.js";
+    import { renderNav } from "/account/js/uiNav.js";
+    renderNav("settings");
+    await requireUser();
+  </script>
+</body>
+</html>
