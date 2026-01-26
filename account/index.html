@@ -4,29 +4,51 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="/account/css/account.css" />
-  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <title>Account · Dashboard</title>
 </head>
 <body>
   <div class="wrap">
+    <!-- 側邊欄 -->
     <aside class="sidebar">
-      <div id="nav" style="display:flex; flex-direction:column; height:100%;"></div>
+      <div class="p-8 border-b border-brand-dark/5 flex justify-center">
+        <a href="/index.html" class="flex items-center gap-2 group">
+             <img src="/logo.png" alt="Owlnest Logo" class="h-8 w-auto brightness-0 opacity-80 transition group-hover:opacity-100">
+             <span class="font-serif text-xl font-bold tracking-widest text-brand-dark group-hover:text-brand-gold transition">Owlnest</span>
+        </a>
+      </div>
+      <nav class="flex-grow p-6 space-y-2" id="sidebar-nav"></nav>
+      <div class="p-6 border-t border-brand-dark/5">
+        <button id="logout-btn" class="flex items-center gap-3 px-4 py-3 w-full text-left text-xs uppercase tracking-widest font-bold text-brand-dark/50 hover:text-brand-gold hover:bg-brand-cream/50 rounded transition">
+            <i class="fas fa-sign-out-alt"></i> Sign Out
+        </button>
+      </div>
     </aside>
 
-    <main class="main">
+    <!-- 手機版 Header -->
+    <header class="lg:hidden fixed top-0 left-0 w-full z-30 px-6 py-4 flex justify-between items-center bg-brand-cream/90 backdrop-blur-md border-b border-brand-dark/5">
+      <div class="flex items-center gap-2">
+         <img src="/logo.png" class="h-8 w-auto brightness-0 opacity-80">
+         <span class="font-serif text-lg font-bold tracking-widest text-brand-dark">Owlnest</span>
+      </div>
+      <button onclick="toggleMobileMenu()" class="text-brand-dark text-2xl focus:outline-none"><i class="fas fa-bars"></i></button>
+    </header>
+    <div id="mobile-menu" class="fixed inset-0 z-40 bg-brand-dark text-brand-cream lg:hidden flex flex-col pt-20 px-8">
+        <button onclick="toggleMobileMenu()" class="absolute top-4 right-6 text-2xl text-brand-gold"><i class="fas fa-times"></i></button>
+        <nav class="flex flex-col gap-6 text-lg font-serif" id="mobile-nav-items"></nav>
+        <button id="mobile-logout-btn" class="mt-auto mb-10 text-sm uppercase tracking-widest font-bold text-brand-gold border-t border-white/10 pt-6">Sign Out</button>
+    </div>
+
+    <main class="main flex-grow lg:ml-64 p-6 md:p-12 pt-24 lg:pt-12 w-full transition-all">
       <div class="topbar">
         <div>
           <div class="h1">Dashboard</div>
           <div class="muted" id="hello">Loading…</div>
         </div>
-        <div>
-          <button class="btn" id="btnSignOut" type="button"><i class="fas fa-sign-out-alt"></i> Sign out</button>
-        </div>
       </div>
 
       <div class="grid">
-        <!-- Card 1: Products Summary -->
+        <!-- Card 1 -->
         <section class="card col-6">
           <div class="h1">My Products</div>
           <div class="muted">Registered Devices</div>
@@ -40,7 +62,7 @@
           </div>
         </section>
 
-        <!-- Card 2: Quick Actions -->
+        <!-- Card 2 -->
         <section class="card col-6">
           <div class="h1">Quick Actions</div>
           <div class="list" style="margin-top:20px;">
@@ -70,10 +92,11 @@
     import { renderNav } from "/account/js/uiNav.js";
     import { supabase } from "/account/js/supabaseClient.js";
 
+    window.toggleMobileMenu = function() { document.getElementById('mobile-menu').classList.toggle('open'); }
+
     const helloEl = document.getElementById("hello");
     const productCountEl = document.getElementById("productCount");
     const latestProductEl = document.getElementById("latestProduct");
-    const btnSignOut = document.getElementById("btnSignOut");
 
     function formatDate(iso) {
       if (!iso) return "";
@@ -95,7 +118,7 @@
 
       const { data: latest, error: latestErr } = await supabase
         .from("activations")
-        .select("payload, activated_at")
+        .select("payload, activated_at") 
         .eq("user_id", user.id)
         .order("activated_at", { ascending: false })
         .limit(1)
@@ -105,7 +128,7 @@
         latestProductEl.textContent = "No products yet";
       } else {
         latestProductEl.innerHTML = `
-            <span style="color:var(--col-dark);">${latest.payload}</span>
+            <span style="color:var(--col-dark); font-family:var(--font-serif);">${latest.payload}</span>
             <span class="muted" style="font-size:0.8em; margin-left:8px;">(${formatDate(latest.activated_at)})</span>
         `;
       }
@@ -116,11 +139,8 @@
       const user = await requireUser();
       if (!user) return;
 
-      if (btnSignOut) {
-        btnSignOut.addEventListener("click", async () => {
-          try { await signOut(); } catch (e) { console.error("signOut error:", e); }
-        });
-      }
+      document.getElementById('logout-btn')?.addEventListener('click', signOut);
+      document.getElementById('mobile-logout-btn')?.addEventListener('click', signOut);
 
       await loadDashboard(user);
     }
