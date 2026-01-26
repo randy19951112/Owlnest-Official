@@ -1,88 +1,77 @@
-import { signOut } from "/account/js/authGuard.js";
+// account/js/authGuard.js
+// Shared auth helpers for the Member Center pages.
+//
+// This project is static HTML + ES modules.
+// We protect /account/* by checking Supabase session.
+// If the user isn't signed in, we redirect to /member-login.html.
 
-function qs(sel, root = document){ return root.querySelector(sel); }
+import { supabase } from "./supabaseClient.js";
 
-function openDrawer(sidebar, overlay){
-  sidebar.classList.add("open");
-  overlay.classList.add("show");
+function currentRelativeUrl() {
+  return window.location.pathname + window.location.search + window.location.hash;
 }
 
-function closeDrawer(sidebar, overlay){
-  sidebar.classList.remove("open");
-  overlay.classList.remove("show");
+export function redirectToLogin(next = currentRelativeUrl()) {
+  // Store next in sessionStorage so even if the query is stripped, we still know.
+  try {
+    sessionStorage.setItem('redirect_after_login', next);
+  } catch (_) {}
+
+  const url = new URL('/member-login.html', window.location.origin);
+  if (next) url.searchParams.set('next', next);
+  window.location.href = url.toString();
 }
 
-export function renderNav(activeKey){
-  const navMount = document.getElementById("nav");
-  if (!navMount) return;
+export async function handleAuthRedirectInUrl() {
+  // Supports Supabase email link flows (code / token_hash).
+  const url = new URL(window.location.href);
 
-  // 找到 sidebar 容器
-  const sidebar = navMount.closest(".sidebar") || qs(".sidebar");
-  sidebar?.setAttribute("id", "sidebar");
+  try {
+    if (url.searchParams.get('code')) {
+      await supabase.auth.exchangeCodeForSession(url.searchParams.get('code'));
+      url.searchParams.delete('code');
+      window.history.replaceState({}, document.title, url.pathname + (url.search || '') + url.hash);
+    }
 
-  // overlay（沒有就注入）
-  let overlay = document.getElementById("sidebarOverlay");
-  if (!overlay){
-    overlay = document.createElement("div");
-    overlay.id = "sidebarOverlay";
-    overlay.className = "sidebarOverlay";
-    document.body.appendChild(overlay);
+    if (url.searchParams.get('token_hash')) {
+      const token_hash = url.searchParams.get('token_hash');
+      const type = url.searchParams.get('type') || 'signup';
+      await supabase.auth.verifyOtp({ token_hash, type });
+      url.searchParams.delete('token_hash');
+      url.searchParams.delete('type');
+      window.history.replaceState({}, document.title, url.pathname + (url.search || '') + url.hash);
+    }
+  } catch (e) {
+    // Not fatal: user might visit without an auth callback.
+    console.warn('[authGuard] handleAuthRedirectInUrl failed:', e);
+  }
+}
+
+export async function requireUser({ redirect = true } = {}) {
+  // Make sure we handle any callback params first.
+  await handleAuthRedirectInUrl();
+
+  const { data } = await supabase.auth.getSession();
+  const user = data?.session?.user || null;
+
+  if (!user && redirect) {
+    redirectToLogin(currentRelativeUrl());
+    return null;
   }
 
-  // nav HTML
-  navMount.innerHTML = `
-    <div class="brand">
-      <img src="/logo.png" alt="Owlnest">
-      <div>
-        <div class="t">Owlnest</div>
-        <div class="sub">Member Center</div>
-      </div>
-    </div>
+  return user;
+}
 
-    <div class="nav">
-      <a class="${activeKey==="dashboard"?"active":""}" href="/account/index.html"><i class="fas fa-chart-pie"></i> Dashboard</a>
-      <a class="${activeKey==="products"?"active":""}" href="/account/products.html"><i class="fas fa-box"></i> My Products</a>
-      <a class="${activeKey==="orders"?"active":""}" href="/account/orders.html"><i class="fas fa-receipt"></i> Orders</a>
-      <a class="${activeKey==="support"?"active":""}" href="/account/support.html"><i class="fas fa-headset"></i> Warranty & Support</a>
-      <a class="${activeKey==="profile"?"active":""}" href="/account/profile.html"><i class="fas fa-user-shield"></i> Profile & Security</a>
-      <a class="${activeKey==="settings"?"active":""}" href="/account/settings.html"><i class="fas fa-gear"></i> Settings</a>
-    </div>
-
-    <div class="navDivider"></div>
-
-    <div class="navFooter">
-      <a href="/index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
-      <button id="btnSignOut"><i class="fas fa-right-from-bracket"></i> Sign Out</button>
-    </div>
-  `;
-
-  // Sign out
-  navMount.querySelector("#btnSignOut")?.addEventListener("click", signOut);
-
-  // Mobile: 在 topbar 左側塞一顆漢堡（沒有才塞）
-  const topbar = qs(".topbar");
-  if (topbar && !qs("#navToggleBtn", topbar)){
-    const btn = document.createElement("button");
-    btn.id = "navToggleBtn";
-    btn.className = "navToggle";
-    btn.type = "button";
-    btn.setAttribute("aria-label", "Open menu");
-    btn.innerHTML = `<i class="fas fa-bars"></i>`;
-    topbar.prepend(btn);
-
-    btn.addEventListener("click", () => openDrawer(sidebar, overlay));
+export async function signOut() {
+  try {
+    await supabase.auth.signOut();
+  } catch (e) {
+    console.warn('[authGuard] signOut failed:', e);
   }
 
-  // overlay click to close
-  overlay.addEventListener("click", () => closeDrawer(sidebar, overlay));
+  try {
+    sessionStorage.removeItem('redirect_after_login');
+  } catch (_) {}
 
-  // 點 sidebar 裡任一連結就關起來（手機抽屜）
-  navMount.querySelectorAll("a").forEach(a => {
-    a.addEventListener("click", () => closeDrawer(sidebar, overlay));
-  });
-
-  // 視窗放大時強制關閉 drawer 狀態
-  window.addEventListener("resize", () => {
-    if (window.innerWidth > 1024) closeDrawer(sidebar, overlay);
-  });
+  window.location.href = '/member-login.html';
 }
