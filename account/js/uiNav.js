@@ -1,4 +1,3 @@
-// account/js/uiNav.js
 import { signOut } from "./authGuard.js";
 
 const NAV = [
@@ -35,7 +34,6 @@ export function renderNav(activeKey = "dashboard") {
         <span>Back to Home</span>
       </a>
 
-      <!-- 用 button 避免 a 的預設跳頁干擾 -->
       <button class="navItem" id="navSignOut" type="button"
         style="width:100%; background:transparent; border:0; text-align:left; cursor:pointer;">
         <i class="fa-solid fa-right-from-bracket"></i>
@@ -44,7 +42,6 @@ export function renderNav(activeKey = "dashboard") {
     </div>
   `;
 
-  // 確保一定綁得到（就算點到 icon / span）
   mount.addEventListener("click", async (e) => {
     const btn = e.target.closest("#navSignOut");
     if (!btn) return;
