@@ -45,7 +45,6 @@
 
     const listEl = document.getElementById("list");
 
-    // 注意：這裡假設您的 table 欄位是 payload 和 activated_at
     const { data: items, error } = await supabase
       .from("activations")
       .select("payload, activated_at")
