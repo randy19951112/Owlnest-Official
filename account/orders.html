@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="/account/css/account.css" />
+  <link rel="stylesheet" href="./css/account.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
   <title>Account · Orders</title>
@@ -19,7 +19,7 @@
           <div class="muted">Purchase history</div>
         </div>
         <div class="actions">
-          <a class="btn" href="/account/index.html"><i class="fas fa-chart-pie"></i> DASHBOARD</a>
+          <a class="btn" href="./index.html"><i class="fas fa-chart-pie"></i> DASHBOARD</a>
         </div>
       </div>
 
@@ -30,8 +30,8 @@
   </div>
 
   <script type="module">
-    import { requireUser } from "/account/js/authGuard.js";
-    import { renderNav } from "/account/js/uiNav.js";
+    import { requireUser } from "./js/authGuard.js";
+    import { renderNav } from "./js/uiNav.js";
     renderNav("orders");
     await requireUser();
   </script>
