@@ -1,3 +1,4 @@
+// account/js/uiNav.js
 import { signOut } from "./authGuard.js";
 
 const NAV = [
@@ -8,53 +9,6 @@ const NAV = [
   { key: "profile",   href: "./profile.html", icon: "fa-solid fa-user", label: "Profile & Security" },
   { key: "settings",  href: "./settings.html", icon: "fa-solid fa-gear", label: "Settings" },
 ];
-
-function ensureMobileDrawerWiring() {
-  // backdrop
-  if (!document.querySelector(".navBackdrop")) {
-    const bd = document.createElement("div");
-    bd.className = "navBackdrop";
-    bd.addEventListener("click", () => document.body.classList.remove("nav-open"));
-    document.body.appendChild(bd);
-  }
-
-  // close on ESC
-  window.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") document.body.classList.remove("nav-open");
-  });
-
-  // close drawer after click a link (mobile)
-  document.addEventListener("click", (e) => {
-    const a = e.target?.closest?.("a");
-    if (a && a.classList.contains("navItem")) {
-      document.body.classList.remove("nav-open");
-    }
-  });
-}
-
-function ensureTopbarToggle() {
-  const topbar = document.querySelector(".topbar");
-  if (!topbar) return;
-
-  // left area (title container)
-  const left = topbar.children?.[0];
-  if (left && !left.classList.contains("topbarLeft")) left.classList.add("topbarLeft");
-  if (left && !left.classList.contains("topbarTitle")) left.classList.add("topbarTitle");
-
-  // inject toggle button (mobile only via CSS)
-  if (!document.getElementById("navToggle") && left) {
-    const btn = document.createElement("button");
-    btn.id = "navToggle";
-    btn.className = "iconbtn navToggle";
-    btn.type = "button";
-    btn.setAttribute("aria-label", "Open menu");
-    btn.innerHTML = `<i class="fa-solid fa-bars"></i>`;
-    btn.addEventListener("click", () => {
-      document.body.classList.toggle("nav-open");
-    });
-    left.prepend(btn);
-  }
-}
 
 export function renderNav(activeKey = "dashboard") {
   const mount = document.getElementById("nav");
@@ -80,17 +34,21 @@ export function renderNav(activeKey = "dashboard") {
         <i class="fa-solid fa-arrow-left"></i>
         <span>Back to Home</span>
       </a>
-      <button class="navItem" id="navSignOut" type="button" style="width:100%; background:transparent; border:0; text-align:left;">
+
+      <!-- 用 button 避免 a 的預設跳頁干擾 -->
+      <button class="navItem" id="navSignOut" type="button"
+        style="width:100%; background:transparent; border:0; text-align:left; cursor:pointer;">
         <i class="fa-solid fa-right-from-bracket"></i>
         <span>Sign Out</span>
       </button>
     </div>
   `;
 
-  document.getElementById("navSignOut")?.addEventListener("click", async () => {
+  // 確保一定綁得到（就算點到 icon / span）
+  mount.addEventListener("click", async (e) => {
+    const btn = e.target.closest("#navSignOut");
+    if (!btn) return;
+    e.preventDefault();
     await signOut();
   });
-
-  ensureMobileDrawerWiring();
-  ensureTopbarToggle();
 }
