@@ -194,13 +194,11 @@
       }
     }
 
-    // ✅ 強制跳 dashboard（你點了會先出現提示，確認有觸發 click）
-    window.goDashboard = function (e) {
-      try { if (e) e.preventDefault(); } catch(_) {}
-      showTopMsg("Opening dashboard…", "ok");
-      setTimeout(() => window.location.assign("/account/index.html"), 80);
-      return false;
-    };
+ window.goDashboard = function (e) {
+  try { if (e) e.preventDefault(); } catch(_) {}
+  window.location.assign("/account/index.html");
+  return false;
+};
 
     // ---------- Mobile menu: 真正 hidden ----------
     function openMenu() {
@@ -386,3 +384,4 @@
   </script>
 </body>
 </html>
+
