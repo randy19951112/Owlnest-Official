@@ -5,199 +5,133 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="./css/account.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
-  <title>Account · Profile</title>
-
-  <!-- 只為這一頁補：兩欄表單 Grid（不影響其他頁） -->
-  <style>
-    .formGrid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px 18px;
-      margin-top: 12px;
-    }
-    .formGrid .full{ grid-column: 1 / -1; }
-    .field{ display:flex; flex-direction:column; gap:6px; }
-    .field .label{
-      margin: 0;
-      opacity: .70;
-    }
-    @media (max-width: 640px){
-      .formGrid{ grid-template-columns: 1fr; }
-      .formGrid .full{ grid-column:auto; }
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <title>Owlnest · Profile</title>
 </head>
-
-<body>
-  <div class="drawerBackdrop" id="drawerBackdrop"></div>
+<body class="page-profile">
   <div class="wrap">
     <aside class="sidebar"><div id="nav"></div></aside>
 
     <main class="main">
       <div class="topbar">
         <div>
-          <div class="h1">Profile & Security</div>
-          <div class="muted">Manage your personal information</div>
+          <h1 class="text-h1">Profile</h1>
+          <div class="text-sub">Manage your personal information</div>
         </div>
-
-        <!-- 右上角只留 Sign out（移除 Dashboard） -->
-        <div class="actions">
-          <button class="btn" id="btnTopSignOut" type="button">
-            <i class="fa-solid fa-right-from-bracket"></i> SIGN OUT
-          </button>
+        <div class="topbar-actions">
+           <button id="btnSave" class="btn primary">Save Changes</button>
         </div>
       </div>
 
-      <div class="grid">
-        <!-- Personal Info -->
-        <section class="card col-7">
-          <div class="cardTitle">Personal Info</div>
-          <div class="cardSub">Your info is used for support and order matching.</div>
-
-          <div class="formGrid">
-            <div class="field full">
-              <div class="label">Email</div>
-              <input class="input" id="email" type="email" disabled />
+      <div class="std-card content-narrow">
+         <div id="msg" class="text-bold text-success min-h-20"></div>
+         
+         <div class="form-grid">
+            <div class="form-full input-group">
+               <label class="input-label">Email Address</label>
+               <input type="text" id="email" class="input-field" disabled>
             </div>
-
-            <div class="field">
-              <div class="label">Full Name</div>
-              <input class="input" id="full_name" type="text" placeholder="Your name" />
+            
+            <div class="input-group">
+               <label class="input-label">Full Name</label>
+               <input type="text" id="full_name" class="input-field" placeholder="e.g. John Doe">
             </div>
-
-            <div class="field">
-              <div class="label">Phone</div>
-              <input class="input" id="phone" type="tel" placeholder="+886..." />
+            
+            <div class="input-group">
+               <label class="input-label">Phone Number</label>
+               <input type="text" id="phone" class="input-field" placeholder="+886 912 345 678">
             </div>
-
-            <div class="field">
-              <div class="label">Country</div>
-              <input class="input" id="country" type="text" placeholder="Country" />
+            
+            <div class="form-full mt-4 section-divider">
+               <label class="text-h2 label-md">Shipping Address</label>
             </div>
-
-            <div class="field">
-              <div class="label">City</div>
-              <input class="input" id="city" type="text" placeholder="City" />
+            
+            <div class="input-group">
+               <label class="input-label">Country / Region</label>
+               <input type="text" id="country" class="input-field">
             </div>
-
-            <div class="field full">
-              <div class="label">Address line 1</div>
-              <input class="input" id="addr1" type="text" placeholder="Street / Building / Room" />
+            <div class="input-group">
+               <label class="input-label">City</label>
+               <input type="text" id="city" class="input-field">
             </div>
-
-            <div class="field full">
-              <div class="label">Address line 2</div>
-              <input class="input" id="addr2" type="text" placeholder="Optional" />
+            <div class="form-full input-group">
+               <label class="input-label">Address Line 1</label>
+               <input type="text" id="addr1" class="input-field">
             </div>
-
-            <div class="field full" style="margin-top:6px;">
-              <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
-                <button class="btn primary" id="btnSave" type="button">
-                  <i class="fa-solid fa-floppy-disk"></i> SAVE
-                </button>
-                <span class="muted" id="msg"></span>
-              </div>
+            <div class="form-full input-group">
+               <label class="input-label">Address Line 2 (Optional)</label>
+               <input type="text" id="addr2" class="input-field">
             </div>
-          </div>
-        </section>
-
-        <!-- Security -->
-        <section class="card col-5" style="background:var(--card2);">
-          <div class="cardTitle">Security</div>
-          <div class="cardSub">Send password reset link to your email.</div>
-
-          <button class="btn" id="btnReset" type="button" style="width:100%; justify-content:center;">
-            <i class="fa-solid fa-key"></i> SEND RESET LINK
-          </button>
-
-          <div class="small" id="resetMsg" style="margin-top:10px;"></div>
-          <div class="small" style="margin-top:12px; opacity:.65;">
-            Tip: after you reset, login again and you’ll be back here.
-          </div>
-        </section>
+         </div>
       </div>
+      
+      <div class="std-card content-narrow card-danger mt-4">
+         <div class="text-bold text-danger">Security Zone</div>
+         <p class="text-sub">Need to update your password?</p>
+         <button id="btnReset" class="btn btn-danger w-fit">Send Password Reset Email</button>
+         <div id="resetMsg" class="text-sub"></div>
+      </div>
+
     </main>
   </div>
 
   <script type="module">
-    import { requireUser, signOut } from "./js/authGuard.js";
+    import { requireUser } from "./js/authGuard.js";
     import { supabase } from "./js/supabaseClient.js";
     import { renderNav } from "./js/uiNav.js";
 
     renderNav("profile");
 
-    function safeStr(v){ return (v ?? "").toString(); }
-
     async function init(){
       const user = await requireUser();
       if (!user) return;
-
-      // Top sign out
-      document.getElementById("btnTopSignOut")?.addEventListener("click", signOut);
-
-      // Bind fields
-      const emailEl = document.getElementById("email");
-      const nameEl  = document.getElementById("full_name");
-      const phoneEl = document.getElementById("phone");
-      const countryEl = document.getElementById("country");
-      const cityEl = document.getElementById("city");
-      const addr1El = document.getElementById("addr1");
-      const addr2El = document.getElementById("addr2");
-      const msgEl = document.getElementById("msg");
-      const resetMsgEl = document.getElementById("resetMsg");
-
-      emailEl.value = safeStr(user.email);
-
-      // 這裡統一用 user_metadata 存（最省事、最不會炸）
+      
+      document.getElementById("email").value = user.email;
+      
       const md = user.user_metadata || {};
-      nameEl.value = safeStr(md.full_name);
-      phoneEl.value = safeStr(md.phone);
-      countryEl.value = safeStr(md.country);
-      cityEl.value = safeStr(md.city);
-      addr1El.value = safeStr(md.addr1);
-      addr2El.value = safeStr(md.addr2);
-
-      // Save
-      document.getElementById("btnSave").addEventListener("click", async () => {
-        msgEl.textContent = "Saving...";
-
-        const payload = {
-          full_name: nameEl.value.trim(),
-          phone: phoneEl.value.trim(),
-          country: countryEl.value.trim(),
-          city: cityEl.value.trim(),
-          addr1: addr1El.value.trim(),
-          addr2: addr2El.value.trim(),
-        };
-
-        const { error } = await supabase.auth.updateUser({ data: payload });
-
-        if (error){
-          msgEl.textContent = "Save failed: " + error.message;
-          return;
-        }
-        msgEl.textContent = "Saved ✅";
-        setTimeout(() => { if (msgEl.textContent === "Saved ✅") msgEl.textContent = ""; }, 2500);
-      });
-
-      // Reset password link
-      document.getElementById("btnReset").addEventListener("click", async () => {
-        resetMsgEl.textContent = "Sending...";
-
-        // 讓 reset flow 回到同站的 member-login.html（支援子路徑）
-        const redirectTo = new URL("../member-login.html", window.location.href).toString();
-
-        const { error } = await supabase.auth.resetPasswordForEmail(user.email, { redirectTo });
-
-        if (error){
-          resetMsgEl.textContent = "Failed: " + error.message;
-          return;
-        }
-        resetMsgEl.textContent = "Reset link sent. Please check your inbox.";
-      });
+      const safe = (k) => md[k] || "";
+      
+      document.getElementById("full_name").value = safe("full_name");
+      document.getElementById("phone").value = safe("phone");
+      document.getElementById("country").value = safe("country");
+      document.getElementById("city").value = safe("city");
+      document.getElementById("addr1").value = safe("addr1");
+      document.getElementById("addr2").value = safe("addr2");
+      
+      document.getElementById("btnSave").onclick = async () => {
+         const btn = document.getElementById("btnSave");
+         btn.textContent = "Saving...";
+         btn.disabled = true;
+         
+         const updates = {
+           full_name: document.getElementById("full_name").value,
+           phone: document.getElementById("phone").value,
+           country: document.getElementById("country").value,
+           city: document.getElementById("city").value,
+           addr1: document.getElementById("addr1").value,
+           addr2: document.getElementById("addr2").value,
+         };
+         
+         const { error } = await supabase.auth.updateUser({ data: updates });
+         btn.disabled = false;
+         btn.textContent = "Save Changes";
+         
+         if(error) alert("Error: " + error.message);
+         else {
+           const msg = document.getElementById("msg");
+           msg.textContent = "Profile updated successfully.";
+           setTimeout(()=> msg.textContent="", 3000);
+         }
+      };
+      
+      document.getElementById("btnReset").onclick = async () => {
+         const { error } = await supabase.auth.resetPasswordForEmail(user.email, {
+           redirectTo: window.location.origin + "/member-login.html"
+         });
+         if(error) alert(error.message);
+         else document.getElementById("resetMsg").textContent = "Check your email for the reset link.";
+      };
     }
-
     init();
   </script>
 </body>
