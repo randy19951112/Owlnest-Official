@@ -90,7 +90,7 @@
         <h1 class="text-3xl md:text-4xl font-serif text-brand-dark">Overview</h1>
       </div>
       <!-- [新增] 進入完整後台按鈕 (Desktop) -->
-      <a href="/account/index.html" class="hidden md:flex items-center gap-2 bg-brand-dark text-white px-5 py-2 rounded shadow hover:bg-brand-gold hover:text-brand-dark transition text-sm font-bold uppercase tracking-wide">
+      <a href="/account/index.html" class="hidden md:flex items-center gap-2 bg-brand-dark text-white px-6 py-3 rounded shadow hover:bg-brand-gold hover:text-brand-dark transition text-sm font-bold uppercase tracking-wide">
           <span>Go to Full Dashboard</span> <i class="fas fa-arrow-right"></i>
       </a>
     </div>
@@ -109,17 +109,12 @@
               <p id="user-email" class="font-bold text-brand-dark text-sm truncate">Checking...</p>
             </div>
           </div>
-          <!-- [修正] 這裡改成前往個人設定頁面 -->
-          <a href="/account/profile.html" class="block w-full text-center bg-brand-cream/50 text-brand-dark py-3 rounded transition duration-300 text-sm font-bold uppercase tracking-wide hover:bg-brand-gold hover:text-brand-dark border border-brand-dark/10">
-            Edit Profile
+          <!-- [新增] 手機版也顯示完整後台按鈕 -->
+          <a href="/account/index.html" class="block w-full text-center bg-brand-dark text-white py-3 rounded transition duration-300 text-sm font-bold uppercase tracking-wide hover:bg-brand-gold hover:text-brand-dark shadow-lg">
+             Go to Dashboard
           </a>
         </div>
         
-        <!-- [新增] 手機版顯示的完整後台按鈕 -->
-        <a href="/account/index.html" class="md:hidden block w-full text-center bg-brand-dark text-white py-4 rounded shadow-lg hover:bg-brand-gold hover:text-brand-dark transition text-sm font-bold uppercase tracking-wide">
-            <i class="fas fa-columns mr-2"></i> Go to Dashboard
-        </a>
-
         <div class="bg-brand-dark/5 border border-brand-dark/5 p-6 rounded-lg text-center">
           <div class="w-10 h-10 mx-auto bg-brand-gold text-brand-dark rounded-full flex items-center justify-center mb-3"><i class="fas fa-headset"></i></div>
           <h3 class="text-brand-dark font-serif text-lg mb-2">Need Help?</h3>
@@ -128,22 +123,20 @@
       </div>
 
       <div class="md:col-span-2 space-y-8">
-        <div class="bg-white p-8 rounded-lg shadow-sm border border-brand-dark/5 min-h-[200px] relative">
+        <!-- Products Preview -->
+        <div class="bg-white p-8 rounded-lg shadow-sm border border-brand-dark/5 min-h-[200px]">
           <div class="flex items-center justify-between mb-6">
-            <h2 class="text-xs font-bold text-brand-dark/40 uppercase tracking-[0.2em]">My Products (Preview)</h2>
-            <!-- [新增] 前往完整產品頁 -->
-            <a href="/account/products.html" class="text-xs text-brand-gold font-bold hover:text-brand-dark transition">Manage All</a>
+            <h2 class="text-xs font-bold text-brand-dark/40 uppercase tracking-[0.2em]">My Products</h2>
           </div>
           <ul id="product-list" class="space-y-4">
-            <li class="text-center py-10 text-brand-dark/40 font-light text-sm italic bg-brand-cream/30 rounded border border-dashed border-brand-dark/10">Loading products...</li>
+            <li class="text-center py-10 text-brand-dark/40 font-light text-sm italic bg-brand-cream/30 rounded border border-dashed border-brand-dark/10">Loading...</li>
           </ul>
         </div>
 
+        <!-- Orders Preview -->
         <div class="bg-white p-8 rounded-lg shadow-sm border border-brand-dark/5">
           <div class="flex items-center justify-between mb-6">
-            <h2 class="text-xs font-bold text-brand-dark/40 uppercase tracking-[0.2em]">Latest Orders</h2>
-            <!-- [新增] 前往完整訂單頁 -->
-            <a href="/account/orders.html" class="text-xs text-brand-gold font-bold hover:text-brand-dark transition">View History</a>
+            <h2 class="text-xs font-bold text-brand-dark/40 uppercase tracking-[0.2em]">Orders</h2>
           </div>
           <div class="overflow-x-auto">
             <table class="w-full text-left text-sm">
@@ -151,7 +144,7 @@
                 <tr><th class="pb-3 pl-2">ID</th><th class="pb-3">Date</th><th class="pb-3">Total</th></tr>
               </thead>
               <tbody id="order-list">
-                <tr><td colspan="3" class="py-8 text-center text-brand-dark/40 italic">Loading orders...</td></tr>
+                <tr><td colspan="3" class="py-8 text-center text-brand-dark/40 italic">Loading...</td></tr>
               </tbody>
             </table>
           </div>
@@ -214,21 +207,17 @@
     async function ensureSessionOrRedirect() {
         await handleEmailRedirectSession();
         const { data: { session } } = await sb.auth.getSession();
-        if (!session) { 
-            sessionStorage.setItem("redirect_after_login", window.location.href); 
-            window.location.href = "member-login.html"; 
-            return null; 
-        }
+        if (!session) { sessionStorage.setItem("redirect_after_login", window.location.href); window.location.href = "member-login.html"; return null; }
         return session;
     }
 
     async function loadActivations() {
         const listEl = $("product-list"); if (!listEl) return;
         try {
-            const { data, error } = await sb.from("activations").select("payload, activated_at").order("activated_at", { ascending: false }).limit(3); // Limit to 3 for summary
+            const { data, error } = await sb.from("activations").select("payload, activated_at").order("activated_at", { ascending: false }).limit(3);
             if (error) throw error;
             if (!data || data.length === 0) {
-                listEl.innerHTML = `<li class="text-center py-10 bg-brand-cream/50 rounded border border-dashed border-brand-dark/10 flex flex-col items-center justify-center gap-3"><i class="fas fa-box-open text-3xl text-brand-dark/20"></i><span class="text-brand-dark/50 text-sm">No products registered yet.</span><a href="verify.html" class="text-brand-gold text-xs font-bold uppercase tracking-widest border-b border-brand-gold pb-0.5 hover:text-brand-dark hover:border-brand-dark transition">Register Now</a></li>`;
+                listEl.innerHTML = `<li class="text-center py-10 bg-brand-cream/50 rounded border border-dashed border-brand-dark/10 flex flex-col items-center justify-center gap-3"><i class="fas fa-box-open text-3xl text-brand-dark/20"></i><span class="text-brand-dark/50 text-sm">No products registered yet.</span></li>`;
                 return;
             }
             listEl.innerHTML = "";
@@ -236,8 +225,6 @@
                 const d = new Date(item.activated_at).toLocaleDateString();
                 listEl.innerHTML += `<li class="flex items-center justify-between bg-white p-5 rounded border border-brand-dark/5 hover:shadow-md transition group"><div class="flex items-center gap-4"><div class="w-10 h-10 rounded-full bg-brand-gold flex items-center justify-center text-brand-dark shadow-sm group-hover:scale-110 transition"><i class="fas fa-check"></i></div><div><p class="font-mono text-brand-dark font-bold tracking-wide text-sm">${item.payload}</p><p class="text-xs text-brand-dark/50">OwlNest Sleep Lamp</p></div></div><span class="text-xs text-brand-dark/60 bg-brand-cream px-3 py-1 rounded-full font-medium border border-brand-dark/5">${d}</span></li>`;
             });
-            // Show "View All" if more than 3
-            // (Simulated logic, ideally check count)
         } catch (e) { listEl.innerHTML = `<li class="text-center text-red-400 py-6 text-sm">Unable to load products.</li>`; }
     }
 
@@ -246,14 +233,13 @@
         try {
             const { data, error } = await sb.from("orders").select("id, created_at, total, items").order("created_at", { ascending: false }).limit(3);
             if (error) throw error;
-            if (!data || data.length === 0) { tbody.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-brand-dark/40 italic bg-brand-cream/20 rounded">No order history found.</td></tr>`; return; }
+            if (!data || data.length === 0) { tbody.innerHTML = `<tr><td colspan="3" class="py-8 text-center text-brand-dark/40 italic bg-brand-cream/20 rounded">No order history found.</td></tr>`; return; }
             tbody.innerHTML = "";
             data.forEach((o) => {
                 const d = new Date(o.created_at).toLocaleDateString();
-                const itemCount = Array.isArray(o.items) ? o.items.length : (o.items ? "✓" : "-");
                 tbody.innerHTML += `<tr class="border-b border-brand-dark/5 last:border-0 hover:bg-brand-cream/30 transition"><td class="py-4 pl-2 font-mono text-xs text-brand-dark/70">${o.id.substring(0,8)}...</td><td class="py-4 text-xs text-brand-dark/60">${d}</td><td class="py-4 text-brand-dark font-bold font-mono">$${formatMoney(o.total)}</td></tr>`;
             });
-        } catch (e) { tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-red-400 text-sm">Unable to load orders.</td></tr>`; }
+        } catch (e) { tbody.innerHTML = `<tr><td colspan="3" class="py-6 text-center text-red-400 text-sm">Unable to load orders.</td></tr>`; }
     }
 
     (async function init() {
