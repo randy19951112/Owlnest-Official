@@ -25,52 +25,26 @@
     tailwind.config = {
       theme: {
         extend: {
-          fontFamily: {
-            sans: ['"Manrope"', "sans-serif"],
-            serif: ['"Playfair Display"', "serif"],
-          },
-          colors: {
-            brand: { dark: "#455169", cream: "#faefcf", gold: "#D4AF37" },
-          },
-        },
-      },
-    };
+          fontFamily: { sans: ['"Manrope"', 'sans-serif'], serif: ['"Playfair Display"', 'serif'] },
+          colors: { brand: { dark: '#455169', cream: '#faefcf', gold: '#D4AF37' } }
+        }
+      }
+    }
   </script>
 
   <style>
     body { margin: 0; overflow-x: hidden; background-color: #faefcf; }
-
-    /* ✅ 關鍵：menu 關閉時不擋任何點擊 */
-    #mobile-menu {
-      transform: translateY(-100%);
-      transition: transform 0.3s ease-in-out, opacity 0.2s ease-in-out;
-      opacity: 0;
-      pointer-events: none;
-    }
-    #mobile-menu.open {
-      transform: translateY(0);
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    #snipcart {
-      --color-modal-bg: #faefcf;
-      --color-button-primary: #D4AF37;
-      --color-button-primary-hover: #c5a02f;
-      --color-button-primary-text: #455169;
-    }
+    #snipcart { --color-modal-bg: #faefcf; --color-button-primary: #D4AF37; --color-button-primary-hover: #c5a02f; --color-button-primary-text: #455169; }
   </style>
 </head>
 
 <body class="bg-brand-cream text-brand-dark min-h-screen font-sans flex flex-col">
 
   <!-- Header -->
-  <header id="main-header"
-    class="fixed top-0 left-0 w-full z-50 px-4 md:px-8 py-3 md:py-6 flex justify-between items-center bg-brand-cream/90 backdrop-blur-md transition-all duration-300 border-b border-brand-dark/5 shadow-sm">
+  <header id="main-header" class="fixed top-0 left-0 w-full z-50 px-4 md:px-8 py-3 md:py-6 flex justify-between items-center bg-brand-cream/90 backdrop-blur-md transition-all duration-300 border-b border-brand-dark/5 shadow-sm">
     <div class="flex items-center gap-2 flex-shrink-0">
-      <img src="logo.png" alt="Owlnest Logo" class="h-8 md:h-12 w-auto brightness-0 opacity-80 object-contain" />
-      <a href="/index.html"
-        class="font-serif text-lg md:text-3xl tracking-widest font-bold text-brand-dark hover:text-brand-gold transition whitespace-nowrap">
+      <img src="logo.png" alt="Owlnest Logo" class="h-8 md:h-12 w-auto brightness-0 opacity-80 object-contain">
+      <a href="/index.html" class="font-serif text-lg md:text-3xl tracking-widest font-bold text-brand-dark hover:text-brand-gold transition whitespace-nowrap">
         Owlnest <span class="hidden sm:inline">Official</span>
       </a>
     </div>
@@ -82,44 +56,35 @@
       <div class="flex items-center gap-4 ml-4">
         <button class="relative group snipcart-checkout text-brand-dark">
           <i class="fas fa-shopping-bag text-2xl hover:text-brand-gold transition"></i>
-          <span
-            class="snipcart-items-count absolute -top-1 -right-2 bg-brand-gold text-brand-dark text-[10px] font-bold px-1.5 rounded-full">0</span>
+          <span class="snipcart-items-count absolute -top-1 -right-2 bg-brand-gold text-brand-dark text-[10px] font-bold px-1.5 rounded-full">0</span>
         </button>
-        <button id="logout-btn-desktop"
-          class="text-xs border border-brand-dark/30 px-3 py-1 rounded hover:bg-brand-dark hover:text-brand-cream transition">
-          Sign Out
-        </button>
+        <button id="logout-btn-desktop" class="text-xs border border-brand-dark/30 px-3 py-1 rounded hover:bg-brand-dark hover:text-brand-cream transition">Sign Out</button>
       </div>
     </div>
 
     <div class="flex lg:hidden items-center gap-4 flex-shrink-0">
       <button class="relative active:scale-95 transition snipcart-checkout text-brand-dark">
         <i class="fas fa-shopping-bag text-xl"></i>
-        <span
-          class="snipcart-items-count absolute -top-1 -right-2 bg-brand-gold text-brand-dark text-[10px] font-bold px-1.5 rounded-full">0</span>
+        <span class="snipcart-items-count absolute -top-1 -right-2 bg-brand-gold text-brand-dark text-[10px] font-bold px-1.5 rounded-full">0</span>
       </button>
-      <button onclick="toggleMobileMenu()"
-        class="text-2xl focus:outline-none active:scale-95 transition text-brand-dark">
+      <button id="mobile-menu-btn" class="text-2xl focus:outline-none active:scale-95 transition text-brand-dark">
         <i class="fas fa-bars" id="mobile-menu-icon"></i>
       </button>
     </div>
   </header>
 
-  <!-- Mobile Menu -->
-  <div id="mobile-menu" class="fixed inset-0 bg-brand-dark z-40 flex flex-col justify-center items-center pt-20 lg:hidden text-brand-cream">
+  <!-- ✅ Mobile Menu：改成真正 hidden（關閉時完全不在畫面上，不會擋點擊） -->
+  <div id="mobile-menu" class="hidden fixed inset-0 bg-brand-dark z-40 flex flex-col justify-center items-center pt-20 lg:hidden text-brand-cream">
     <nav class="flex flex-col gap-8 text-xl tracking-widest uppercase font-semibold text-center">
-      <a href="/index.html" class="hover:text-brand-gold transition" onclick="toggleMobileMenu()">Home</a>
-      <a href="/about.html" class="hover:text-brand-gold transition" onclick="toggleMobileMenu()">About Us</a>
-      <a href="/index.html#section-3" class="hover:text-brand-gold transition" onclick="toggleMobileMenu()">Products</a>
-      <a href="/index.html#section-8" class="hover:text-brand-gold transition" onclick="toggleMobileMenu()">Contact</a>
-      <hr class="w-12 border-white/20 mx-auto" />
-      <button id="logout-btn-mobile" class="text-sm text-brand-gold hover:text-white transition">
-        Sign Out
-      </button>
+      <a href="/index.html" class="hover:text-brand-gold transition" data-close-menu>Home</a>
+      <a href="/about.html" class="hover:text-brand-gold transition" data-close-menu>About Us</a>
+      <a href="/index.html#section-3" class="hover:text-brand-gold transition" data-close-menu>Products</a>
+      <a href="/index.html#section-8" class="hover:text-brand-gold transition" data-close-menu>Contact</a>
+      <hr class="w-12 border-white/20 mx-auto">
+      <button id="logout-btn-mobile" class="text-sm text-brand-gold hover:text-white transition">Sign Out</button>
     </nav>
   </div>
 
-  <!-- ✅ main 加 relative z-10，避免被任何層蓋住 -->
   <main class="relative z-10 flex-grow max-w-5xl mx-auto p-6 md:p-12 w-full pt-28 md:pt-32">
     <div class="flex items-end justify-between mb-8 border-b border-brand-dark/10 pb-4">
       <div>
@@ -127,20 +92,24 @@
         <h1 class="text-3xl md:text-4xl font-serif text-brand-dark">Overview</h1>
       </div>
 
-      <!-- Desktop: Enter Member Center -->
-      <a id="enter-member-center" href="/account/index.html"
-        class="hidden md:flex items-center gap-2 bg-brand-dark text-white px-6 py-3 rounded shadow hover:bg-brand-gold hover:text-brand-dark transition text-sm font-bold uppercase tracking-wide group">
+      <!-- Desktop 進 dashboard（改成 onclick 強制跳，並拉高 z-index） -->
+      <a id="enter-member-center"
+         href="/account/index.html"
+         onclick="return goDashboard(event);"
+         class="relative z-50 hidden md:flex items-center gap-2 bg-brand-dark text-white px-6 py-3 rounded shadow hover:bg-brand-gold hover:text-brand-dark transition text-sm font-bold uppercase tracking-wide group">
         <span>Enter Member Center</span>
         <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
       </a>
     </div>
 
+    <!-- 點到按鈕會顯示這行，方便你判斷「有沒有真的點到」 -->
     <div id="top-msg" class="hidden mb-6 text-sm p-4 rounded bg-white shadow-sm border border-brand-dark/5"></div>
 
     <div class="grid md:grid-cols-3 gap-8">
       <div class="md:col-span-1 space-y-8">
         <div class="bg-white p-8 rounded-lg shadow-sm border border-brand-dark/5 relative overflow-hidden group">
           <div class="absolute top-0 right-0 w-20 h-20 bg-brand-gold/10 rounded-bl-full -mr-10 -mt-10 transition group-hover:scale-110"></div>
+
           <h2 class="text-xs font-bold text-brand-dark/40 uppercase tracking-[0.2em] mb-6">Profile</h2>
 
           <div class="flex items-center gap-4 mb-8">
@@ -153,22 +122,19 @@
             </div>
           </div>
 
-          <!-- Mobile / Card button -->
-          <a id="go-dashboard" href="/account/index.html"
-            class="block w-full text-center bg-brand-dark text-white py-3 rounded transition duration-300 text-sm font-bold uppercase tracking-wide hover:bg-brand-gold hover:text-brand-dark shadow-lg">
+          <!-- Mobile / Card 進 dashboard（同樣 onclick 強制跳） -->
+          <a id="go-dashboard"
+             href="/account/index.html"
+             onclick="return goDashboard(event);"
+             class="relative z-50 block w-full text-center bg-brand-dark text-white py-3 rounded transition duration-300 text-sm font-bold uppercase tracking-wide hover:bg-brand-gold hover:text-brand-dark shadow-lg">
             Go to Dashboard
           </a>
         </div>
 
         <div class="bg-brand-dark/5 border border-brand-dark/5 p-6 rounded-lg text-center">
-          <div class="w-10 h-10 mx-auto bg-brand-gold text-brand-dark rounded-full flex items-center justify-center mb-3">
-            <i class="fas fa-headset"></i>
-          </div>
+          <div class="w-10 h-10 mx-auto bg-brand-gold text-brand-dark rounded-full flex items-center justify-center mb-3"><i class="fas fa-headset"></i></div>
           <h3 class="text-brand-dark font-serif text-lg mb-2">Need Help?</h3>
-          <a href="mailto:owlnestpq2025@gmail.com"
-            class="text-xs font-bold text-brand-dark border-b border-brand-dark/30 hover:text-brand-gold hover:border-brand-gold transition pb-0.5">
-            Contact Support
-          </a>
+          <a href="mailto:owlnestpq2025@gmail.com" class="text-xs font-bold text-brand-dark border-b border-brand-dark/30 hover:text-brand-gold hover:border-brand-gold transition pb-0.5">Contact Support</a>
         </div>
       </div>
 
@@ -179,9 +145,7 @@
             <span class="w-8 h-1 bg-brand-gold rounded-full"></span>
           </div>
           <ul id="product-list" class="space-y-4">
-            <li class="text-center py-10 text-brand-dark/40 font-light text-sm italic bg-brand-cream/30 rounded border border-dashed border-brand-dark/10">
-              Loading products...
-            </li>
+            <li class="text-center py-10 text-brand-dark/40 font-light text-sm italic bg-brand-cream/30 rounded border border-dashed border-brand-dark/10">Loading products...</li>
           </ul>
         </div>
 
@@ -193,16 +157,10 @@
           <div class="overflow-x-auto">
             <table class="w-full text-left text-sm">
               <thead class="text-brand-dark/50 font-semibold border-b border-brand-dark/5">
-                <tr>
-                  <th class="pb-3 pl-2">ID</th>
-                  <th class="pb-3">Date</th>
-                  <th class="pb-3">Total</th>
-                </tr>
+                <tr><th class="pb-3 pl-2">ID</th><th class="pb-3">Date</th><th class="pb-3">Total</th></tr>
               </thead>
               <tbody id="order-list">
-                <tr>
-                  <td colspan="3" class="py-8 text-center text-brand-dark/40 italic">Loading orders...</td>
-                </tr>
+                <tr><td colspan="3" class="py-8 text-center text-brand-dark/40 italic">Loading orders...</td></tr>
               </tbody>
             </table>
           </div>
@@ -217,43 +175,74 @@
   </footer>
 
   <script>
-    // ✅ 讓 toggleMobileMenu 一定是全域函式（inline onclick 需要）
-    window.toggleMobileMenu = function () {
-      const menu = document.getElementById("mobile-menu");
-      const icon = document.getElementById("mobile-menu-icon");
-      const isOpen = menu.classList.contains("open");
+    // ---------- UI helpers ----------
+    const $ = (id) => document.getElementById(id);
 
-      if (isOpen) {
-        menu.classList.remove("open");
-        if (icon) { icon.classList.remove("fa-times"); icon.classList.add("fa-bars"); }
+    function showTopMsg(html, type = "info") {
+      const el = $("top-msg");
+      if (!el) return;
+      el.classList.remove("hidden");
+      el.className = "mb-6 text-sm p-4 rounded bg-white shadow-sm border border-brand-dark/10 flex items-center gap-3";
+      if (type === "error") {
+        el.classList.add("text-red-600", "border-red-100", "bg-red-50");
+        el.innerHTML = `<i class="fas fa-exclamation-circle text-lg"></i> <span>${html}</span>`;
+      } else if (type === "ok") {
+        el.classList.add("text-green-700", "border-green-100", "bg-green-50");
+        el.innerHTML = `<i class="fas fa-check-circle text-lg"></i> <span>${html}</span>`;
       } else {
-        menu.classList.add("open");
-        if (icon) { icon.classList.remove("fa-bars"); icon.classList.add("fa-times"); }
+        el.innerHTML = `<i class="fas fa-info-circle text-lg text-brand-dark/50"></i> <span>${html}</span>`;
       }
+    }
+
+    // ✅ 強制跳 dashboard（你點了會先出現提示，確認有觸發 click）
+    window.goDashboard = function (e) {
+      try { if (e) e.preventDefault(); } catch(_) {}
+      showTopMsg("Opening dashboard…", "ok");
+      setTimeout(() => window.location.assign("/account/index.html"), 80);
+      return false;
     };
 
-    // ✅ 保底：就算被奇怪東西攔截，也硬跳 dashboard
+    // ---------- Mobile menu: 真正 hidden ----------
+    function openMenu() {
+      const menu = $("mobile-menu");
+      const icon = $("mobile-menu-icon");
+      if (!menu) return;
+      menu.classList.remove("hidden");
+      if (icon) { icon.classList.remove("fa-bars"); icon.classList.add("fa-times"); }
+    }
+
+    function closeMenu() {
+      const menu = $("mobile-menu");
+      const icon = $("mobile-menu-icon");
+      if (!menu) return;
+      menu.classList.add("hidden");
+      if (icon) { icon.classList.remove("fa-times"); icon.classList.add("fa-bars"); }
+    }
+
+    function toggleMenu() {
+      const menu = $("mobile-menu");
+      if (!menu) return;
+      if (menu.classList.contains("hidden")) openMenu();
+      else closeMenu();
+    }
+
     window.addEventListener("DOMContentLoaded", () => {
-      const jump = (e) => {
-        // 不管 default，直接跳
-        window.location.assign("/account/index.html");
-      };
-      document.getElementById("go-dashboard")?.addEventListener("click", jump);
-      document.getElementById("enter-member-center")?.addEventListener("click", jump);
+      $("mobile-menu-btn")?.addEventListener("click", toggleMenu);
+      document.querySelectorAll("[data-close-menu]").forEach((a) => {
+        a.addEventListener("click", closeMenu);
+      });
     });
 
+    // ---------- Supabase ----------
     const SUPABASE_URL = "https://khoiplqugajmybmultzs.supabase.co";
     const SUPABASE_KEY = "sb_publishable_ic3b9TeYt7SuXxLIhLuyvA_FWHYVb0Z";
     const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
-      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
+      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
     });
-    const $ = (id) => document.getElementById(id);
 
     function formatMoney(n) {
       const num = Number(n);
-      return Number.isNaN(num)
-        ? "-"
-        : new Intl.NumberFormat(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(num);
+      return Number.isNaN(num) ? "-" : new Intl.NumberFormat(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(num);
     }
 
     async function handleEmailRedirectSession() {
@@ -334,6 +323,7 @@
               <span class="text-xs text-brand-dark/60 bg-brand-cream px-3 py-1 rounded-full font-medium border border-brand-dark/5">${d}</span>
             </li>`;
         });
+
       } catch (e) {
         console.error(e);
         listEl.innerHTML = `<li class="text-center text-red-400 py-6 text-sm">Unable to load products.</li>`;
@@ -363,11 +353,12 @@
           const d = new Date(o.created_at).toLocaleDateString();
           tbody.innerHTML += `
             <tr class="border-b border-brand-dark/5 last:border-0 hover:bg-brand-cream/30 transition">
-              <td class="py-4 pl-2 font-mono text-xs text-brand-dark/70">${o.id.substring(0, 8)}...</td>
+              <td class="py-4 pl-2 font-mono text-xs text-brand-dark/70">${o.id.substring(0,8)}...</td>
               <td class="py-4 text-xs text-brand-dark/60">${d}</td>
               <td class="py-4 text-brand-dark font-bold font-mono">$${formatMoney(o.total)}</td>
             </tr>`;
         });
+
       } catch (e) {
         console.error(e);
         tbody.innerHTML = `<tr><td colspan="3" class="py-6 text-center text-red-400 text-sm">Unable to load orders.</td></tr>`;
@@ -378,8 +369,7 @@
       const session = await ensureSessionOrRedirect();
       if (!session) return;
 
-      const emailEl = $("user-email");
-      if (emailEl) emailEl.textContent = session.user.email || "(no email)";
+      $("user-email") && ($("user-email").textContent = session.user.email || "(no email)");
 
       const logoutHandler = async () => {
         await sb.auth.signOut();
