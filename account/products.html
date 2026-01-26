@@ -9,44 +9,15 @@
 </head>
 <body>
   <div class="wrap">
-    <!-- 側邊欄 -->
     <aside class="sidebar">
-      <div class="p-8 border-b border-brand-dark/5 flex justify-center">
-        <a href="/index.html" class="flex items-center gap-2 group">
-             <img src="/logo.png" alt="Owlnest Logo" class="h-8 w-auto brightness-0 opacity-80 transition group-hover:opacity-100">
-             <span class="font-serif text-xl font-bold tracking-widest text-brand-dark group-hover:text-brand-gold transition">Owlnest</span>
-        </a>
-      </div>
-      <nav class="flex-grow p-6 space-y-2" id="sidebar-nav"></nav>
-      <div class="p-6 border-t border-brand-dark/5">
-        <button id="logout-btn" class="flex items-center gap-3 px-4 py-3 w-full text-left text-xs uppercase tracking-widest font-bold text-brand-dark/50 hover:text-brand-gold hover:bg-brand-cream/50 rounded transition">
-            <i class="fas fa-sign-out-alt"></i> Sign Out
-        </button>
-      </div>
+      <div id="nav" style="display:flex; flex-direction:column; height:100%;"></div>
     </aside>
 
-    <!-- 手機版 Header -->
-    <header class="lg:hidden fixed top-0 left-0 w-full z-30 px-6 py-4 flex justify-between items-center bg-brand-cream/90 backdrop-blur-md border-b border-brand-dark/5">
-      <div class="flex items-center gap-2">
-         <img src="/logo.png" class="h-8 w-auto brightness-0 opacity-80">
-         <span class="font-serif text-lg font-bold tracking-widest text-brand-dark">Owlnest</span>
-      </div>
-      <button onclick="toggleMobileMenu()" class="text-brand-dark text-2xl focus:outline-none"><i class="fas fa-bars"></i></button>
-    </header>
-    
-    <!-- 手機版選單 -->
-    <div id="mobile-menu" class="fixed inset-0 z-40 bg-brand-dark text-brand-cream lg:hidden flex flex-col pt-20 px-8">
-        <button onclick="toggleMobileMenu()" class="absolute top-4 right-6 text-2xl text-brand-gold"><i class="fas fa-times"></i></button>
-        <nav class="flex flex-col gap-6 text-lg font-serif" id="mobile-nav-items"></nav>
-        <button id="mobile-logout-btn" class="mt-auto mb-10 text-sm uppercase tracking-widest font-bold text-brand-gold border-t border-white/10 pt-6">Sign Out</button>
-    </div>
-
-    <!-- 主內容 -->
-    <main class="main flex-grow lg:ml-64 p-6 md:p-12 pt-24 lg:pt-12 w-full transition-all">
+    <main class="main">
       <div class="topbar">
         <div>
           <div class="h1">My Products</div>
-          <div class="muted">Manage your registered Owlnest devices</div>
+          <div class="muted">Your registered devices</div>
         </div>
         <div>
           <a class="btn primary" href="/activate.html"><i class="fas fa-plus"></i> Activate New</a>
@@ -64,78 +35,57 @@
   </div>
 
   <script type="module">
-    import { requireUser, signOut } from "/account/js/authGuard.js";
-    import { renderNav } from "/account/js/uiNav.js";
+    import { requireUser } from "/account/js/authGuard.js";
     import { supabase } from "/account/js/supabaseClient.js";
+    import { renderNav } from "/account/js/uiNav.js";
 
-    // 手機選單開關
-    window.toggleMobileMenu = function() { document.getElementById('mobile-menu').classList.toggle('open'); }
-
+    renderNav("products");
+    
     async function init() {
-        try {
-            // 1. 渲染側邊欄
-            renderNav("products");
-            
-            // 2. 檢查登入
-            const user = await requireUser();
-            if (!user) return; 
+        const user = await requireUser();
+        if (!user) return;
 
-            // 3. 綁定登出
-            document.getElementById('logout-btn')?.addEventListener('click', signOut);
-            document.getElementById('mobile-logout-btn')?.addEventListener('click', signOut);
+        const listEl = document.getElementById("list");
 
-            // 4. 讀取資料 (修正欄位名稱)
-            const { data: items, error } = await supabase
-              .from("activations")
-              .select("payload, activated_at")  // 修正：使用 payload
-              .eq("user_id", user.id)
-              .order("activated_at", { ascending: false });
+        // [關鍵修正] 改用 payload 欄位
+        const { data: items, error } = await supabase
+          .from("activations")
+          .select("payload, activated_at")
+          .eq("user_id", user.id)
+          .order("activated_at", { ascending: false });
 
-            const listEl = document.getElementById("list");
-
-            // 錯誤處理
-            if (error) {
-              console.error("Data error:", error);
-              listEl.innerHTML = `<div style="color:red; padding:20px; text-align:center;">
-                  <i class="fas fa-exclamation-triangle"></i> Error loading data.
-              </div>`;
-              return;
-            }
-
-            // 無資料處理
-            if (!items?.length) {
-              listEl.innerHTML = `
-                <div class="row" style="flex-direction:column; text-align:center; padding:40px; background:none; border:none;">
-                    <div style="font-size:3rem; color:var(--col-gold); margin-bottom:10px; opacity:0.5;"><i class="fas fa-box-open"></i></div>
-                    <div style="font-weight:700; font-size:1.1rem; color:var(--col-dark);">No Products Found</div>
-                    <div class="muted" style="margin-bottom:20px;">You haven’t registered any products yet.</div>
-                    <a class="btn primary" href="/activate.html">Activate Your First Product</a>
-                </div>
-              `;
-              return;
-            }
-
-            // 顯示列表
-            listEl.innerHTML = items.map(it => `
-              <div class="row">
-                <div style="display:flex; align-items:center; gap:16px;">
-                  <div style="background:var(--col-dark); color:var(--col-gold); width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.2rem;">
-                    <i class="fas fa-lightbulb"></i>
-                  </div>
-                  <div>
-                    <div style="font-weight:800; color:var(--col-dark); font-family:var(--font-serif); letter-spacing:0.05em; font-size:1.1rem;">${it.payload}</div>
-                    <div class="muted" style="font-size:0.8rem; margin-top:4px;">Activated on ${new Date(it.activated_at).toLocaleDateString()}</div>
-                  </div>
-                </div>
-                <div class="badge"><i class="fas fa-check-circle" style="margin-right:4px;"></i> Active</div>
-              </div>
-            `).join("");
-
-        } catch (err) {
-            console.error("Script error:", err);
+        if (error) {
+          listEl.innerHTML = `<div style="color:red; padding:20px;">Error: ${error.message}</div>`;
+          return;
         }
-    }
 
+        if (!items?.length) {
+          listEl.innerHTML = `
+            <div class="row" style="flex-direction:column; text-align:center; padding:40px;">
+                <div style="font-size:2rem; color:var(--col-gold); margin-bottom:10px;"><i class="fas fa-box-open"></i></div>
+                <div style="font-weight:700;">No Products Found</div>
+                <a class="btn primary" href="/activate.html" style="margin-top:10px;">Register Now</a>
+            </div>
+          `;
+          return;
+        }
+
+        listEl.innerHTML = items.map(it => `
+          <div class="row">
+            <div style="display:flex; align-items:center; gap:16px;">
+              <div style="background:var(--col-dark); color:var(--col-gold); width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center;">
+                <i class="fas fa-lightbulb"></i>
+              </div>
+              <div>
+                <div style="font-weight:700; color:var(--col-dark); font-family:var(--font-serif);">${it.payload}</div>
+                <div class="muted" style="font-size:0.8rem;">Activated: ${new Date(it.activated_at).toLocaleDateString()}</div>
+              </div>
+            </div>
+            <div class="badge">Active</div>
+          </div>
+        `).join("");
+    }
+    
     init();
   </script>
 </body>
