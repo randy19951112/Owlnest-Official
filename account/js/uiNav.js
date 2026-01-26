@@ -13,7 +13,7 @@ export function renderNav(activeKey = "dashboard") {
   const mount = document.getElementById("nav");
   if (!mount) return;
 
-  // 1. 渲染內容
+  // 1. 渲染側邊欄內容
   mount.innerHTML = `
     <div class="brand">
       <img src="../logo.png" alt="Owlnest" />
@@ -40,7 +40,7 @@ export function renderNav(activeKey = "dashboard") {
     </div>
   `;
 
-  // 2. 綁定登出邏輯
+  // 2. 登出功能
   const btnSignOut = document.getElementById("navSignOut");
   if (btnSignOut) {
     btnSignOut.onclick = async () => {
@@ -48,22 +48,29 @@ export function renderNav(activeKey = "dashboard") {
     };
   }
 
-  // 3. 核心修正：自動處理手機版 Drawer 切換
-  // [Fix] 不再包裹標題區塊，避免破壞電腦版 Flex 結構
-  const backdrop = document.getElementById('drawerBackdrop');
+  // 3. 手機版 Drawer 控制邏輯
   const toggleMenu = () => document.body.classList.toggle('nav-open');
+  
+  // 綁定背景遮罩點擊
+  const backdrop = document.getElementById('drawerBackdrop');
+  if (backdrop) backdrop.onclick = toggleMenu;
 
+  // 檢查並插入漢堡按鈕 (僅插入一次)
   const topbar = document.querySelector('.topbar');
-  // 確保 topbar 存在且尚未插入過按鈕
   if (topbar && !document.querySelector('.drawerBtn')) {
     const menuBtn = document.createElement('button');
     menuBtn.className = 'drawerBtn';
     menuBtn.innerHTML = '<i class="fa-solid fa-bars"></i>';
     menuBtn.onclick = toggleMenu;
 
-    // 直接插入到最前面，不更動原本的標題 Div 結構
+    // 單純插入到 topbar 最前面，不改變任何現有結構
     topbar.prepend(menuBtn);
+    
+    // 點擊側邊欄連結後自動關閉選單 (優化手機體驗)
+    mount.querySelectorAll('.navItem').forEach(link => {
+      link.addEventListener('click', () => {
+        if(window.innerWidth <= 860) document.body.classList.remove('nav-open');
+      });
+    });
   }
-
-  if (backdrop) backdrop.onclick = toggleMenu;
 }
