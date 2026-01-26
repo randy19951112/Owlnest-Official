@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="/account/css/account.css" />
+  <link rel="stylesheet" href="./css/account.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
   <title>Account · Support</title>
@@ -16,7 +16,7 @@
       <div class="topbar">
         <div>
           <div class="h1">Warranty & Support</div>
-          <div class="muted">Help & warranty information</div>
+          <div class="muted">Help center</div>
         </div>
       </div>
 
@@ -27,8 +27,8 @@
   </div>
 
   <script type="module">
-    import { requireUser } from "/account/js/authGuard.js";
-    import { renderNav } from "/account/js/uiNav.js";
+    import { requireUser } from "./js/authGuard.js";
+    import { renderNav } from "./js/uiNav.js";
     renderNav("support");
     await requireUser();
   </script>
