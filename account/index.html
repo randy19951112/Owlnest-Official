@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="/account/css/account.css" />
+  <link rel="stylesheet" href="./css/account.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
   <title>Account · Dashboard</title>
@@ -19,8 +19,8 @@
           <div class="muted" id="welcome">Loading...</div>
         </div>
         <div class="actions">
-          <a class="btn" href="/account/products.html"><i class="fas fa-box"></i> MY PRODUCTS</a>
-          <a class="btn" href="/account/profile.html"><i class="fas fa-user"></i> PROFILE</a>
+          <a class="btn" href="./products.html"><i class="fas fa-box"></i> MY PRODUCTS</a>
+          <a class="btn" href="./profile.html"><i class="fas fa-user"></i> PROFILE</a>
           <button class="btn" id="btnTopSignOut"><i class="fas fa-right-from-bracket"></i> SIGN OUT</button>
         </div>
       </div>
@@ -36,7 +36,7 @@
           <div style="margin-top:6px; font-weight:900; font-size:18px;" id="latest">-</div>
 
           <div style="margin-top:14px;">
-            <a class="btn primary" href="/activate.html"><i class="fas fa-plus"></i> ACTIVATE NEW</a>
+            <a class="btn primary" href="../activate.html"><i class="fas fa-plus"></i> ACTIVATE NEW</a>
           </div>
         </section>
 
@@ -49,7 +49,7 @@
               <div style="font-weight:900;"><i class="fas fa-qrcode" style="color:var(--col-gold);"></i> Verify product</div>
               <div class="small">Check authenticity before activation</div>
             </div>
-            <a class="btn primary" href="/verify.html">VERIFY</a>
+            <a class="btn primary" href="../verify.html">VERIFY</a>
           </div>
 
           <div class="row">
@@ -57,7 +57,7 @@
               <div style="font-weight:900;"><i class="fas fa-user-pen" style="color:var(--col-gold);"></i> Update profile</div>
               <div class="small">Name / phone / security</div>
             </div>
-            <a class="btn" href="/account/profile.html">OPEN</a>
+            <a class="btn" href="./profile.html">OPEN</a>
           </div>
 
           <div class="row">
@@ -65,7 +65,7 @@
               <div style="font-weight:900;"><i class="fas fa-headset" style="color:var(--col-gold);"></i> Support</div>
               <div class="small">Warranty & Support</div>
             </div>
-            <a class="btn" href="/account/support.html">VIEW</a>
+            <a class="btn" href="./support.html">VIEW</a>
           </div>
         </section>
 
@@ -80,9 +80,9 @@
   </div>
 
   <script type="module">
-    import { requireUser, signOut } from "/account/js/authGuard.js";
-    import { supabase } from "/account/js/supabaseClient.js";
-    import { renderNav } from "/account/js/uiNav.js";
+    import { requireUser, signOut } from "./js/authGuard.js";
+    import { supabase } from "./js/supabaseClient.js";
+    import { renderNav } from "./js/uiNav.js";
 
     renderNav("dashboard");
 
