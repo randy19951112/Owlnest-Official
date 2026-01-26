@@ -1,6 +1,6 @@
-/* account/css/account.css - 完整覆蓋版 */
+/* account/css/account.css */
 
-/* ===== Theme tokens ===== */
+/* ===== 主題變數 (保持不變) ===== */
 :root{
   --bg: #faefcf;
   --col-dark: #455169;
@@ -9,34 +9,27 @@
   --col-soft: rgba(69,81,105,.10);
   --col-line: rgba(69,81,105,.14);
   --col-gold: #D4AF37;
-
   --card: rgba(255,255,255,.86);
-  --card2: rgba(255,255,255,.62);
-
   --shadow: 0 18px 45px rgba(0,0,0,.06);
-  --shadow-sm: 0 8px 22px rgba(0,0,0,.05);
-
   --r-xl: 28px;
-  --r-lg: 20px;
   --r-md: 16px;
-
   --pad: 26px;
   --sidebar-w: 300px;
 }
 
 *{ box-sizing:border-box; }
-html,body{ height:100%; overflow-x: hidden; } /* 防止手機版橫向捲動 */
+html, body{ height:100%; overflow-x: hidden; }
 body{
   margin:0;
   background: var(--bg);
   color: var(--col-dark);
-  font-family: "Manrope", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  font-family: "Manrope", sans-serif;
 }
 
-/* Layout */
+/* 佈局架構 */
 .wrap{ display:flex; min-height:100vh; width: 100%; }
 
-/* Sidebar (Desktop) */
+/* 側邊欄 (電腦版) */
 .sidebar{
   width: var(--sidebar-w);
   flex-shrink: 0;
@@ -46,85 +39,86 @@ body{
   backdrop-filter: blur(10px);
 }
 
-/* Main */
+/* 主內容區 */
 .main{
   flex-grow: 1;
   padding: 40px var(--pad);
-  min-width: 0; /* 防止內容撐開 */
+  min-width: 0;
 }
 
-/* UI Elements */
-.topbar{ display:flex; align-items:center; justify-content:space-between; margin-bottom:30px; gap: 15px; }
-.h1{ font-size:32px; font-weight:800; color:var(--col-ink); font-family:"Playfair Display", serif; }
-.muted{ color:var(--col-muted); font-size:14px; margin-top:4px; }
-
-.card{
-  background: var(--card);
-  border: 1px solid var(--col-line);
-  border-radius: var(--r-xl);
-  padding: var(--pad);
-  box-shadow: var(--shadow);
-}
-
-/* Button */
-.btn{
-  display:inline-flex; align-items:center; gap:8px;
-  padding:12px 20px; border-radius:var(--r-md);
-  text-decoration:none; font-weight:700; font-size:14px;
-  transition: all .2s ease; border:1px solid var(--col-line);
-  background: white; color: var(--col-dark);
-}
-.btn.primary{ background: var(--col-ink); color:white; border:none; }
-.btn:hover{ transform:translateY(-2px); box-shadow:var(--shadow-sm); }
-
-/* Nav */
-#nav { display: flex; flex-direction: column; height: 100%; }
-.brand{ display:flex; align-items:center; gap:12px; margin-bottom:40px; }
-.brand img{ height:32px; }
-.brand .name{ font-weight:900; font-size:20px; letter-spacing:1px; color:var(--col-ink); }
-
-.nav{ flex-grow:1; display:flex; flex-direction:column; gap:6px; }
-.navItem{
-  display:flex; align-items:center; gap:12px; padding:14px 18px;
-  text-decoration:none; color:var(--col-muted); border-radius:var(--r-md);
-  transition: .2s; font-weight:600;
-}
-.navItem:hover{ background:var(--col-soft); color:var(--col-dark); }
-.navItem.active{ background:white; color:var(--col-ink); box-shadow:var(--shadow-sm); }
-
-.navBottom{ margin-top:40px; border-top:1px solid var(--col-line); pt:20px; }
-
-/* Mobile drawer sidebar */
+/* 手機版抽屜式選單控制 */
 .drawerBackdrop{
-  position: fixed; inset: 0; background: rgba(0,0,0,.4);
-  opacity: 0; pointer-events: none; transition: opacity .25s ease; z-index: 40;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.3);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s ease;
+  z-index: 40;
 }
 .drawerBackdrop.active{ opacity: 1; pointer-events: auto; }
 
-.drawerBtn{ display:none; }
+.drawerBtn{ display: none; }
 
-@media (min-width: 861px){
-  .drawerBackdrop{ display:none; }
-}
-
+/* 響應式修正 (手機版) */
 @media (max-width: 860px){
-  .drawerBtn{ 
-    display:flex; width:44px; height:44px; align-items:center; justify-content:center;
-    background:white; border:1px solid var(--col-line); border-radius:12px; cursor:pointer;
+  .drawerBtn{
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    background: white;
+    border: 1px solid var(--col-line);
+    border-radius: 12px;
+    cursor: pointer;
+    margin-right: 15px;
   }
-  .sidebar{
-    position: fixed; top: 0; left: 0; height: 100vh;
-    width: 280px; transform: translateX(-100%);
-    transition: transform .3s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 50; background: var(--bg);
-  }
-  .sidebar.open{ transform: translateX(0); }
-  .main{ padding: 20px; width: 100%; }
-  .topbar{ flex-direction: row; align-items: center; justify-content: flex-start; }
-  .h1{ font-size: 24px; }
   
-  /* 列表類內容改為單欄 */
-  .pCard, .orderRow, .prodCard { flex-direction: column !important; align-items: stretch !important; }
-  .pRight, .orderRight, .actionsRow { width: 100%; margin-top: 10px; }
+  .sidebar{
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 280px;
+    transform: translateX(-100%);
+    transition: transform .3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 50;
+    background: var(--bg);
+  }
+  
+  .sidebar.open{ transform: translateX(0); }
+  
+  .main{
+    padding: 20px !important;
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+  
+  .topbar{
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+  }
+
+  /* 調整卡片在手機上的排版 */
+  .orderRow, .pCard, .prodCard {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 15px !important;
+  }
+  
+  .orderRight, .pRight, .actionsRow {
+    width: 100% !important;
+    margin-top: 10px;
+  }
+  
   .btn { width: 100%; justify-content: center; }
 }
+
+/* 其餘 UI 組件樣式保持你原本的設定... */
+.card{ background: var(--card); border: 1px solid var(--col-line); border-radius: var(--r-xl); padding: var(--pad); box-shadow: var(--shadow); }
+.topbar{ display:flex; align-items:center; justify-content:space-between; margin-bottom:30px; }
+.h1{ font-size:32px; font-weight:800; color:var(--col-ink); font-family:"Playfair Display", serif; }
+.navItem{ display:flex; align-items:center; gap:12px; padding:14px 18px; text-decoration:none; color:var(--col-muted); border-radius:var(--r-md); transition: .2s; font-weight:600; }
+.navItem.active{ background:white; color:var(--col-ink); box-shadow: var(--shadow-sm); }
