@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-Hant">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -9,96 +9,139 @@
   <title>Owlnest · My Products</title>
 
   <style>
-    /* Modal */
+    /* ========= Activate Modal (High-contrast, readable) ========= */
     .modal-overlay{
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,.55);
-      display:none;
-      align-items:center; justify-content:center;
+      position: fixed;
+      inset: 0;
+      background: rgba(8,10,14,.72);
+      display: none;
+      align-items: center;
+      justify-content: center;
       padding: 18px;
       z-index: 9999;
-      backdrop-filter: blur(6px);
     }
     .modal-overlay.show{ display:flex; }
+
     .modal{
       width: 100%;
-      max-width: 520px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.06);
-      border-radius: 14px;
-      box-shadow: 0 25px 70px rgba(0,0,0,.35);
+      max-width: 560px;
+      border-radius: 16px;
       overflow: hidden;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(19,23,33,.96);
+      box-shadow: 0 28px 90px rgba(0,0,0,.55);
     }
+
     .modal-head{
       padding: 18px 18px 10px;
-      display:flex; align-items:flex-start; justify-content:space-between;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
       gap: 12px;
     }
+
     .modal-title{
       font-size: 18px;
-      font-weight: 700;
-      letter-spacing: .5px;
+      font-weight: 800;
+      letter-spacing: .4px;
+      color: rgba(255,255,255,.96);
     }
+
     .modal-sub{
-      margin-top: 4px;
-      font-size: 12px;
-      opacity: .75;
-      line-height: 1.5;
+      margin-top: 6px;
+      font-size: 13px;
+      line-height: 1.55;
+      color: rgba(255,255,255,.72);
     }
+
     .modal-close{
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
       border: 1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.18);
-      color: rgba(255,255,255,.9);
-      border-radius: 10px;
-      width: 36px; height: 36px;
-      display:flex; align-items:center; justify-content:center;
-      cursor:pointer;
-      transition: .2s;
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.92);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: .15s;
     }
-    .modal-close:hover{ background: rgba(0,0,0,.28); }
+    .modal-close:hover{ background: rgba(255,255,255,.10); }
+
     .modal-body{ padding: 0 18px 18px; }
+
     .key-input{
       width: 100%;
       padding: 12px 12px;
       border-radius: 12px;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.18);
-      color: #fff;
+      border: 1px solid rgba(212,175,55,.30);
+      background: rgba(0,0,0,.35);
+      color: rgba(255,255,255,.96);
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       letter-spacing: .8px;
       outline: none;
     }
+    .key-input::placeholder{ color: rgba(255,255,255,.45); }
     .key-input:focus{
-      border-color: rgba(212,175,55,.45);
-      box-shadow: 0 0 0 3px rgba(212,175,55,.12);
+      border-color: rgba(212,175,55,.55);
+      box-shadow: 0 0 0 3px rgba(212,175,55,.18);
     }
-    .modal-actions{
-      margin-top: 12px;
-      display:flex;
-      gap: 10px;
-      justify-content:flex-end;
-      flex-wrap: wrap;
-    }
-    .btn.secondary{
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.14);
-      color: rgba(255,255,255,.9);
-    }
-    .btn.secondary:hover{
-      background: rgba(255,255,255,.10);
-    }
+
     .modal-msg{
       margin-top: 10px;
       font-size: 13px;
       min-height: 18px;
-      opacity: .95;
+      color: rgba(255,255,255,.78);
     }
     .modal-msg.ok{ color: #7CFFB1; }
-    .modal-msg.err{ color: #ff6b6b; }
+    .modal-msg.err{ color: #FF6B6B; }
     .modal-msg.info{ color: rgba(255,255,255,.78); }
 
-    /* small helper: make the top action button look identical but act like a button */
-    .btn-as-link{ text-decoration: none; display:inline-flex; align-items:center; gap:8px; }
+    .modal-actions{
+      margin-top: 12px;
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+
+    /* Buttons (match account.css vibe but readable) */
+    .btn{
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-weight: 700;
+      letter-spacing: .3px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.08);
+      color: rgba(255,255,255,.92);
+      cursor: pointer;
+      transition: .15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      user-select: none;
+    }
+    .btn:hover{ background: rgba(255,255,255,.12); }
+
+    .btn.primary{
+      background: rgba(212,175,55,.92);
+      border-color: rgba(212,175,55,.35);
+      color: rgba(28,32,40,.96);
+    }
+    .btn.primary:hover{ background: rgba(212,175,55,1); }
+
+    .btn.secondary{
+      background: rgba(255,255,255,.08);
+      border-color: rgba(255,255,255,.14);
+      color: rgba(255,255,255,.92);
+    }
+    .btn.secondary:hover{ background: rgba(255,255,255,.12); }
+
+    .btn[disabled]{
+      opacity: .55;
+      cursor: not-allowed;
+    }
   </style>
 </head>
 
@@ -112,9 +155,9 @@
           <h1 class="text-h1">My Products</h1>
           <div class="text-sub">Your registered devices</div>
         </div>
+
         <div class="topbar-actions">
-          <!-- ✅ 改成開 modal，不再跳 ../activate.html 也不把金鑰放 URL -->
-          <button id="open-activate" class="btn primary btn-as-link" type="button">
+          <button id="open-activate" class="btn primary" type="button">
             <i class="fa-solid fa-plus"></i> Activate New
           </button>
         </div>
@@ -125,17 +168,18 @@
     </main>
   </div>
 
-  <!-- ✅ Modal -->
+  <!-- ✅ Activate Modal (English + readable) -->
   <div id="activate-modal" class="modal-overlay" aria-hidden="true">
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="activate-title">
       <div class="modal-head">
         <div>
           <div id="activate-title" class="modal-title">Activate a Product Key</div>
           <div class="modal-sub">
-            請貼上你的「金鑰」來綁定產品到你的帳號。<br>
-            金鑰不會寫進網址，也不會顯示在你的產品列表中。
+            Paste your product key to bind a device to your account.
+            The key is never added to the URL and will not be shown in your product list.
           </div>
         </div>
+
         <button class="modal-close" id="close-activate" type="button" aria-label="Close">
           <i class="fa-solid fa-xmark"></i>
         </button>
@@ -146,13 +190,11 @@
                placeholder="Paste product key (e.g. OWL-XXXX-XXXX)"
                autocomplete="off" autocapitalize="off" spellcheck="false" />
 
-        <div id="activate-msg" class="modal-msg info"></div>
+        <div id="activate-msg" class="modal-msg info">Paste your product key to continue.</div>
 
         <div class="modal-actions">
           <button id="cancel-activate" class="btn secondary" type="button">Cancel</button>
-          <button id="do-activate" class="btn primary" type="button">
-            Confirm & Activate
-          </button>
+          <button id="do-activate" class="btn primary" type="button">Confirm & Activate</button>
         </div>
       </div>
     </div>
@@ -177,7 +219,10 @@
     const msgEl = document.getElementById("activate-msg");
 
     function safeText(s){
-      return String(s ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
+      return String(s ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;");
     }
 
     function renderItem(item){
@@ -215,20 +260,14 @@
     function setActivateBtnState(){
       const key = keyEl.value.trim();
       doBtn.disabled = !key;
-      doBtn.classList.toggle("opacity-50", !key);
-      doBtn.classList.toggle("cursor-not-allowed", !key);
     }
 
     openBtn.addEventListener("click", openModal);
     closeBtn.addEventListener("click", closeModal);
     cancelBtn.addEventListener("click", closeModal);
 
-    // 點 overlay 空白處也可關
-    modal.addEventListener("click", (e) => {
-      if (e.target === modal) closeModal();
-    });
+    modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
 
-    // Esc 關閉
     window.addEventListener("keydown", (e) => {
       if (e.key === "Escape" && modal.classList.contains("show")) closeModal();
     });
@@ -249,7 +288,7 @@
         const token = session?.access_token;
 
         if (!token){
-          msgEl.textContent = "Session expired. Please login again.";
+          msgEl.textContent = "Session expired. Please sign in again.";
           msgEl.className = "modal-msg err";
           doBtn.textContent = "Confirm & Activate";
           setActivateBtnState();
@@ -270,22 +309,18 @@
         if (res.ok && data.success){
           msgEl.textContent = "Success! Product registered.";
           msgEl.className = "modal-msg ok";
-
-          // refresh list
           await loadProducts();
-
-          // close after a beat
           setTimeout(() => closeModal(), 700);
           return;
         }
 
         const err = data.error || "unknown";
-        let text = "Activation Failed.";
+        let text = "Activation failed.";
         if (err === "already_activated") text = "This key is already activated.";
         else if (err === "revoked") text = "This key has been revoked.";
         else if (err === "invalid_code") text = "Invalid key.";
-        else if (err === "unauthorized") text = "Please login again.";
-        else text = `Activation Failed (${err})`;
+        else if (err === "unauthorized") text = "Please sign in again.";
+        else text = `Activation failed (${err}).`;
 
         msgEl.textContent = text;
         msgEl.className = "modal-msg err";
@@ -336,7 +371,6 @@
       cards.innerHTML = items.map(renderItem).join("");
     }
 
-    // init
     loadProducts();
   </script>
 </body>
