@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campaign | Owlnest Official</title>
+    <link rel="icon" type="image/png" href="../logo.png">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Manrope"', 'sans-serif'],
+                        serif: ['"Playfair Display"', 'serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#455169',
+                            cream: '#faefcf',
+                            gold: '#D4AF37'
+                        },
+                        // Card System Colors
+                        card: {
+                            a: '#fff4de', // Level A: General
+                            b: '#fdf6e6'  // Level B: Long reading
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        section { scroll-margin-top: 140px; }
+        .fade-in { animation: fadeIn 0.8s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-brand-cream text-brand-dark antialiased">
+
+    <!-- Header (Beige Background, Dark Logo) -->
+    <header class="fixed w-full z-50 top-0 bg-brand-cream/95 backdrop-blur-md shadow-sm border-b border-brand-dark/5 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <!-- Using Dark Logo (logo.png) for light background -->
+                <img src="../logo.png" alt="Owlnest" class="h-8 w-auto">
+                <span class="font-serif font-bold text-lg tracking-wide text-brand-dark hidden sm:block">Owlnest Official</span>
+            </div>
+            <a href="../index.html" class="group flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-brand-dark/60 hover:text-brand-dark transition">
+                <i class="fas fa-arrow-left group-hover:-translate-x-1 transition-transform"></i> Back to Home
+            </a>
+        </div>
+    </header>
+
+    <main class="pt-20">
+        <div id="live-content" class="fade-in">
+            
+            <!-- Hero Section (Card Level B) -->
+            <section class="relative py-12 md:py-20 lg:py-24 px-4 sm:px-6">
+                <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+                    
+                    <!-- Left: Text Card (Level B) -->
+                    <div class="bg-card-b border border-brand-dark/5 rounded-3xl p-8 md:p-12 shadow-[0_4px_20px_rgba(69,81,105,0.03)] lg:sticky lg:top-32">
+                        <div id="hero-badge" class="inline-flex items-center gap-2 px-3 py-1 border border-brand-gold/30 rounded-full text-brand-gold text-[10px] font-bold tracking-[0.2em] uppercase mb-6 md:mb-8 bg-brand-cream/50">
+                            <span id="hero-badge-dot" class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span> 
+                            <span id="hero-badge-text">Loading...</span>
+                        </div>
+                        
+                        <h1 id="hero-title" class="text-3xl md:text-5xl lg:text-5xl font-serif font-bold mb-6 leading-tight text-brand-dark">Loading...</h1>
+                        <h2 id="hero-subtitle" class="text-base md:text-lg text-brand-dark/80 font-light mb-8 leading-relaxed italic font-serif"></h2>
+                        <p id="hero-desc" class="text-sm md:text-base text-gray-500 leading-relaxed mb-10"></p>
+                        
+                        <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+                            <a id="hero-cta-main" href="#" target="_blank" class="w-full sm:w-auto inline-flex items-center justify-center bg-brand-dark text-brand-cream px-8 py-4 font-bold tracking-widest uppercase hover:bg-brand-gold hover:text-brand-dark transition duration-300 rounded-sm shadow-md text-xs md:text-sm">
+                                <!-- JS Injected -->
+                            </a>
+                            <a id="hero-cta-sec" href="#discord-access" class="w-full sm:w-auto inline-flex items-center justify-center border border-brand-dark/20 text-brand-dark px-8 py-4 font-bold tracking-widest uppercase hover:bg-card-a hover:border-transparent hover:shadow-sm transition duration-300 rounded-sm text-xs md:text-sm">
+                                <!-- JS Injected -->
+                            </a>
+                        </div>
+                        <p class="mt-6 text-[10px] md:text-xs text-gray-400 hero-disclaimer">Project currently in development. Delivery estimates apply.</p>
+                    </div>
+                    
+                    <!-- Right: Visual & Stats -->
+                    <div class="flex flex-col gap-6">
+                        <!-- Product Visual (Level B) -->
+                        <div class="bg-card-b rounded-3xl overflow-hidden shadow-lg border border-brand-dark/5 aspect-video flex items-center justify-center">
+                            <img src="../lamp-off.jpg" class="w-full h-full object-cover opacity-90 hover:opacity-100 transition duration-700" alt="Owlnest Lamp">
+                        </div>
+
+                        <!-- Stats Card (Level C - Dark Blue Emphasis) -->
+                        <div class="bg-brand-dark text-brand-cream p-8 md:p-10 rounded-3xl shadow-xl relative overflow-hidden">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-brand-gold/10 rounded-full blur-3xl"></div>
+                            
+                            <div class="grid grid-cols-2 gap-y-6 gap-x-8 mb-8 relative z-10">
+                                <div>
+                                    <div class="text-brand-gold text-[10px] md:text-xs font-bold uppercase tracking-widest mb-2">Raised</div>
+                                    <div id="stat-raised" class="text-2xl md:text-4xl font-serif text-white">-</div>
+                                    <div class="text-[10px] text-white/40 mt-1 uppercase tracking-wide">of <span id="stat-goal">-</span> goal</div>
+                                </div>
+                                <div>
+                                    <div class="text-brand-gold text-[10px] md:text-xs font-bold uppercase tracking-widest mb-2">Backers</div>
+                                    <div id="stat-backers" class="text-2xl md:text-4xl font-serif text-white">-</div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3 flex justify-between items-end relative z-10">
+                                <div class="text-brand-gold text-[10px] md:text-xs font-bold uppercase tracking-widest">Campaign Progress</div>
+                                <div class="text-brand-cream text-lg md:text-xl font-serif"><span id="stat-days">-</span> <span class="text-[10px] md:text-xs font-sans text-white/40 uppercase tracking-wide">days left</span></div>
+                            </div>
+                            <div id="progress-container" class="w-full bg-white/10 h-2 rounded-full overflow-hidden relative z-10">
+                                <div id="progress-bar" class="bg-brand-gold h-full rounded-full transition-all duration-1000 shadow-[0_0_10px_rgba(212,175,55,0.5)]" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tiers Section (Card Level B) -->
+            <section class="py-12 md:py-16 px-4 sm:px-6">
+                <div class="max-w-7xl mx-auto bg-card-b rounded-3xl shadow-sm border border-brand-dark/5 p-8 md:p-16">
+                    <div class="text-center mb-12">
+                        <h2 id="tiers-title" class="text-3xl md:text-4xl font-serif font-bold mb-4 text-brand-dark">Exclusive Rewards</h2>
+                        <div class="w-12 h-1 bg-brand-gold mx-auto"></div>
+                        <p class="mt-4 text-sm text-gray-500 max-w-2xl mx-auto">Support us early and secure the best price. Limited quantities available during pre-launch.</p>
+                    </div>
+                    
+                    <div id="tiers-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 auto-rows-fr justify-items-center">
+                        <!-- Injected via JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Info Split (Card Level A) -->
+            <section class="py-12 md:py-16 px-4 sm:px-6">
+                <div class="max-w-7xl mx-auto grid lg:grid-cols-12 gap-8 lg:gap-12">
+                    <!-- Timeline Card (Level A) -->
+                    <div class="lg:col-span-5 bg-card-a rounded-3xl shadow-sm border border-brand-dark/5 p-8 md:p-12">
+                        <h3 class="text-xl md:text-2xl font-serif font-bold mb-8 text-brand-dark flex items-center gap-3">
+                            <i class="far fa-calendar-alt text-brand-gold"></i> Project Timeline
+                        </h3>
+                        <div id="timeline-container" class="ml-2">
+                            <!-- Injected via JS -->
+                        </div>
+                    </div>
+                    
+                    <!-- FAQ Card (Level A) -->
+                    <div class="lg:col-span-7 bg-card-a rounded-3xl shadow-sm border border-brand-dark/5 p-8 md:p-12">
+                        <h3 class="text-xl md:text-2xl font-serif font-bold mb-8 text-brand-dark flex items-center gap-3">
+                            <i class="far fa-question-circle text-brand-gold"></i> FAQ
+                        </h3>
+                        <div id="faq-container">
+                            <!-- Injected via JS -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Discord Access (Card Level C - Dark Blue) -->
+            <section id="discord-access" class="py-12 md:py-16 px-4 sm:px-6">
+                <div class="max-w-5xl mx-auto bg-brand-dark text-brand-cream rounded-3xl shadow-2xl p-8 md:p-16 text-center relative overflow-hidden">
+                    <!-- Inverted logo for dark bg -->
+                    <div class="absolute top-0 left-0 w-full h-full bg-[url('../logo2.png')] bg-no-repeat bg-center opacity-5 bg-contain pointer-events-none"></div>
+                    
+                    <div class="relative z-10">
+                        <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-8 border border-white/10 text-brand-gold text-3xl shadow-sm">
+                            <i class="fab fa-discord"></i>
+                        </div>
+                        
+                        <h2 class="text-2xl md:text-4xl font-serif font-bold mb-4 md:mb-6 text-white">Community Access</h2>
+                        <p class="text-base md:text-lg text-white/70 mb-10 max-w-2xl mx-auto leading-relaxed">
+                            The Owlnest Discord is a private sanctuary for verified owners. 
+                            To maintain community quality, access is restricted.
+                        </p>
+                        
+                        <!-- Steps (Inner Cards - Semi-transparent white on dark) -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 text-left">
+                            <div class="bg-white/5 border border-white/10 p-6 rounded-xl backdrop-blur-sm">
+                                <div class="text-brand-gold font-bold mb-2 text-sm">01. Back Project</div>
+                                <p class="text-xs md:text-sm text-white/50">Support our Kickstarter campaign to secure your Owlnest Lamp.</p>
+                            </div>
+                            <div class="bg-white/5 border border-white/10 p-6 rounded-xl backdrop-blur-sm">
+                                <div class="text-brand-gold font-bold mb-2 text-sm">02. Receive Key</div>
+                                <p class="text-xs md:text-sm text-white/50">Wait for delivery. Your unique Product Key is inside the box.</p>
+                            </div>
+                            <div class="bg-white/5 border border-white/10 p-6 rounded-xl backdrop-blur-sm">
+                                <div class="text-brand-gold font-bold mb-2 text-sm">03. Verify & Join</div>
+                                <p class="text-xs md:text-sm text-white/50">Register on our Member Portal to unlock your invite link.</p>
+                            </div>
+                        </div>
+                        
+                        <a href="../member-login.html" class="inline-flex items-center gap-2 border border-brand-gold text-brand-gold px-8 py-3 font-bold uppercase tracking-widest hover:bg-brand-gold hover:text-brand-dark transition duration-300 rounded-sm text-xs md:text-sm">
+                            Go to Member Portal <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Legal Card Section (Card Level B) -->
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 pb-20 space-y-8">
+                
+                <!-- Campaign Terms -->
+                <section id="campaign-terms" class="bg-card-b rounded-3xl shadow-sm border border-brand-dark/5 p-8 md:p-12">
+                    <h2 class="text-xl md:text-2xl font-serif font-bold text-brand-dark mb-6">Campaign Terms</h2>
+                    <div class="text-sm text-gray-500 space-y-4 leading-relaxed font-light">
+                        <p>This page describes the general terms for our pre-launch / crowdfunding campaign. By participating, you acknowledge that you are supporting a product development project and that some details may change as the project progresses.</p>
+                        
+                        <h3 class="font-bold text-brand-dark mt-4">1. Campaign status & availability</h3>
+                        <p>The campaign may be in pre-launch, live, or post-campaign status depending on the timeline. During pre-launch, reward details and final pricing may be presented as previews and can be updated before the campaign goes live. Availability, reward quantities, and estimated schedules may change based on manufacturing capacity, certification progress, and logistics constraints.</p>
+                        
+                        <h3 class="font-bold text-brand-dark mt-4">2. Rewards, pricing & updates</h3>
+                        <p>Reward tiers and pricing are subject to change before the live campaign begins. Once the campaign is live, any changes will be communicated through official campaign updates or the platform’s update mechanism (where applicable). Images and renders shown may be prototypes; final product appearance may vary slightly due to production tolerances and supplier materials.</p>
+                        
+                        <h3 class="font-bold text-brand-dark mt-4">3. Estimated timeline (non-binding)</h3>
+                        <p>Any timeline shown (e.g., production, shipping) is an estimate, not a guarantee. Delays may occur due to component supply, quality assurance testing, compliance/certification procedures, shipping congestion, or other external factors.</p>
+                        
+                        <h3 class="font-bold text-brand-dark mt-4">4. Shipping & delivery notes</h3>
+                        <p>Shipping regions, fees, and duties/taxes (if any) depend on the destination and local regulations. Customs duties, VAT/GST, or import fees are the responsibility of the recipient unless explicitly stated otherwise. Address changes (if supported) must be requested within the timeframe we announce.</p>
+                        
+                        <h3 class="font-bold text-brand-dark mt-4">5. Risk acknowledgment</h3>
+                        <p>You acknowledge that crowdfunding involves risk, and you are supporting a development effort rather than purchasing an off-the-shelf retail product. If unexpected issues occur (e.g., supplier discontinuation), we will provide updates and reasonable alternatives where possible.</p>
+                        
+                        <h3 class="font-bold text-brand-dark mt-4">6. Contact & communication</h3>
+                        <p>For questions, please use the contact method shown on our official site. We aim to respond as soon as practical, but response times may vary during high-volume periods.</p>
+                        
+                        <p class="text-xs mt-6 pt-6 border-t border-brand-dark/10 text-brand-gold">Last updated: 2025-05-20</p>
+                    </div>
+                </section>
+
+                <!-- Privacy Policy -->
+                <section id="privacy-policy" class="bg-card-b rounded-3xl shadow-sm border border-brand-dark/5 p-8 md:p-12">
+                    <h2 class="text-xl md:text-2xl font-serif font-bold text-brand-dark mb-6">Privacy Policy</h2>
+                    <div class="text-sm text-gray-500 space-y-4 leading-relaxed font-light">
+                        <p>We respect your privacy and are committed to protecting your personal data. This policy explains what we collect and how we use it for campaign communication and fulfillment.</p>
+                        
+                        <h3 class="font-bold text-brand-dark mt-4">1. What we collect</h3>
+                        <p>Depending on how you interact with the campaign, we may collect: Contact information (e.g., name, email), Shipping details (e.g., address, phone number for delivery), Basic order/support details (e.g., selected tier, quantity, region), Technical data (e.g., device/browser information, approximate location derived from IP for security and analytics).</p>
+                        
+                        <h3 class="font-bold text-brand-dark mt-4">2. How we use your information</h3>
+                        <p>We use your information to: Provide campaign updates and important notices (timeline changes, shipping preparations), Deliver rewards and handle fulfillment logistics, Provide customer support and resolve issues, Improve our website experience and diagnose technical problems, Prevent fraud and protect account security.</p>
+                        
+                        <h3 class="font-bold text-brand-dark mt-4">3. Payments & sensitive data</h3>
+                        <p>Payment processing is handled by the crowdfunding platform and/or authorized payment providers. We do not store full payment card details on our website.</p>
+                        
+                        <h3 class="font-bold text-brand-dark mt-4">4. Sharing with third parties</h3>
+                        <p>We may share limited data with trusted partners only as needed to operate the campaign, such as: Logistics and shipping carriers (for delivery), Email/communication services (for sending updates), Analytics and security services (for site performance and protection). We do not sell your personal data to third parties.</p>
+                        
+                        <h3 class="font-bold text-brand-dark mt-4">5. Data retention</h3>
+                        <p>We retain personal data only as long as necessary for campaign operations, fulfillment, support, and legal/compliance requirements.</p>
+                        
+                        <h3 class="font-bold text-brand-dark mt-4">6. Your rights</h3>
+                        <p>Depending on your jurisdiction, you may request to: Access, correct, or delete your personal data, Withdraw consent for marketing communications (if any), Request a copy of the data we hold about you.</p>
+                        
+                        <h3 class="font-bold text-brand-dark mt-4">7. Contact</h3>
+                        <p>If you have privacy questions or requests, contact us through the official contact method listed on our website.</p>
+                        
+                        <p class="text-xs mt-6 pt-6 border-t border-brand-dark/10 text-brand-gold">Last updated: 2025-05-20</p>
+                    </div>
+                </section>
+
+                <!-- Refund Policy -->
+                <section id="refund-policy" class="bg-card-b rounded-3xl shadow-sm border border-brand-dark/5 p-8 md:p-12">
+                    <h2 class="text-xl md:text-2xl font-serif font-bold text-brand-dark mb-6">Refund Policy</h2>
+                    <div class="text-sm text-gray-500 space-y-4 leading-relaxed font-light">
+                        <p>This refund policy describes general refund principles for the campaign. If you support us through a crowdfunding platform, the platform’s rules and tools may apply and can take precedence.</p>
+                        
+                        <h3 class="font-bold text-brand-dark mt-4">1. Pre-launch period</h3>
+                        <p>During pre-launch, no payment is collected on this page. If you submit interest or sign up for notifications, you may unsubscribe at any time.</p>
+                        
+                        <h3 class="font-bold text-brand-dark mt-4">2. During the live campaign</h3>
+                        <p>If the campaign is hosted on a crowdfunding platform, pledge modifications or cancellations may be available through the platform’s own settings while the campaign is live. Any platform fees or rules related to cancellations are handled according to that platform’s terms.</p>
+                        
+                        <h3 class="font-bold text-brand-dark mt-4">3. After the campaign ends</h3>
+                        <p>After campaign completion, funds are typically allocated to production and fulfillment preparation. Refund requests after the campaign may be reviewed case-by-case depending on production status, fulfillment stage, and platform policy.</p>
+                        
+                        <h3 class="font-bold text-brand-dark mt-4">4. After fulfillment/shipping begins</h3>
+                        <p>Once shipping or fulfillment has started, refunds may no longer be possible, or may require return handling depending on the situation. If delivery fails due to an incorrect address provided by the supporter, additional shipping costs may apply for re-delivery.</p>
+                        
+                        <h3 class="font-bold text-brand-dark mt-4">5. Damaged or missing items</h3>
+                        <p>If an item arrives damaged or is missing, please contact support with relevant order details and photos (if applicable). We will work with you to determine the appropriate resolution.</p>
+                        
+                        <h3 class="font-bold text-brand-dark mt-4">6. How to request help</h3>
+                        <p>For refund or support requests, contact us via the official support/contact method listed on our website. We will respond as soon as practical; response times may vary during high-volume periods.</p>
+                        
+                        <p class="text-xs mt-6 pt-6 border-t border-brand-dark/10 text-brand-gold">Last updated: 2025-05-20</p>
+                    </div>
+                </section>
+            </div>
+            
+            <!-- Disclaimer -->
+            <div class="py-12 px-6 text-center">
+                <p class="text-[10px] text-brand-dark/40 max-w-3xl mx-auto leading-relaxed">
+                    Disclaimer: This project is currently in the crowdfunding stage. Delivery dates are estimates and subject to change.
+                    The visuals shown are prototypes; the final product may vary slightly. 
+                    By backing this project, you agree to the terms and conditions of the crowdfunding platform.
+                </p>
+            </div>
+        </div>
+
+        <!-- Ended State -->
+        <div id="ended-content" class="hidden min-h-[70vh] flex flex-col items-center justify-center text-center px-6">
+            <div class="w-16 h-16 bg-brand-dark/5 rounded-full flex items-center justify-center mb-6">
+                <i class="fas fa-flag-checkered text-brand-dark/40 text-2xl"></i>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-serif font-bold text-brand-dark mb-4">Campaign Concluded</h1>
+            <p class="text-brand-dark/60 mb-8 max-w-md leading-relaxed text-sm">
+                Thank you for your support. This campaign has successfully ended.<br>
+                Please check your email for shipping updates.
+            </p>
+            <a href="../index.html" class="inline-block border border-brand-dark/20 text-brand-dark px-8 py-3 font-bold tracking-widest uppercase hover:bg-brand-dark hover:text-brand-cream transition duration-300 rounded-sm text-xs">
+                Back to Home
+            </a>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black text-white/30 py-12 text-center text-xs tracking-widest uppercase px-6">
+        <div class="mb-6 opacity-30 hover:opacity-50 transition">
+            <img src="../logo.png" alt="Owlnest" class="h-6 mx-auto grayscale">
+        </div>
+        <p>&copy; 2025 Owlnest Official. All Rights Reserved.</p>
+        <!-- Footer links removed as requested -->
+    </footer>
+
+    <!-- Scripts -->
+    <script src="./campaign.js"></script>
+</body>
+</html>

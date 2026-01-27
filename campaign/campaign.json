@@ -1,0 +1,73 @@
+{
+  "status": "prelaunch",
+  "active": true,
+  "lang": "en",
+  "title": "Owlnest Sleep Aid Lamp: The Art of Deep Sleep",
+  "subtitle": "Simulating natural sunset to support your circadian rhythm. ITRI-certified spectrum technology.",
+  "description": "After 3 years of R&D, we are bringing the serenity of dusk back to your bedroom. Join our community to shape the revolution of rest.",
+  "notice": "Pre-launch: Final pricing and rewards revealed at launch.",
+  "platformCta": {
+    "label": "Launching Soon on Kickstarter",
+    "href": "#"
+  },
+  "secondaryCta": {
+    "label": "Community Access (Verified Owners)",
+    "href": "#discord-access"
+  },
+  "stats": {
+    "goal": null,
+    "raised": null,
+    "backers": null,
+    "daysLeft": null
+  },
+  "tiers": [
+    {
+      "name": "Super Early Bird",
+      "price": null,
+      "retailPrice": null,
+      "bullets": ["1x Owlnest Lamp", "Limited Quantity", "Lowest Price Tier"],
+      "ctaLabel": "Coming Soon",
+      "ctaHref": "#"
+    },
+    {
+      "name": "The Double Pack",
+      "price": null,
+      "retailPrice": null,
+      "bullets": ["2x Owlnest Lamps", "Perfect for Partners", "Priority Delivery"],
+      "ctaLabel": "Coming Soon",
+      "ctaHref": "#"
+    },
+    {
+      "name": "Family Bundle",
+      "price": null,
+      "retailPrice": null,
+      "bullets": ["4x Owlnest Lamps", "Full Home Setup", "Best Value"],
+      "ctaLabel": "Coming Soon",
+      "ctaHref": "#"
+    }
+  ],
+  "timeline": [
+    { "date": "TBA", "title": "Campaign Launch", "text": "Crowdfunding live & Tooling initialization." },
+    { "date": "Est. 2025", "title": "Pilot Production", "text": "Quality assurance testing & certification." },
+    { "date": "Est. 2025", "title": "Mass Production", "text": "Final assembly and packaging." },
+    { "date": "Est. 2025", "title": "Shipping", "text": "Global delivery begins." }
+  ],
+  "faq": [
+    {
+      "q": "How does the sunset simulation work?",
+      "a": "Owlnest shifts color temperature over 30 minutes, transitioning from warm reading light to a deep, blue-free amber glow, mimicking natural dusk."
+    },
+    {
+      "q": "How do I join the Discord community?",
+      "a": "Our Discord is a private space for verified owners. Purpose: protect community quality & backer co-creation. Access is unlocked AFTER you receive your product by verifying your unique Product Key in the Member Portal."
+    },
+    {
+      "q": "Do you ship internationally?",
+      "a": "Yes, we plan to ship to select regions including US, UK, EU, and Taiwan. Specific shipping costs will be confirmed at launch."
+    },
+    {
+      "q": "Is there a warranty?",
+      "a": "All Kickstarter rewards are expected to come with a standard 1-year limited warranty covering manufacturing defects."
+    }
+  ]
+}
