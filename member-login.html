@@ -37,13 +37,16 @@
   </style>
 </head>
 
-<body class="bg-brand-dark text-white min-h-screen flex flex-col font-sans relative">
-  <div class="fixed top-[-10%] right-[-5%] w-[500px] h-[500px] bg-brand-gold/10 rounded-full blur-[120px] pointer-events-none z-0"></div>
-  <div class="fixed bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-black/20 rounded-full blur-[120px] pointer-events-none z-0"></div>
+<!-- 1. Page Background: Set to brand cream (off-white) for reduced fatigue -->
+<body class="bg-brand-cream text-brand-dark min-h-screen flex flex-col font-sans relative">
+  <!-- Subtle ambient blobs (lighter for the light background) -->
+  <div class="fixed top-[-10%] right-[-5%] w-[500px] h-[500px] bg-brand-gold/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
+  <div class="fixed bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-brand-dark/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
 
-  <!-- Header -->
-  <header id="main-header" class="fixed top-0 left-0 w-full z-50 px-4 md:px-8 py-3 md:py-6 flex justify-between items-center bg-brand-dark/90 backdrop-blur-md transition-all duration-300 border-b border-white/5 shadow-sm">
+  <!-- Header: Kept dark to support logo2.png (white logo) -->
+  <header id="main-header" class="fixed top-0 left-0 w-full z-50 px-4 md:px-8 py-3 md:py-6 flex justify-between items-center bg-brand-dark/95 backdrop-blur-md transition-all duration-300 border-b border-white/5 shadow-sm">
     <div class="flex items-center gap-2 flex-shrink-0">
+       <!-- 5. Logo Usage: Using logo2.png on dark header -->
        <img src="logo2.png" alt="Owlnest Logo" class="h-8 md:h-12 w-auto contrast-100 object-contain">
        <a href="index.html" class="font-serif text-lg md:text-3xl tracking-widest font-bold text-brand-cream hover:text-brand-gold transition whitespace-nowrap">Owlnest <span class="hidden sm:inline">Official</span></a>
     </div>
@@ -81,35 +84,51 @@
   </div>
 
   <main class="flex-grow flex items-center justify-center p-4 relative z-10 pt-28 md:pt-32">
-    <div class="bg-white/5 border border-white/10 p-8 md:p-12 rounded-lg backdrop-blur-xl shadow-2xl w-full max-w-md">
-      <h2 class="text-3xl font-serif mb-2 text-center text-brand-gold">Member</h2>
-      <p id="subtitle" class="mb-6 text-sm text-center text-gray-400 font-light tracking-wide">Sign in with email & password.</p>
+    <!-- 2. Login Card: Dark card preserved for contrast against light background -->
+    <div class="bg-brand-dark border border-white/10 p-8 md:p-12 rounded-lg shadow-2xl w-full max-w-md text-white relative overflow-hidden">
+      <!-- Inner decoration for card -->
+      <div class="absolute top-0 right-0 w-32 h-32 bg-brand-gold/10 rounded-full blur-2xl pointer-events-none"></div>
+
+      <h2 class="text-3xl font-serif mb-2 text-center text-brand-gold relative z-10">Member</h2>
+      <p id="subtitle" class="mb-6 text-sm text-center text-gray-300 font-light tracking-wide relative z-10">Sign in with email & password.</p>
 
       <!-- Tabs -->
-      <div class="grid grid-cols-2 gap-3 mb-6">
+      <div class="grid grid-cols-2 gap-3 mb-6 relative z-10">
+        <!-- 4. Buttons: Primary accent maintained -->
         <button id="tab-login" type="button" class="py-3 rounded border border-brand-gold bg-brand-gold text-brand-dark font-bold uppercase tracking-widest text-xs transition shadow-lg">Sign In</button>
-        <button id="tab-register" type="button" class="py-3 rounded border border-brand-gold/30 bg-transparent text-brand-gold font-bold uppercase tracking-widest text-xs hover:bg-brand-gold/10 transition">Create Account</button>
+        <button id="tab-register" type="button" class="py-3 rounded border border-brand-gold/30 bg-transparent text-brand-gold font-bold uppercase tracking-widest text-xs hover:bg-white/5 transition">Create Account</button>
       </div>
 
-      <form id="auth-form" class="space-y-5">
-        <div><input type="email" id="email" placeholder="Email Address" required autocomplete="email" class="w-full p-4 rounded bg-brand-dark/50 border border-brand-gold/20 text-white placeholder-gray-500 focus:outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold transition text-center tracking-wide"></div>
-        <div><input type="password" id="password" placeholder="Password" required autocomplete="current-password" class="w-full p-4 rounded bg-brand-dark/50 border border-brand-gold/20 text-white placeholder-gray-500 focus:outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold transition text-center tracking-wide"></div>
-        <div id="confirm-wrap" class="hidden"><input type="password" id="confirmPassword" placeholder="Confirm Password" autocomplete="new-password" class="w-full p-4 rounded bg-brand-dark/50 border border-brand-gold/20 text-white placeholder-gray-500 focus:outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold transition text-center tracking-wide"></div>
-        <button type="submit" id="submit-btn" class="w-full bg-brand-gold text-brand-dark font-bold py-4 rounded hover:bg-white transition duration-300 uppercase tracking-widest text-sm shadow-lg transform active:scale-95">Sign In</button>
+      <form id="auth-form" class="space-y-5 relative z-10">
+        <!-- 3. Input Fields: High contrast fix - White background, dark text -->
+        <div>
+            <input type="email" id="email" placeholder="Email Address" required autocomplete="email" 
+            class="w-full p-4 rounded bg-white border border-gray-300 text-brand-dark placeholder-gray-500 focus:outline-none focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/50 transition text-center tracking-wide shadow-sm">
+        </div>
+        <div>
+            <input type="password" id="password" placeholder="Password" required autocomplete="current-password" 
+            class="w-full p-4 rounded bg-white border border-gray-300 text-brand-dark placeholder-gray-500 focus:outline-none focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/50 transition text-center tracking-wide shadow-sm">
+        </div>
+        <div id="confirm-wrap" class="hidden">
+            <input type="password" id="confirmPassword" placeholder="Confirm Password" autocomplete="new-password" 
+            class="w-full p-4 rounded bg-white border border-gray-300 text-brand-dark placeholder-gray-500 focus:outline-none focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/50 transition text-center tracking-wide shadow-sm">
+        </div>
+        
+        <button type="submit" id="submit-btn" class="w-full bg-brand-gold text-brand-dark font-bold py-4 rounded hover:bg-white transition duration-300 uppercase tracking-widest text-sm shadow-lg transform active:scale-95 mt-2">Sign In</button>
       </form>
 
-      <div id="message" class="mt-5 text-center text-sm hidden p-3 rounded bg-black/20"></div>
+      <div id="message" class="mt-5 text-center text-sm hidden p-3 rounded bg-black/20 text-white"></div>
       
       <!-- Back to Home Button -->
-      <div class="mt-8 text-center border-t border-white/5 pt-6">
-        <a href="index.html" class="text-xs text-brand-cream/60 hover:text-brand-gold transition border-b border-transparent hover:border-brand-gold pb-0.5 tracking-widest uppercase">
+      <div class="mt-8 text-center border-t border-white/10 pt-6">
+        <a href="index.html" class="text-xs text-gray-400 hover:text-brand-gold transition border-b border-transparent hover:border-brand-gold pb-0.5 tracking-widest uppercase">
           Back to Home
         </a>
       </div>
     </div>
   </main>
 
-  <footer class="relative z-10 py-8 text-center text-xs text-gray-500">
+  <footer class="relative z-10 py-8 text-center text-xs text-brand-dark/50">
     <div class="flex justify-center items-center gap-6 mb-4">
       <a href="http://facebook.com/owlnestofficial" target="_blank" class="hover:text-brand-gold transition"><i class="fab fa-facebook-f text-lg"></i></a>
       <a href="http://www.instagram.com/owlnestpq_chilllife" target="_blank" class="hover:text-brand-gold transition"><i class="fab fa-instagram text-lg"></i></a>
@@ -150,7 +169,7 @@
     function setMode(nextMode) {
       mode = nextMode;
       const activeClass = "py-3 rounded border border-brand-gold bg-brand-gold text-brand-dark font-bold uppercase tracking-widest text-xs transition shadow-lg";
-      const inactiveClass = "py-3 rounded border border-brand-gold/30 bg-transparent text-brand-gold font-bold uppercase tracking-widest text-xs hover:bg-brand-gold/10 transition";
+      const inactiveClass = "py-3 rounded border border-brand-gold/30 bg-transparent text-brand-gold font-bold uppercase tracking-widest text-xs hover:bg-white/5 transition";
 
       if (mode === 'login') {
         tabLogin.className = activeClass;
@@ -172,7 +191,7 @@
 
     function showMessage(html, type = 'info') {
       msg.classList.remove('hidden');
-      msg.className = 'mt-5 text-center text-sm p-3 rounded bg-black/20';
+      msg.className = 'mt-5 text-center text-sm p-3 rounded bg-black/20 text-white';
       if (type === 'error') msg.classList.add('text-red-300', 'border', 'border-red-500/30');
       if (type === 'ok') msg.classList.add('text-green-300', 'border', 'border-green-500/30');
       msg.innerHTML = html;
