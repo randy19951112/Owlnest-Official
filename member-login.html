@@ -5,19 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Member Login | Owlnest</title>
   <link rel="icon" type="image/png" href="logo.png" />
-  
+
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
+
   <!-- Supabase JS -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  
+
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-  
+
   <!-- Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
+
   <!-- Snipcart CSS -->
   <link rel="stylesheet" href="https://cdn.snipcart.com/themes/v3.7.1/default/snipcart.css" />
   <script>
@@ -43,39 +43,41 @@
 
   <header id="main-header" class="fixed top-0 left-0 w-full z-50 px-4 md:px-8 py-3 md:py-6 flex justify-between items-center bg-brand-dark/95 backdrop-blur-md transition-all duration-300 border-b border-white/5 shadow-sm">
     <div class="flex items-center gap-2 flex-shrink-0">
-       <img src="logo2.png" alt="Owlnest Logo" class="h-8 md:h-12 w-auto contrast-100 object-contain">
-       <a href="index.html" class="font-serif text-lg md:text-3xl tracking-widest font-bold text-brand-cream hover:text-brand-gold transition whitespace-nowrap">Owlnest <span class="hidden sm:inline">Official</span></a>
+      <img src="logo2.png" alt="Owlnest Logo" class="h-8 md:h-12 w-auto contrast-100 object-contain">
+      <a href="index.html" class="font-serif text-lg md:text-3xl tracking-widest font-bold text-brand-cream hover:text-brand-gold transition whitespace-nowrap">
+        Owlnest <span class="hidden sm:inline">Official</span>
+      </a>
     </div>
-    
+
     <div class="hidden lg:flex items-center gap-8 text-sm tracking-widest uppercase font-semibold text-brand-cream">
-        <a href="about.html" class="hover:text-brand-gold transition pb-1">About Us</a>
-        <a href="index.html#section-3" class="hover:text-brand-gold transition pb-1">Products</a>
-        <a href="index.html#section-8" class="hover:text-brand-gold transition pb-1">Contact</a>
-        <div class="flex items-center gap-4 ml-4">
-            <button class="relative group snipcart-checkout">
-                <i class="fas fa-shopping-bag text-2xl hover:text-brand-gold transition"></i>
-                <span class="snipcart-items-count absolute -top-1 -right-2 bg-brand-gold text-brand-dark text-[10px] font-bold px-1.5 rounded-full">0</span>
-            </button>
-        </div>
+      <a href="about.html" class="hover:text-brand-gold transition pb-1">About Us</a>
+      <a href="index.html#section-3" class="hover:text-brand-gold transition pb-1">Products</a>
+      <a href="index.html#section-8" class="hover:text-brand-gold transition pb-1">Contact</a>
+      <div class="flex items-center gap-4 ml-4">
+        <button class="relative group snipcart-checkout">
+          <i class="fas fa-shopping-bag text-2xl hover:text-brand-gold transition"></i>
+          <span class="snipcart-items-count absolute -top-1 -right-2 bg-brand-gold text-brand-dark text-[10px] font-bold px-1.5 rounded-full">0</span>
+        </button>
+      </div>
     </div>
 
     <div class="flex lg:hidden items-center gap-4 flex-shrink-0">
-        <button class="relative active:scale-95 transition snipcart-checkout text-brand-cream">
-            <i class="fas fa-shopping-bag text-xl"></i>
-            <span class="snipcart-items-count absolute -top-1 -right-2 bg-brand-gold text-brand-dark text-[10px] font-bold px-1.5 rounded-full">0</span>
-        </button>
-        <button onclick="toggleMobileMenu()" class="text-2xl focus:outline-none active:scale-95 transition text-brand-cream">
-            <i class="fas fa-bars" id="mobile-menu-icon"></i>
-        </button>
+      <button class="relative active:scale-95 transition snipcart-checkout text-brand-cream">
+        <i class="fas fa-shopping-bag text-xl"></i>
+        <span class="snipcart-items-count absolute -top-1 -right-2 bg-brand-gold text-brand-dark text-[10px] font-bold px-1.5 rounded-full">0</span>
+      </button>
+      <button onclick="toggleMobileMenu()" class="text-2xl focus:outline-none active:scale-95 transition text-brand-cream">
+        <i class="fas fa-bars" id="mobile-menu-icon"></i>
+      </button>
     </div>
   </header>
 
   <div id="mobile-menu" class="fixed inset-0 bg-brand-dark z-40 flex flex-col justify-center items-center pt-20 lg:hidden text-brand-cream">
     <nav class="flex flex-col gap-8 text-xl tracking-widest uppercase font-semibold text-center">
-        <a href="index.html" class="hover:text-brand-gold transition">Home</a>
-        <a href="about.html" class="hover:text-brand-gold transition">About Us</a>
-        <a href="index.html#section-3" onclick="toggleMobileMenu()" class="hover:text-brand-gold transition">Products</a>
-        <a href="index.html#section-8" onclick="toggleMobileMenu()" class="hover:text-brand-gold transition">Contact</a>
+      <a href="index.html" class="hover:text-brand-gold transition">Home</a>
+      <a href="about.html" class="hover:text-brand-gold transition">About Us</a>
+      <a href="index.html#section-3" onclick="toggleMobileMenu()" class="hover:text-brand-gold transition">Products</a>
+      <a href="index.html#section-8" onclick="toggleMobileMenu()" class="hover:text-brand-gold transition">Contact</a>
     </nav>
   </div>
 
@@ -84,9 +86,11 @@
       <div class="absolute top-0 right-0 w-32 h-32 bg-brand-gold/10 rounded-full blur-2xl pointer-events-none"></div>
 
       <h2 class="text-3xl font-serif mb-2 text-center text-brand-gold relative z-10">Member</h2>
-      <p id="subtitle" class="mb-6 text-sm text-center text-gray-300 font-light tracking-wide relative z-10">Sign in with email & password.</p>
+      <p id="subtitle" class="mb-6 text-sm text-center text-gray-300 font-light tracking-wide relative z-10">
+        Sign in with email & password.
+      </p>
 
-      <!-- ✅ Google OAuth Button -->
+      <!-- Google OAuth -->
       <button
         id="google-login"
         type="button"
@@ -110,33 +114,59 @@
 
       <form id="auth-form" class="space-y-5 relative z-10">
         <div>
-            <input type="email" id="email" placeholder="Email Address" required autocomplete="email" 
-            class="w-full p-4 rounded bg-white border border-gray-300 text-brand-dark placeholder-gray-500 focus:outline-none focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/50 transition text-center tracking-wide shadow-sm">
+          <input
+            type="email"
+            id="email"
+            placeholder="Email Address"
+            required
+            autocomplete="email"
+            class="w-full p-4 rounded bg-white border border-gray-300 text-brand-dark placeholder-gray-500 focus:outline-none focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/50 transition text-center tracking-wide shadow-sm"
+          >
         </div>
-        <div>
-            <input type="password" id="password" placeholder="Password" required autocomplete="current-password" 
-            class="w-full p-4 rounded bg-white border border-gray-300 text-brand-dark placeholder-gray-500 focus:outline-none focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/50 transition text-center tracking-wide shadow-sm">
-        </div>
-        <div id="confirm-wrap" class="hidden">
-            <input type="password" id="confirmPassword" placeholder="Confirm Password" autocomplete="new-password" 
-            class="w-full p-4 rounded bg-white border border-gray-300 text-brand-dark placeholder-gray-500 focus:outline-none focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/50 transition text-center tracking-wide shadow-sm">
-        </div>
-        
-        <button type="submit" id="submit-btn" class="w-full bg-brand-gold text-brand-dark font-bold py-4 rounded hover:bg-white transition duration-300 uppercase tracking-widest text-sm shadow-lg transform active:scale-95 mt-2">Sign In</button>
-      <div class="text-center mt-3">
-  <button
-    id="forgot-password"
-    type="button"
-    class="text-xs text-gray-300 hover:text-brand-gold transition border-b border-transparent hover:border-brand-gold pb-0.5 tracking-widest uppercase"
-  >
-    Forgot password?
-  </button>
-</div>
 
+        <div>
+          <input
+            type="password"
+            id="password"
+            placeholder="Password"
+            required
+            autocomplete="current-password"
+            class="w-full p-4 rounded bg-white border border-gray-300 text-brand-dark placeholder-gray-500 focus:outline-none focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/50 transition text-center tracking-wide shadow-sm"
+          >
+        </div>
+
+        <div id="confirm-wrap" class="hidden">
+          <input
+            type="password"
+            id="confirmPassword"
+            placeholder="Confirm Password"
+            autocomplete="new-password"
+            class="w-full p-4 rounded bg-white border border-gray-300 text-brand-dark placeholder-gray-500 focus:outline-none focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/50 transition text-center tracking-wide shadow-sm"
+          >
+        </div>
+
+        <button
+          type="submit"
+          id="submit-btn"
+          class="w-full bg-brand-gold text-brand-dark font-bold py-4 rounded hover:bg-white transition duration-300 uppercase tracking-widest text-sm shadow-lg transform active:scale-95 mt-2"
+        >
+          Sign In
+        </button>
+
+        <!-- ✅ Forgot password -->
+        <div class="text-center mt-3">
+          <button
+            id="forgot-password"
+            type="button"
+            class="text-xs text-gray-300 hover:text-brand-gold transition border-b border-transparent hover:border-brand-gold pb-0.5 tracking-widest uppercase"
+          >
+            Forgot password?
+          </button>
+        </div>
       </form>
 
       <div id="message" class="mt-5 text-center text-sm hidden p-3 rounded bg-black/20 text-white"></div>
-      
+
       <div class="mt-8 text-center border-t border-white/10 pt-6">
         <a href="index.html" class="text-xs text-gray-400 hover:text-brand-gold transition border-b border-transparent hover:border-brand-gold pb-0.5 tracking-widest uppercase">
           Back to Home
@@ -162,7 +192,6 @@
   <script>
     const SUPABASE_URL = 'https://khoiplqugajmybmultzs.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_ic3b9TeYt7SuXxLIhLuyvA_FWHYVb0Z';
-
     const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     const tabLogin = document.getElementById('tab-login');
@@ -175,14 +204,14 @@
     const pwEl = document.getElementById('password');
     const confirmWrap = document.getElementById('confirm-wrap');
     const confirmEl = document.getElementById('confirmPassword');
-
     const googleBtn = document.getElementById('google-login');
+    const forgotBtn = document.getElementById('forgot-password');
 
     let mode = 'login';
 
     function toggleMobileMenu() {
-        const menu = document.getElementById('mobile-menu');
-        menu.classList.toggle('open');
+      const menu = document.getElementById('mobile-menu');
+      menu.classList.toggle('open');
     }
 
     function setMode(nextMode) {
@@ -216,7 +245,10 @@
       msg.innerHTML = html;
     }
 
-    function hideMessage() { msg.classList.add('hidden'); msg.innerHTML = ''; }
+    function hideMessage() {
+      msg.classList.add('hidden');
+      msg.innerHTML = '';
+    }
 
     function getNextUrl() {
       const params = new URLSearchParams(window.location.search);
@@ -225,7 +257,7 @@
         || (window.location.origin + '/account/index.html');
     }
 
-    // ✅ This also works for OAuth because OAuth returns with ?code=
+    // Handle redirect back with ?code= (OAuth + magic links)
     async function handleEmailRedirectSession() {
       const url = new URL(window.location.href);
       try {
@@ -234,7 +266,9 @@
           url.searchParams.delete('code');
           window.history.replaceState({}, document.title, url.pathname + (url.search ? url.search : ''));
         }
-      } catch (e) { console.warn('Redirect error', e); }
+      } catch (e) {
+        console.warn('Redirect error', e);
+      }
     }
 
     async function kickIfAlreadyLoggedIn() {
@@ -249,17 +283,34 @@
     tabLogin.addEventListener('click', () => setMode('login'));
     tabRegister.addEventListener('click', () => setMode('register'));
 
-    // ✅ Google OAuth sign-in / sign-up (Supabase handles both)
+    // ✅ Forgot password
+    forgotBtn?.addEventListener('click', async () => {
+      hideMessage();
+      const typedEmail = (emailEl?.value || '').trim();
+      const targetEmail = typedEmail || prompt('Enter your email to reset password:');
+      if (!targetEmail) return;
+
+      try {
+        const { error } = await sb.auth.resetPasswordForEmail(targetEmail, {
+          redirectTo: window.location.origin + '/reset-password.html'
+        });
+        if (error) throw error;
+
+        showMessage('✅ Password reset email sent. Please check your inbox.', 'ok');
+      } catch (err) {
+        console.error(err);
+        showMessage('❌ ' + (err?.message || 'Failed to send reset email.'), 'error');
+      }
+    });
+
+    // ✅ Google OAuth sign-in / sign-up
     googleBtn?.addEventListener('click', async () => {
       hideMessage();
-
       try {
         googleBtn.disabled = true;
         googleBtn.classList.add('opacity-60');
         showMessage('Redirecting to Google...', 'ok');
 
-        // Send user back to THIS page so we can exchange the code for a session,
-        // then redirect to account dashboard using your existing logic.
         const redirectTo = window.location.origin + '/member-login.html';
 
         const { error } = await sb.auth.signInWithOAuth({
@@ -268,7 +319,6 @@
         });
 
         if (error) throw error;
-
       } catch (err) {
         console.error(err);
         showMessage('❌ Google sign-in failed. Please try again.', 'error');
@@ -286,32 +336,9 @@
     })();
 
     form.addEventListener('submit', async (e) => {
-      // ✅ Forgot password (send reset email)
-document.getElementById('forgot-password')?.addEventListener('click', async () => {
-  hideMessage();
-
-  // Prefer the email typed in the input
-  const typedEmail = (emailEl?.value || '').trim();
-  const targetEmail = typedEmail || prompt('Enter your email to reset password:');
-  if (!targetEmail) return;
-
-  try {
-    // Send user to reset-password.html to set a new password
-    const { error } = await sb.auth.resetPasswordForEmail(targetEmail, {
-      redirectTo: window.location.origin + '/reset-password.html'
-    });
-
-    if (error) throw error;
-
-    showMessage('✅ Password reset email sent. Please check your inbox.', 'ok');
-  } catch (err) {
-    console.error(err);
-    showMessage('❌ ' + (err?.message || 'Failed to send reset email.'), 'error');
-  }
-});
-
       e.preventDefault();
       hideMessage();
+
       const email = emailEl.value.trim();
       const password = pwEl.value;
       if (!email || !password) return;
@@ -322,7 +349,9 @@ document.getElementById('forgot-password')?.addEventListener('click', async () =
         if (password !== confirmPw) { showMessage('❌ Passwords do not match.', 'error'); return; }
       }
 
-      btn.disabled = true; btn.classList.add('opacity-50'); btn.textContent = (mode === 'register') ? 'Creating...' : 'Signing in...';
+      btn.disabled = true;
+      btn.classList.add('opacity-50');
+      btn.textContent = (mode === 'register') ? 'Creating...' : 'Signing in...';
 
       try {
         if (mode === 'register') {
@@ -335,15 +364,17 @@ document.getElementById('forgot-password')?.addEventListener('click', async () =
         } else {
           const { error } = await sb.auth.signInWithPassword({ email, password });
           if (error) throw error;
+
           const nextUrl = getNextUrl();
           sessionStorage.removeItem('redirect_after_login');
           window.location.href = nextUrl;
         }
       } catch (err) {
-        showMessage('❌ ' + (err?.message || 'Authentication Error'), 'error');
         console.error(err);
+        showMessage('❌ ' + (err?.message || 'Authentication Error'), 'error');
       } finally {
-        btn.disabled = false; btn.classList.remove('opacity-50');
+        btn.disabled = false;
+        btn.classList.remove('opacity-50');
         btn.textContent = (mode === 'register') ? 'Create Account' : 'Sign In';
       }
     });
