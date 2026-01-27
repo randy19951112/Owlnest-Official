@@ -7,7 +7,101 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
   <title>Owlnest · My Products</title>
+
+  <style>
+    /* Modal */
+    .modal-overlay{
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.55);
+      display:none;
+      align-items:center; justify-content:center;
+      padding: 18px;
+      z-index: 9999;
+      backdrop-filter: blur(6px);
+    }
+    .modal-overlay.show{ display:flex; }
+    .modal{
+      width: 100%;
+      max-width: 520px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.06);
+      border-radius: 14px;
+      box-shadow: 0 25px 70px rgba(0,0,0,.35);
+      overflow: hidden;
+    }
+    .modal-head{
+      padding: 18px 18px 10px;
+      display:flex; align-items:flex-start; justify-content:space-between;
+      gap: 12px;
+    }
+    .modal-title{
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: .5px;
+    }
+    .modal-sub{
+      margin-top: 4px;
+      font-size: 12px;
+      opacity: .75;
+      line-height: 1.5;
+    }
+    .modal-close{
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.18);
+      color: rgba(255,255,255,.9);
+      border-radius: 10px;
+      width: 36px; height: 36px;
+      display:flex; align-items:center; justify-content:center;
+      cursor:pointer;
+      transition: .2s;
+    }
+    .modal-close:hover{ background: rgba(0,0,0,.28); }
+    .modal-body{ padding: 0 18px 18px; }
+    .key-input{
+      width: 100%;
+      padding: 12px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.18);
+      color: #fff;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      letter-spacing: .8px;
+      outline: none;
+    }
+    .key-input:focus{
+      border-color: rgba(212,175,55,.45);
+      box-shadow: 0 0 0 3px rgba(212,175,55,.12);
+    }
+    .modal-actions{
+      margin-top: 12px;
+      display:flex;
+      gap: 10px;
+      justify-content:flex-end;
+      flex-wrap: wrap;
+    }
+    .btn.secondary{
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.14);
+      color: rgba(255,255,255,.9);
+    }
+    .btn.secondary:hover{
+      background: rgba(255,255,255,.10);
+    }
+    .modal-msg{
+      margin-top: 10px;
+      font-size: 13px;
+      min-height: 18px;
+      opacity: .95;
+    }
+    .modal-msg.ok{ color: #7CFFB1; }
+    .modal-msg.err{ color: #ff6b6b; }
+    .modal-msg.info{ color: rgba(255,255,255,.78); }
+
+    /* small helper: make the top action button look identical but act like a button */
+    .btn-as-link{ text-decoration: none; display:inline-flex; align-items:center; gap:8px; }
+  </style>
 </head>
+
 <body class="page-products">
   <div class="wrap">
     <aside class="sidebar"><div id="nav"></div></aside>
@@ -16,19 +110,52 @@
       <div class="topbar">
         <div>
           <h1 class="text-h1">My Products</h1>
-          <div class="text-sub">Manage your registered devices</div>
+          <div class="text-sub">Your registered devices</div>
         </div>
         <div class="topbar-actions">
-           <a href="../activate.html" class="btn primary"><i class="fa-solid fa-plus"></i> Activate New</a>
+          <!-- ✅ 改成開 modal，不再跳 ../activate.html 也不把金鑰放 URL -->
+          <button id="open-activate" class="btn primary btn-as-link" type="button">
+            <i class="fa-solid fa-plus"></i> Activate New
+          </button>
         </div>
       </div>
 
       <div id="msg" class="text-sub mb-4"></div>
-      
-      <div id="cards" class="flex-column-gap-12">
-         <!-- Container for JS cards -->
-      </div>
+      <div id="cards"></div>
     </main>
+  </div>
+
+  <!-- ✅ Modal -->
+  <div id="activate-modal" class="modal-overlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="activate-title">
+      <div class="modal-head">
+        <div>
+          <div id="activate-title" class="modal-title">Activate a Product Key</div>
+          <div class="modal-sub">
+            請貼上你的「金鑰」來綁定產品到你的帳號。<br>
+            金鑰不會寫進網址，也不會顯示在你的產品列表中。
+          </div>
+        </div>
+        <button class="modal-close" id="close-activate" type="button" aria-label="Close">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <input id="product-key" class="key-input" type="text"
+               placeholder="Paste product key (e.g. OWL-XXXX-XXXX)"
+               autocomplete="off" autocapitalize="off" spellcheck="false" />
+
+        <div id="activate-msg" class="modal-msg info"></div>
+
+        <div class="modal-actions">
+          <button id="cancel-activate" class="btn secondary" type="button">Cancel</button>
+          <button id="do-activate" class="btn primary" type="button">
+            Confirm & Activate
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script type="module">
@@ -39,41 +166,154 @@
 
     renderNav("products");
 
+    const ACTIVATE_ENDPOINT = "/.netlify/functions/activate";
+
+    const modal = document.getElementById("activate-modal");
+    const openBtn = document.getElementById("open-activate");
+    const closeBtn = document.getElementById("close-activate");
+    const cancelBtn = document.getElementById("cancel-activate");
+    const doBtn = document.getElementById("do-activate");
+    const keyEl = document.getElementById("product-key");
+    const msgEl = document.getElementById("activate-msg");
+
+    function safeText(s){
+      return String(s ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
+    }
+
     function renderItem(item){
       const displayCode = displayNameFromActivation(item);
       const activated = fmtShortDate(item.activated_at);
-      
+
       return `
         <div class="list-row mt-3">
           <div class="flex-grow min-w-0 row-left">
-            <div class="icon-circle blue">
-               <i class="fa-solid fa-box"></i>
-            </div>
-            <div class="min-w-0">
-              <div class="break-word text-bold text-md">${safeText(displayCode)}</div>
-              <div class="text-sub text-xs">Activated: ${safeText(activated)}</div>
-            </div>
+            <div class="text-md">${safeText(displayCode)}</div>
+            <div class="text-sub text-xs">Activated: ${safeText(activated)}</div>
           </div>
-          
           <div class="row-right">
-             <span class="badge active"><i class="fa-solid fa-check"></i> Active</span>
-             <a class="btn btn-sm" href="./support.html">Support</a>
+            <span class="pill">Active</span>
           </div>
         </div>
       `;
     }
 
-    function safeText(str){
-      if(!str) return "";
-      return str.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    function openModal(){
+      msgEl.textContent = "Paste your product key to continue.";
+      msgEl.className = "modal-msg info";
+      keyEl.value = "";
+      doBtn.disabled = true;
+      modal.classList.add("show");
+      modal.setAttribute("aria-hidden", "false");
+      setTimeout(() => keyEl.focus(), 50);
     }
 
-    async function init(){
+    function closeModal(){
+      modal.classList.remove("show");
+      modal.setAttribute("aria-hidden", "true");
+    }
+
+    function setActivateBtnState(){
+      const key = keyEl.value.trim();
+      doBtn.disabled = !key;
+      doBtn.classList.toggle("opacity-50", !key);
+      doBtn.classList.toggle("cursor-not-allowed", !key);
+    }
+
+    openBtn.addEventListener("click", openModal);
+    closeBtn.addEventListener("click", closeModal);
+    cancelBtn.addEventListener("click", closeModal);
+
+    // 點 overlay 空白處也可關
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    // Esc 關閉
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && modal.classList.contains("show")) closeModal();
+    });
+
+    keyEl.addEventListener("input", setActivateBtnState);
+
+    async function activateKey(){
+      const key = keyEl.value.trim();
+      if (!key) return;
+
+      doBtn.disabled = true;
+      doBtn.textContent = "Activating...";
+      msgEl.textContent = "";
+      msgEl.className = "modal-msg info";
+
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        const token = session?.access_token;
+
+        if (!token){
+          msgEl.textContent = "Session expired. Please login again.";
+          msgEl.className = "modal-msg err";
+          doBtn.textContent = "Confirm & Activate";
+          setActivateBtnState();
+          return;
+        }
+
+        const res = await fetch(ACTIVATE_ENDPOINT, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify({ key, token: key })
+        });
+
+        const data = await res.json().catch(() => ({}));
+
+        if (res.ok && data.success){
+          msgEl.textContent = "Success! Product registered.";
+          msgEl.className = "modal-msg ok";
+
+          // refresh list
+          await loadProducts();
+
+          // close after a beat
+          setTimeout(() => closeModal(), 700);
+          return;
+        }
+
+        const err = data.error || "unknown";
+        let text = "Activation Failed.";
+        if (err === "already_activated") text = "This key is already activated.";
+        else if (err === "revoked") text = "This key has been revoked.";
+        else if (err === "invalid_code") text = "Invalid key.";
+        else if (err === "unauthorized") text = "Please login again.";
+        else text = `Activation Failed (${err})`;
+
+        msgEl.textContent = text;
+        msgEl.className = "modal-msg err";
+
+      } catch (e) {
+        console.error(e);
+        msgEl.textContent = "Network error. Please try again.";
+        msgEl.className = "modal-msg err";
+      } finally {
+        doBtn.textContent = "Confirm & Activate";
+        setActivateBtnState();
+      }
+    }
+
+    doBtn.addEventListener("click", activateKey);
+    keyEl.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !doBtn.disabled) activateKey();
+    });
+
+    async function loadProducts(){
       const user = await requireUser();
       if (!user) return;
 
-      const msgEl = document.getElementById("msg");
-      msgEl.textContent = "Loading...";
+      const msg = document.getElementById("msg");
+      const cards = document.getElementById("cards");
+
+      msg.textContent = "Loading...";
+      cards.innerHTML = "";
 
       const { data, error } = await supabase
         .from("activations")
@@ -82,21 +322,22 @@
         .order("activated_at", { ascending:false });
 
       if (error){
-        msgEl.textContent = "Error: " + error.message;
+        msg.textContent = "Error: " + error.message;
         return;
       }
 
       const items = data || [];
       if (!items.length){
-        msgEl.textContent = "No products found.";
+        msg.textContent = "No products found.";
         return;
       }
 
-      msgEl.textContent = "";
-      document.getElementById("cards").innerHTML = items.map(renderItem).join("");
+      msg.textContent = "";
+      cards.innerHTML = items.map(renderItem).join("");
     }
 
-    init();
+    // init
+    loadProducts();
   </script>
 </body>
 </html>
