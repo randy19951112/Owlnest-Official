@@ -1,514 +1,193 @@
-/* account/css/account.css */
+import React, { useState } from 'react';
 
-/* =========================================================
-   1. Design Tokens (Brand: Warm & Luxury)
-   ========================================================= */
-:root {
-  /* Brand Colors */
-  --bg: #FAEFD6;           /* 暖米色 (Base) */
-  --col-dark: #455169;     /* 深藍灰 (Primary Text) */
-  --col-ink: #2C3646;      /* 深墨色 (Headings) */
-  --col-gold: #D4AF37;     /* 品牌金 (Accents) */
-  --col-muted: #8A92A3;    /* 暖灰色 (Secondary Text) */
-  --col-line: #E8DCC2;     /* 暖框線 (Border) */
-  
-  /* Status Colors */
-  --col-danger: #B91C1C;
-  --bg-danger: #FEF2F2;
-  --border-danger: #FECACA;
-  
-  /* Surfaces */
-  --surface-card: #FFFCF5; /* 暖白卡片 (Creamy) */
-  --surface-hover: #FFFFFF;
-  
-  /* Spacing */
-  --sp-1: 8px;
-  --sp-2: 16px;
-  --sp-3: 24px;
-  --sp-4: 32px;
-  --sp-5: 40px;
-  
-  /* UI Elements */
-  --sidebar-w: 280px;
-  --r-card: 20px;
-  --r-btn: 12px;
-  
-  /* Shadows */
-  --shadow-sm: 0 4px 20px rgba(69, 81, 105, 0.04);
-  --shadow-md: 0 12px 32px rgba(69, 81, 105, 0.08);
-}
+/**
+ * ProductActivationModal Component
+ * * A high-readability modal for binding product keys to accounts.
+ * Adheres to Owlnest's "Warm & Luxury" design system.
+ */
+const App = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [productKey, setProductKey] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-/* =========================================================
-   2. Reset & Utilities (Foundation)
-   ========================================================= */
-*, *::before, *::after { box-sizing: border-box; }
+  const handleActivate = async () => {
+    if (!productKey) return;
+    
+    setIsSubmitting(true);
+    // Simulate API call - Product key is sent in body, never in URL
+    setTimeout(() => {
+      console.log('Activating key:', productKey);
+      setIsSubmitting(false);
+      setIsOpen(false);
+      setProductKey('');
+    }, 1500);
+  };
 
-html {
-  width: 100%;
-  height: 100%;
-  -webkit-text-size-adjust: 100%;
-}
+  return (
+    <div className="min-h-screen bg-[#FAEFD6] p-8 font-sans text-[#455169]">
+      {/* Simulation of the "My Products" section trigger */}
+      <div className="max-w-4xl mx-auto">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-serif font-bold text-[#2C3646]">My Products</h1>
+          <button 
+            onClick={() => setIsOpen(true)}
+            className="btn primary"
+          >
+            <span className="mr-2">+</span> Activate New
+          </button>
+        </div>
+        
+        {/* Mock Product Card */}
+        <div className="std-card">
+          <div className="flex items-center gap-4">
+            <div className="icon-circle gold">
+              <i className="fas fa-lamp"></i>
+            </div>
+            <div>
+              <h3 className="text-bold text-lg text-[#2C3646]">Owlnest Sleep Aid Lamp</h3>
+              <p className="text-sub">Bedroom Set A1</p>
+            </div>
+          </div>
+        </div>
+      </div>
 
-body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  min-height: 100vh;
-  background-color: var(--bg);
-  color: var(--col-dark);
-  font-family: "Manrope", system-ui, -apple-system, sans-serif;
-  line-height: 1.6;
-  font-size: 15px;
-  -webkit-font-smoothing: antialiased;
-}
+      {/* Modal Overlay */}
+      {isOpen && (
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4">
+          {/* Backdrop: Darkened to focus attention without tinting the modal content */}
+          <div 
+            className="absolute inset-0 bg-[#2C3646]/80 backdrop-blur-sm"
+            onClick={() => !isSubmitting && setIsOpen(false)}
+          />
 
-img, svg, video { max-width: 100%; height: auto; display: block; }
-a { text-decoration: none; color: inherit; transition: 0.2s; cursor: pointer; }
-button { font-family: inherit; border: none; background: none; cursor: pointer; padding: 0; }
+          {/* Modal Content: Solid Surface Card */}
+          <div className="relative w-full max-w-md animate-in fade-in zoom-in duration-200">
+            <div className="std-card !p-8 shadow-2xl !bg-[#FFFCF5] border-[#E8DCC2]">
+              
+              {/* Header */}
+              <div className="mb-6">
+                <h2 className="text-2xl font-serif font-bold text-[#2C3646] mb-2">
+                  Activate a Product Key
+                </h2>
+                <p className="text-sm leading-relaxed text-[#455169]">
+                  Paste your product key to bind a device to your account. 
+                  The key is never added to the URL and will not be shown in your product list.
+                </p>
+              </div>
 
-/* --- Utility Classes (Global) --- */
-.hidden { display: none !important; }
-.w-full { width: 100% !important; }
-.w-fit { 
-  width: fit-content !important; 
-  width: -moz-fit-content !important; 
-  width: -webkit-fit-content !important; 
-}
+              {/* Input Section */}
+              <div className="space-y-4 mb-8">
+                <div className="input-group">
+                  <label className="input-label">Product Key</label>
+                  <input
+                    type="text"
+                    value={productKey}
+                    onChange={(e) => setProductKey(e.target.value)}
+                    placeholder="Paste product key (e.g. OWL-XXXX-XXXX)"
+                    className="input-field !bg-white !border-[#E8DCC2] focus:!border-[#D4AF37] h-12"
+                    disabled={isSubmitting}
+                    autoFocus
+                  />
+                  <p className="text-xs text-[#8A92A3] mt-1">
+                    Paste your product key to continue.
+                  </p>
+                </div>
+              </div>
 
-/* Spacing Utils */
-.mt-1 { margin-top: 4px; }
-.mt-2 { margin-top: 8px; }
-.mt-3 { margin-top: 12px; }
-.mt-4 { margin-top: 16px; }
-.mt-5 { margin-top: 24px; }
-.mb-1 { margin-bottom: 4px; }
-.mb-2 { margin-bottom: 8px; }
-.mb-4 { margin-bottom: 16px; }
-.mr-2 { margin-right: 16px; }
+              {/* Action Buttons */}
+              <div className="flex flex-col gap-3">
+                <button
+                  onClick={handleActivate}
+                  disabled={!productKey || isSubmitting}
+                  className={`btn primary h-12 text-md transition-all ${
+                    isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
+                  }`}
+                >
+                  {isSubmitting ? 'Verifying Key...' : 'Confirm & Activate'}
+                </button>
+                
+                <button
+                  onClick={() => setIsOpen(false)}
+                  disabled={isSubmitting}
+                  className="btn h-12 text-[#455169] border-transparent hover:bg-[#F3EAD3]"
+                >
+                  Cancel
+                </button>
+              </div>
 
-/* Text Utils */
-.text-center { text-align: center; }
-.text-right { text-align: right; }
-.break-word { 
-  word-break: break-word; 
-  overflow-wrap: break-word; 
-  min-width: 0; 
-}
-.flex-grow { flex-grow: 1; }
-.flex-shrink-0 { flex-shrink: 0; }
-.min-w-0 { min-width: 0; }
+              {/* Security Badge */}
+              <div className="mt-6 pt-6 border-t border-[#E8DCC2] flex items-center justify-center gap-2 text-xs text-[#8A92A3]">
+                <i className="fas fa-shield-alt text-[#D4AF37]"></i>
+                Secure Encrypted Activation
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
-/* Requested New Utilities */
-.kpi-label-muted { opacity: 0.7; }
-.text-xs { font-size: 12px; }
-.text-md { font-size: 16px; }
-.text-bold { font-weight: 700; }
-.text-uppercase { text-transform: uppercase; letter-spacing: 0.05em; }
-.text-amount { font-weight: 700; font-size: 16px; color: var(--col-ink); }
-.text-danger { color: var(--col-danger); }
-.text-success { color: #137333; }
+      {/* Global CSS required for layout (reusing account.css tokens) */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        .btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0 24px;
+          border-radius: 12px;
+          font-weight: 600;
+          font-size: 14px;
+          border: 1px solid #E8DCC2;
+          background: white;
+          color: #455169;
+          transition: all 0.2s;
+          cursor: pointer;
+        }
+        .btn.primary {
+          background: #455169;
+          color: #FAEFD6;
+          border-color: #455169;
+        }
+        .btn:hover:not(:disabled) {
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(69, 81, 105, 0.15);
+        }
+        .std-card {
+          background: #FFFCF5;
+          border: 1px solid #E8DCC2;
+          border-radius: 20px;
+          padding: 24px;
+          box-shadow: 0 4px 20px rgba(69, 81, 105, 0.04);
+        }
+        .input-field {
+          width: 100%;
+          padding: 10px 14px;
+          border: 1px solid #E8DCC2;
+          border-radius: 10px;
+          font-size: 15px;
+          outline: none;
+        }
+        .input-label {
+          font-size: 13px;
+          font-weight: 600;
+          color: #8A92A3;
+        }
+        .text-sub {
+          color: #8A92A3;
+          font-size: 14px;
+        }
+        .icon-circle.gold {
+          width: 44px;
+          height: 44px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #FFFDF5;
+          color: #D4AF37;
+          border: 1px solid rgba(212,175,55,0.2);
+        }
+      `}} />
+    </div>
+  );
+};
 
-/* Layout Utils */
-.row-left { display: flex; gap: 16px; align-items: center; }
-.row-left-sm { display: flex; gap: 12px; align-items: center; }
-.flex-column-gap-12 { display: flex; flex-direction: column; gap: 12px; }
-.min-h-20 { min-height: 20px; }
-.section-divider { border-top: 1px solid var(--col-line); padding-top: 16px; }
-.label-md { font-size: 16px; }
-
-/* Icons */
-.icon-shield { color: #059669; font-size: 20px; }
-.icon-large { font-size: 32px; color: var(--col-muted); margin-bottom: 16px; }
-
-/* =========================================================
-   3. Typography
-   ========================================================= */
-.text-h1 {
-  font-family: "Playfair Display", serif;
-  font-weight: 700;
-  font-size: 40px;
-  color: var(--col-ink);
-  line-height: 1.1;
-  margin: 0;
-}
-.text-h2 {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--col-ink);
-  margin: 0 0 16px 0;
-}
-.text-sub {
-  color: var(--col-muted);
-  font-size: 14px;
-  margin-top: 4px;
-  line-height: 1.5;
-}
-.text-mono {
-  font-family: ui-monospace, SFMono-Regular, monospace;
-  letter-spacing: 0.02em;
-}
-
-/* =========================================================
-   4. Components
-   ========================================================= */
-/* Cards */
-.std-card {
-  background: var(--surface-card);
-  border: 1px solid var(--col-line);
-  border-radius: var(--r-card);
-  padding: var(--sp-3);
-  box-shadow: var(--shadow-sm);
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-2);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  position: relative;
-}
-.std-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-  background: var(--surface-hover);
-  border-color: rgba(212, 175, 55, 0.3);
-}
-.content-narrow { max-width: 820px; } 
-
-/* Special Cards */
-.card-dark {
-  background: var(--col-dark);
-  color: #FAEFD6;
-  border: none;
-}
-.card-dark .text-sub { color: rgba(250, 239, 214, 0.7); }
-
-.card-danger {
-  border-color: var(--border-danger);
-  background: var(--bg-danger);
-}
-.card-danger .text-h2 { color: var(--col-danger); }
-
-/* List Row */
-.list-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--sp-3);
-  background: var(--surface-card);
-  border: 1px solid var(--col-line);
-  border-radius: 16px;
-  padding: var(--sp-3);
-  transition: 0.2s;
-}
-.list-row:hover {
-  background: var(--surface-hover);
-  border-color: var(--col-gold);
-}
-
-/* Buttons */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  height: 40px;
-  padding: 0 24px;
-  border-radius: var(--r-btn);
-  font-weight: 600;
-  font-size: 14px;
-  border: 1px solid var(--col-line);
-  background: white;
-  color: var(--col-dark);
-  transition: all 0.2s;
-  white-space: nowrap; 
-}
-.btn.primary {
-  background: var(--col-dark);
-  color: #FAEFD6;
-  border-color: var(--col-dark);
-}
-.btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(69, 81, 105, 0.15);
-}
-.btn:active { transform: translateY(0); }
-.btn-block { width: 100%; }
-
-/* Button Variants */
-.btn-sm { height: 32px; padding: 0 14px; font-size: 12px; }
-
-.btn-dark-outline {
-  background: rgba(255,255,255,0.1);
-  color: #FAEFD6;
-  border: 1px solid rgba(255,255,255,0.2);
-}
-.btn-dark-outline:hover { background: rgba(255,255,255,0.2); }
-
-.btn-danger {
-  border-color: var(--border-danger);
-  color: var(--col-danger);
-}
-.btn-danger:hover { background: #FEE2E2; }
-
-/* Badges */
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 12px;
-  border-radius: 99px;
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  background: rgba(69,81,105, 0.08);
-  color: var(--col-dark);
-}
-.badge.active { background: #E6F4EA; color: #137333; }
-.badge.warn { background: #FEF7E0; color: #B08D26; }
-
-/* Form Inputs */
-.input-group { display: flex; flex-direction: column; gap: 8px; }
-.input-label { font-size: 13px; font-weight: 600; color: var(--col-muted); }
-.input-field {
-  width: 100%;
-  padding: 10px 14px;
-  border: 1px solid var(--col-line);
-  border-radius: 10px;
-  font-size: 15px;
-  background: rgba(255,255,255,0.5);
-  transition: 0.2s;
-}
-.input-field:focus {
-  outline: none;
-  background: white;
-  border-color: var(--col-gold);
-  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
-}
-.input-field:disabled {
-  background: rgba(0,0,0,0.03);
-  color: var(--col-muted);
-  cursor: not-allowed;
-}
-
-/* Icons & Elements */
-.icon-circle {
-  width: 44px; height: 44px;
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-  background: rgba(255,255,255,0.8);
-  color: var(--col-dark);
-  border: 1px solid var(--col-line);
-}
-.icon-circle.gold { background: #FFFDF5; color: var(--col-gold); border-color: rgba(212,175,55,0.2); }
-.icon-circle.blue { background: #F8F9FA; color: var(--col-dark); }
-
-.settings-empty { padding: 40px; text-align: center; }
-.separator { height: 1px; background: var(--col-line); margin: 8px 0; }
-
-/* KPI Specifics */
-.kpi-label { font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; font-size: 12px; }
-.kpi-value { font-size: 48px; font-weight: 700; color: var(--col-gold); line-height: 1; margin-bottom: 8px; }
-.kpi-value-sm { font-size: 18px; font-weight: 600; margin-bottom: auto; }
-
-/* =========================================================
-   5. Layout & Responsive
-   ========================================================= */
-.wrap {
-  display: flex;
-  width: 100%;
-  max-width: 1600px;
-  margin: 0 auto;
-}
-
-/* Sidebar */
-.sidebar {
-  width: var(--sidebar-w);
-  flex-shrink: 0;
-  padding: var(--sp-4) var(--sp-3);
-  background: rgba(250, 239, 214, 0.6);
-  border-right: 1px solid var(--col-line);
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-}
-
-.main {
-  flex-grow: 1;
-  padding: var(--sp-5);
-  min-width: 0;
-}
-
-/* Topbar */
-.topbar {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  margin-bottom: var(--sp-4);
-  padding-bottom: var(--sp-3);
-  border-bottom: 1px solid var(--col-line);
-}
-.topbar-actions { display: flex; gap: var(--sp-2); }
-
-.drawer-backdrop { display: none; }
-.drawer-btn { display: none; }
-
-/* Grids */
-.kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--sp-3); }
-.quick-card { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--sp-2); }
-.support-grid { display: grid; grid-template-columns: 2fr 1fr; gap: var(--sp-3); }
-.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-.form-full { grid-column: 1 / -1; }
-
-/* ---------------------------------------------------------
-   Tablet (768px - 1024px)
-   --------------------------------------------------------- */
-@media (max-width: 1024px) {
-  .sidebar {
-    position: fixed;
-    top: 0; left: 0;
-    height: 100vh; height: 100dvh; 
-    width: 280px;
-    background: #FAEFD6;
-    border-right: 1px solid var(--col-line);
-    transform: translateX(-100%);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 100;
-    box-shadow: none;
-  }
-  
-  body.nav-open .sidebar {
-    transform: translateX(0);
-    box-shadow: 10px 0 40px rgba(69,81,105,0.1);
-  }
-  body.nav-open { overflow: hidden; }
-
-  .drawer-backdrop {
-    display: block;
-    position: fixed;
-    inset: 0;
-    background: rgba(69,81,105,0.4);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s;
-    z-index: 90;
-    backdrop-filter: blur(2px);
-  }
-  body.nav-open .drawer-backdrop { opacity: 1; pointer-events: auto; }
-
-  .drawer-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px; height: 44px;
-    border: 1px solid var(--col-line);
-    border-radius: 12px;
-    background: rgba(255,255,255,0.8);
-    color: var(--col-dark);
-    font-size: 18px;
-    cursor: pointer;
-    flex-shrink: 0;
-  }
-
-  .main { padding: var(--sp-4); }
-  .topbar { align-items: center; justify-content: flex-start; gap: var(--sp-2); }
-  .text-h1 { font-size: 32px; }
-  .topbar-actions { margin-left: auto; }
-}
-
-/* ---------------------------------------------------------
-   Mobile (< 768px)
-   --------------------------------------------------------- */
-@media (max-width: 768px) {
-  .main { padding: 20px 16px; }
-
-  .topbar {
-    flex-wrap: wrap;
-    gap: var(--sp-2);
-    border-bottom: none;
-    margin-bottom: var(--sp-3);
-  }
-  .text-h1 { font-size: 26px; }
-
-  .topbar-actions {
-    width: 100%;
-    margin-left: 0;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    order: 3;
-    margin-top: 8px;
-  }
-  .topbar-actions .btn:last-child:nth-child(odd) { grid-column: 1 / -1; }
-  
-  .btn { 
-    width: 100%; 
-    height: auto; 
-    min-height: 48px;
-    padding: 8px 16px;
-    white-space: normal;
-    line-height: 1.2;
-    text-align: center;
-  }
-
-  .list-row {
-    flex-direction: column;
-    align-items: stretch;
-    gap: var(--sp-2);
-  }
-  .row-right {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: var(--sp-2);
-    border-top: 1px dashed var(--col-line);
-  }
-  
-  .kpi-grid, .support-grid, .form-grid {
-    grid-template-columns: 1fr !important;
-    gap: 20px;
-  }
-}
-
-/* =========================================================
-   6. Nav (Sidebar Content)
-   ========================================================= */
-.nav-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 40px; }
-.nav-brand img { height: 32px; }
-.nav-brand span { font-family: "Playfair Display"; font-weight: 700; font-size: 20px; color: var(--col-ink); }
-.nav-list { display: flex; flex-direction: column; gap: 4px; flex-grow: 1; }
-.nav-item {
-  display: flex; align-items: center; gap: 12px;
-  padding: 12px 16px; border-radius: 12px;
-  color: var(--col-dark); font-weight: 600; transition: 0.2s;
-  opacity: 0.7;
-}
-.nav-item:hover { background: rgba(255,255,255,0.5); opacity: 1; }
-.nav-item.active { background: var(--col-dark); color: #FAEFD6; opacity: 1; }
-.nav-ico { width: 24px; text-align: center; }
-.nav-bottom { margin-top: auto; padding-top: 20px; border-top: 1px solid var(--col-line); }
-/* --- Nav hardening (prevent host CSS overriding) --- */
-.sidebar .nav-brand img{
-  height: 32px !important;
-  width: auto !important;
-  max-width: 100% !important;
-}
-
-.sidebar .nav-item{
-  text-decoration: none !important;
-  color: var(--col-dark) !important;
-}
-
-.sidebar .nav-item:visited{
-  color: var(--col-dark) !important;
-}
-.nav-item.active,
-.nav-item.active * { color: #FAEFD6; }
-/* [Fix] Dark card should stay dark on hover */
-.std-card.card-dark:hover {
-  background: var(--col-dark);
-  border-color: transparent; /* 保持無邊框感 */
-}
+export default App;
