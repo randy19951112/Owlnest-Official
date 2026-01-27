@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -37,16 +37,12 @@
   </style>
 </head>
 
-<!-- 1. Page Background: Set to brand cream (off-white) for reduced fatigue -->
 <body class="bg-brand-cream text-brand-dark min-h-screen flex flex-col font-sans relative">
-  <!-- Subtle ambient blobs (lighter for the light background) -->
   <div class="fixed top-[-10%] right-[-5%] w-[500px] h-[500px] bg-brand-gold/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
   <div class="fixed bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-brand-dark/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
 
-  <!-- Header: Kept dark to support logo2.png (white logo) -->
   <header id="main-header" class="fixed top-0 left-0 w-full z-50 px-4 md:px-8 py-3 md:py-6 flex justify-between items-center bg-brand-dark/95 backdrop-blur-md transition-all duration-300 border-b border-white/5 shadow-sm">
     <div class="flex items-center gap-2 flex-shrink-0">
-       <!-- 5. Logo Usage: Using logo2.png on dark header -->
        <img src="logo2.png" alt="Owlnest Logo" class="h-8 md:h-12 w-auto contrast-100 object-contain">
        <a href="index.html" class="font-serif text-lg md:text-3xl tracking-widest font-bold text-brand-cream hover:text-brand-gold transition whitespace-nowrap">Owlnest <span class="hidden sm:inline">Official</span></a>
     </div>
@@ -84,23 +80,35 @@
   </div>
 
   <main class="flex-grow flex items-center justify-center p-4 relative z-10 pt-28 md:pt-32">
-    <!-- 2. Login Card: Dark card preserved for contrast against light background -->
     <div class="bg-brand-dark border border-white/10 p-8 md:p-12 rounded-lg shadow-2xl w-full max-w-md text-white relative overflow-hidden">
-      <!-- Inner decoration for card -->
       <div class="absolute top-0 right-0 w-32 h-32 bg-brand-gold/10 rounded-full blur-2xl pointer-events-none"></div>
 
       <h2 class="text-3xl font-serif mb-2 text-center text-brand-gold relative z-10">Member</h2>
       <p id="subtitle" class="mb-6 text-sm text-center text-gray-300 font-light tracking-wide relative z-10">Sign in with email & password.</p>
 
+      <!-- ✅ Google OAuth Button -->
+      <button
+        id="google-login"
+        type="button"
+        class="w-full py-4 rounded bg-white text-brand-dark font-bold uppercase tracking-widest text-xs shadow-lg transform active:scale-95 hover:bg-brand-cream transition duration-300 flex items-center justify-center gap-3 relative z-10"
+      >
+        <i class="fab fa-google text-base"></i>
+        Continue with Google
+      </button>
+
+      <div class="my-5 flex items-center gap-3 relative z-10">
+        <div class="h-px bg-white/15 flex-1"></div>
+        <div class="text-[10px] tracking-widest uppercase text-white/55">or</div>
+        <div class="h-px bg-white/15 flex-1"></div>
+      </div>
+
       <!-- Tabs -->
       <div class="grid grid-cols-2 gap-3 mb-6 relative z-10">
-        <!-- 4. Buttons: Primary accent maintained -->
         <button id="tab-login" type="button" class="py-3 rounded border border-brand-gold bg-brand-gold text-brand-dark font-bold uppercase tracking-widest text-xs transition shadow-lg">Sign In</button>
         <button id="tab-register" type="button" class="py-3 rounded border border-brand-gold/30 bg-transparent text-brand-gold font-bold uppercase tracking-widest text-xs hover:bg-white/5 transition">Create Account</button>
       </div>
 
       <form id="auth-form" class="space-y-5 relative z-10">
-        <!-- 3. Input Fields: High contrast fix - White background, dark text -->
         <div>
             <input type="email" id="email" placeholder="Email Address" required autocomplete="email" 
             class="w-full p-4 rounded bg-white border border-gray-300 text-brand-dark placeholder-gray-500 focus:outline-none focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/50 transition text-center tracking-wide shadow-sm">
@@ -115,11 +123,20 @@
         </div>
         
         <button type="submit" id="submit-btn" class="w-full bg-brand-gold text-brand-dark font-bold py-4 rounded hover:bg-white transition duration-300 uppercase tracking-widest text-sm shadow-lg transform active:scale-95 mt-2">Sign In</button>
+      <div class="text-center mt-3">
+  <button
+    id="forgot-password"
+    type="button"
+    class="text-xs text-gray-300 hover:text-brand-gold transition border-b border-transparent hover:border-brand-gold pb-0.5 tracking-widest uppercase"
+  >
+    Forgot password?
+  </button>
+</div>
+
       </form>
 
       <div id="message" class="mt-5 text-center text-sm hidden p-3 rounded bg-black/20 text-white"></div>
       
-      <!-- Back to Home Button -->
       <div class="mt-8 text-center border-t border-white/10 pt-6">
         <a href="index.html" class="text-xs text-gray-400 hover:text-brand-gold transition border-b border-transparent hover:border-brand-gold pb-0.5 tracking-widest uppercase">
           Back to Home
@@ -158,6 +175,8 @@
     const pwEl = document.getElementById('password');
     const confirmWrap = document.getElementById('confirm-wrap');
     const confirmEl = document.getElementById('confirmPassword');
+
+    const googleBtn = document.getElementById('google-login');
 
     let mode = 'login';
 
@@ -199,7 +218,6 @@
 
     function hideMessage() { msg.classList.add('hidden'); msg.innerHTML = ''; }
 
-    // ✅ 修正：不要再回 account.html
     function getNextUrl() {
       const params = new URLSearchParams(window.location.search);
       return sessionStorage.getItem('redirect_after_login')
@@ -207,6 +225,7 @@
         || (window.location.origin + '/account/index.html');
     }
 
+    // ✅ This also works for OAuth because OAuth returns with ?code=
     async function handleEmailRedirectSession() {
       const url = new URL(window.location.href);
       try {
@@ -230,13 +249,67 @@
     tabLogin.addEventListener('click', () => setMode('login'));
     tabRegister.addEventListener('click', () => setMode('register'));
 
+    // ✅ Google OAuth sign-in / sign-up (Supabase handles both)
+    googleBtn?.addEventListener('click', async () => {
+      hideMessage();
+
+      try {
+        googleBtn.disabled = true;
+        googleBtn.classList.add('opacity-60');
+        showMessage('Redirecting to Google...', 'ok');
+
+        // Send user back to THIS page so we can exchange the code for a session,
+        // then redirect to account dashboard using your existing logic.
+        const redirectTo = window.location.origin + '/member-login.html';
+
+        const { error } = await sb.auth.signInWithOAuth({
+          provider: 'google',
+          options: { redirectTo }
+        });
+
+        if (error) throw error;
+
+      } catch (err) {
+        console.error(err);
+        showMessage('❌ Google sign-in failed. Please try again.', 'error');
+        googleBtn.disabled = false;
+        googleBtn.classList.remove('opacity-60');
+      }
+    });
+
     (async function init() {
       setMode('login');
       await handleEmailRedirectSession();
       await kickIfAlreadyLoggedIn();
+      googleBtn.disabled = false;
+      googleBtn.classList.remove('opacity-60');
     })();
 
     form.addEventListener('submit', async (e) => {
+      // ✅ Forgot password (send reset email)
+document.getElementById('forgot-password')?.addEventListener('click', async () => {
+  hideMessage();
+
+  // Prefer the email typed in the input
+  const typedEmail = (emailEl?.value || '').trim();
+  const targetEmail = typedEmail || prompt('Enter your email to reset password:');
+  if (!targetEmail) return;
+
+  try {
+    // Send user to reset-password.html to set a new password
+    const { error } = await sb.auth.resetPasswordForEmail(targetEmail, {
+      redirectTo: window.location.origin + '/reset-password.html'
+    });
+
+    if (error) throw error;
+
+    showMessage('✅ Password reset email sent. Please check your inbox.', 'ok');
+  } catch (err) {
+    console.error(err);
+    showMessage('❌ ' + (err?.message || 'Failed to send reset email.'), 'error');
+  }
+});
+
       e.preventDefault();
       hideMessage();
       const email = emailEl.value.trim();
@@ -255,7 +328,6 @@
         if (mode === 'register') {
           const { error } = await sb.auth.signUp({
             email, password,
-            // ✅ 修正：驗證信回跳 /account/index.html（不再 account.html）
             options: { emailRedirectTo: window.location.origin + '/account/index.html' }
           });
           if (error) throw error;
