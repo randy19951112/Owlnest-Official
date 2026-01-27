@@ -1,92 +1,47 @@
-<!doctype html>
-<html lang="zh-Hant">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Activate | Owlnest</title>
-  <meta name="robots" content="noindex,nofollow" />
-  <style>
-    body{
-      margin:0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans TC", Arial, sans-serif;
-      background:#455169;
-      color:rgba(255,255,255,.9);
-      min-height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:24px;
-    }
-    .card{
-      max-width:560px;
-      width:100%;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.10);
-      border-radius: 14px;
-      padding: 22px;
-      box-shadow: 0 25px 70px rgba(0,0,0,.35);
-    }
-    .title{
-      font-weight: 800;
-      letter-spacing: .6px;
-      margin: 0 0 10px;
-    }
-    .sub{
-      margin: 0 0 14px;
-      line-height: 1.6;
-      opacity: .85;
-      font-size: 14px;
-    }
-    .btn{
-      display:inline-block;
-      background:#D4AF37;
-      color:#2b2f36;
-      font-weight: 800;
-      border-radius: 12px;
-      padding: 10px 14px;
-      text-decoration:none;
-    }
-    .hint{
-      margin-top: 12px;
-      font-size: 12px;
-      opacity: .7;
-    }
-    code{
-      background: rgba(0,0,0,.18);
-      padding: 2px 6px;
-      border-radius: 8px;
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Activate Product | Owlnest</title>
 </head>
+
 <body>
-  <div class="card">
-    <h1 class="title">Activation moved</h1>
+  <!-- Modal Container -->
+  <div class="modal">
+    <div class="modal-card">
+      <h2 class="modal-title">Activate Your Product</h2>
 
-    <p class="sub">
-      為了保護你的<strong>產品金鑰</strong>安全，啟用流程已移到會員中心的 <code>My Products</code> 頁面，
-      由「Activate New」彈窗完成輸入與綁定。<br><br>
+      <p class="modal-desc">
+        Enter the <strong>activation code</strong> included with your Owlnest product
+        to bind this device to your account.
+      </p>
 
-      ✅ 請輸入你包裝上看到的 <strong>Token</strong>（短碼），而不是整串序號。<br>
-      例：<code>9ae93da5197a</code><br><br>
+      <input
+        type="text"
+        id="product-key-input"
+        placeholder="Enter activation code (e.g. 9ae93da5197a)"
+        class="input"
+      />
 
-      🔒 隱私說明：我們<strong>不會公開顯示你的完整 Token</strong>；
-      在產品清單中只會顯示部分資訊（例如遮罩後的短碼），避免外人推測或濫用。
-    </p>
+      <p class="modal-hint">
+        The activation code is a short alphanumeric token printed on your product card
+        or packaging.  
+        <br />
+        You do <strong>not</strong> need to enter a long serial number.
+      </p>
 
-    <a class="btn" href="/account/products.html">Go to My Products</a>
-    <div class="hint">If you are not redirected automatically, click the button above.</div>
+      <div class="modal-actions">
+        <button class="btn-secondary" id="cancel-btn">Cancel</button>
+        <button class="btn-primary" id="confirm-btn">Confirm & Activate</button>
+      </div>
+
+      <p class="modal-footnote">
+        Your activation code is used only once to verify authenticity and ownership.
+        <br />
+        Product details will appear in your account after successful activation.
+      </p>
+    </div>
   </div>
-
-  <script>
-    // ✅ 任何 direct open /activate 都導回後台 products 頁
-    // 不讀 URL 參數、不接受 key，避免金鑰出現在網址/歷史/日誌
-    const target = "/account/products.html";
-
-    // 用 replace 避免留在 history（按返回不會回到 activate）
-    setTimeout(() => {
-      try { window.location.replace(target); }
-      catch(e) { window.location.href = target; }
-    }, 150);
-  </script>
 </body>
 </html>
