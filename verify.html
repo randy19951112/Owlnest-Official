@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Product Verify | Owlnest</title>
+  <title>Token Verify | Owlnest</title>
   <link rel="icon" type="image/png" href="logo.png" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
@@ -36,17 +36,20 @@
         <i class="fas fa-shield-alt text-brand-dark text-3xl"></i>
       </div>
 
-      <h2 class="text-3xl font-serif mb-2 text-brand-gold">Authenticity Check</h2>
+      <h2 class="text-3xl font-serif mb-2 text-brand-gold">Token Check</h2>
       <p class="mb-8 text-sm text-gray-400 font-light">
-        Verify your Owlnest product by entering the code or scanning the QR.
+        Enter your 12-character Activation Token to verify authenticity.
       </p>
 
       <input
         type="text"
         id="verify-code"
-        placeholder="ENTER PRODUCT KEY"
-        class="w-full p-4 rounded bg-brand-dark/50 border border-brand-gold/30 text-white placeholder-gray-500 focus:outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold transition text-center tracking-widest font-mono mb-6"
+        placeholder="ENTER 12-CHAR TOKEN"
+        class="w-full p-4 rounded bg-brand-dark/50 border border-brand-gold/30 text-white placeholder-gray-500 focus:outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold transition text-center tracking-widest font-mono mb-3"
+        autocomplete="off" autocapitalize="off" spellcheck="false"
       />
+
+      <div id="hint" class="text-xs text-gray-400 mb-6">Tip: paste the token exactly as provided (A–Z / 0–9, 12 characters).</div>
 
       <button
         id="verify-btn"
@@ -78,8 +81,8 @@
 
   <footer class="py-8 text-center text-xs text-gray-500 relative z-10">
     <div class="flex justify-center items-center gap-6 mb-4">
-      <a href="http://facebook.com/owlnestofficial" target="_blank" class="hover:text-brand-gold transition"><i class="fab fa-facebook-f text-lg"></i></a>
-      <a href="http://www.instagram.com/owlnestpq_chilllife" target="_blank" class="hover:text-brand-gold transition"><i class="fab fa-instagram text-lg"></i></a>
+      <a href="https://facebook.com/owlnestofficial" target="_blank" class="hover:text-brand-gold transition"><i class="fab fa-facebook-f text-lg"></i></a>
+      <a href="https://www.instagram.com/owlnestpq_chilllife" target="_blank" class="hover:text-brand-gold transition"><i class="fab fa-instagram text-lg"></i></a>
       <a href="http://x.com/owlnestpq_2025" target="_blank" class="hover:text-brand-gold transition flex items-center justify-center">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-current" viewBox="0 0 512 512">
           <path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z"/>
@@ -93,6 +96,8 @@
   <script>
     const inputEl = document.getElementById("verify-code");
     const btn = document.getElementById("verify-btn");
+    const hintEl = document.getElementById("hint");
+
     const resultArea = document.getElementById("result-area");
     const statusEl = document.getElementById("result-status");
     const msgEl = document.getElementById("result-msg");
@@ -105,62 +110,78 @@
       btn.textContent = isLoading ? "Verifying..." : "Verify Now";
     }
 
-    function splitKey(raw) {
+    function normalizeToken(raw) {
       const s = String(raw || "").trim();
-      if (!s) return { key: "", serial: "", token: "" };
+      if (!s) return "";
 
-      // 允許兩種輸入：
-      // 1) 完整 key: OWL-2026A-000001.dd39eac4c6fc
-      // 2) 只輸入 token: dd39eac4c6fc
-      const lastDot = s.lastIndexOf(".");
-      if (lastDot === -1) {
-        return { key: s, serial: "", token: s };
-      }
-      return {
-        key: s,
-        serial: s.slice(0, lastDot),     // OWL-2026A-000001
-        token: s.slice(lastDot + 1)      // dd39eac4c6fc
-      };
+      // 相容：若有人貼 serial.token，取最後一段
+      const dot = s.lastIndexOf(".");
+      const token = (dot >= 0 ? s.slice(dot + 1) : s).trim().toUpperCase();
+      return token;
     }
 
-    function showResult({ ok, activated, message }) {
+    function updateHint() {
+      const t = normalizeToken(inputEl.value);
+      if (!t) {
+        hintEl.textContent = "Tip: paste the token exactly as provided (A–Z / 0–9, 12 characters).";
+        return;
+      }
+      if (t.length !== 12) {
+        hintEl.textContent = `Token length: ${t.length}/12`;
+        return;
+      }
+      hintEl.textContent = "Looks good. Click Verify Now.";
+    }
+
+    function showResult({ ok, activated, message, token }) {
       resultArea.classList.remove("hidden");
       actLink.classList.add("hidden");
 
       if (ok) {
-        statusEl.textContent = "Genuine Product";
+        statusEl.textContent = "Genuine Token";
         statusEl.className = "font-bold text-lg mb-1 text-green-400";
         iconEl.innerHTML = '<i class="fas fa-check-circle text-green-400"></i>';
 
         if (activated) {
-          msgEl.textContent = message || "This product has already been activated and registered to an account.";
+          msgEl.textContent = message || "This product is already activated and registered to an account.";
         } else {
-          msgEl.textContent = message || "This is a valid Owlnest product and has not been activated yet. Register it now to claim ownership.";
-          const rawKey = inputEl.value.trim();
-          // ✅ activate 走完整 key（含 serial.token）
-          actLink.href = `activate.html?key=${encodeURIComponent(rawKey)}`;
+          msgEl.textContent = message || "This token is valid and has not been activated yet. Register it now to claim ownership.";
+          const t = normalizeToken(token || inputEl.value);
+          // ✅ 兼容：同時帶 token 與 key（以免你的 activate.html 還在讀 key）
+          actLink.href = `activate.html?token=${encodeURIComponent(t)}&key=${encodeURIComponent(t)}`;
           actLink.classList.remove("hidden");
         }
       } else {
         statusEl.textContent = "Verification Failed";
         statusEl.className = "font-bold text-lg mb-1 text-red-400";
         iconEl.innerHTML = '<i class="fas fa-times-circle text-red-400"></i>';
-        msgEl.textContent = message || "We could not verify this code. It may be invalid, counterfeit, or revoked.";
+        msgEl.textContent = message || "We could not verify this token. It may be invalid, counterfeit, or revoked.";
       }
     }
 
-    // URL 自動填入：?key=
+    // URL 自動填入：?token= 或 ?key=
     (function autoFillFromUrl() {
       const params = new URLSearchParams(window.location.search);
-      const urlKey = params.get("key");
-      if (urlKey) inputEl.value = urlKey;
+      const urlToken = params.get("token") || params.get("key");
+      if (urlToken) inputEl.value = String(urlToken);
+      updateHint();
     })();
 
-    async function verifyProduct() {
-      const raw = inputEl.value.trim();
-      if (!raw) return;
+    inputEl.addEventListener("input", () => {
+      const before = inputEl.value;
+      const after = before.toUpperCase();
+      if (before !== after) inputEl.value = after;
+      updateHint();
+    });
 
-      const { key, token } = splitKey(raw);
+    async function verifyProduct() {
+      const token = normalizeToken(inputEl.value);
+      if (!token) return;
+
+      if (token.length !== 12 || !/^[A-Z0-9]{12}$/.test(token)) {
+        showResult({ ok: false, activated: false, message: "Invalid token format. Please enter exactly 12 letters/numbers." });
+        return;
+      }
 
       setLoading(true);
       resultArea.classList.add("hidden");
@@ -170,11 +191,9 @@
         const res = await fetch("/.netlify/functions/verify", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          // ✅ 重點：送 token（點號後面那段）去比對
-          body: JSON.stringify({ token, key })
+          body: JSON.stringify({ token, key: token })
         });
 
-        // 兼容：有時候 function 不一定回 JSON（先拿 text 再 try parse）
         const rawText = await res.text();
         let data = {};
         try { data = JSON.parse(rawText); } catch (_) { data = { message: rawText }; }
@@ -182,13 +201,14 @@
         const valid = !!(data.valid ?? data.ok ?? data.isValid);
         const activated = !!(data.activated ?? data.isActivated);
         const message = data.message || data.msg || (data.error ? String(data.error) : "");
+        const tokenOut = data.token || token;
 
         if (!res.ok && !message) {
           showResult({ ok: false, activated: false, message: `Verify API error (${res.status})` });
           return;
         }
 
-        showResult({ ok: valid, activated, message: message || undefined });
+        showResult({ ok: valid, activated, message: message || undefined, token: tokenOut });
 
       } catch (err) {
         console.error(err);
@@ -202,6 +222,8 @@
     inputEl.addEventListener("keydown", (e) => {
       if (e.key === "Enter") verifyProduct();
     });
+
+    updateHint();
   </script>
 </body>
 </html>
