@@ -175,7 +175,7 @@
         <div>
           <div id="activate-title" class="modal-title">Activate with Token</div>
           <div class="modal-sub">
-            Paste your Activation Token to link a product to your account.
+            Paste your 12-character Activation Token to link a product to your account.
             For security, the full token is not displayed publicly and won’t appear in your product list.
           </div>
         </div>
@@ -187,10 +187,10 @@
 
       <div class="modal-body">
         <input id="product-key" class="key-input" type="text"
-               placeholder="Paste Activation Token (e.g. OWL-7F3A-9K2M-4D8Q-1X6P)"
+               placeholder="Paste 12-character token (e.g. A1B2C3D4E5F6)"
                autocomplete="off" autocapitalize="off" spellcheck="false" />
 
-        <div id="activate-msg" class="modal-msg info">Paste your Activation Token to continue.</div>
+        <div id="activate-msg" class="modal-msg info">Paste your 12-character Activation Token to continue.</div>
 
         <div class="modal-actions">
           <button id="cancel-activate" class="btn secondary" type="button">Cancel</button>
@@ -243,7 +243,7 @@
     }
 
     function openModal(){
-      msgEl.textContent = "Paste your Activation Token to continue.";
+      msgEl.textContent = "Paste your 12-character Activation Token to continue.";
       msgEl.className = "modal-msg info";
       keyEl.value = "";
       doBtn.disabled = true;
@@ -257,8 +257,14 @@
       modal.setAttribute("aria-hidden", "true");
     }
 
+    function normalizedToken(raw){
+      // Keep it simple: trim + uppercase (no auto adding prefix, no formatting)
+      return String(raw ?? "").trim().toUpperCase();
+    }
+
     function setActivateBtnState(){
-      const token = keyEl.value.trim();
+      const token = normalizedToken(keyEl.value);
+      // Enable only when user has typed/pasted something
       doBtn.disabled = !token;
     }
 
@@ -272,10 +278,30 @@
       if (e.key === "Escape" && modal.classList.contains("show")) closeModal();
     });
 
-    keyEl.addEventListener("input", setActivateBtnState);
+    keyEl.addEventListener("input", () => {
+      // Optional: keep input neat for users (does not add/remove characters, just uppercase)
+      const before = keyEl.value;
+      const after = before.toUpperCase();
+      if (before !== after) keyEl.value = after;
+      setActivateBtnState();
+
+      const t = normalizedToken(keyEl.value);
+      if (!t) {
+        msgEl.textContent = "Paste your 12-character Activation Token to continue.";
+        msgEl.className = "modal-msg info";
+        return;
+      }
+      if (t.length !== 12) {
+        msgEl.textContent = `Token length: ${t.length}/12 (please paste the full 12 characters)`;
+        msgEl.className = "modal-msg info";
+      } else {
+        msgEl.textContent = "Looks good. Click Confirm & Activate.";
+        msgEl.className = "modal-msg info";
+      }
+    });
 
     async function activateToken(){
-      const activationToken = keyEl.value.trim();
+      const activationToken = normalizedToken(keyEl.value);
       if (!activationToken) return;
 
       doBtn.disabled = true;
@@ -319,7 +345,7 @@
         let text = "Activation failed.";
         if (err === "already_activated") text = "This token is already activated.";
         else if (err === "revoked") text = "This token has been revoked.";
-        else if (err === "invalid_code") text = "Invalid token.";
+        else if (err === "invalid_code") text = "Invalid token. Please double-check the 12 characters.";
         else if (err === "unauthorized") text = "Please sign in again.";
         else text = `Activation failed (${err}).`;
 
