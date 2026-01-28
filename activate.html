@@ -1,47 +1,208 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-TW">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Activate Product | Owlnest</title>
+  <title>Product Verify | Owlnest</title>
+  <link rel="icon" type="image/png" href="logo.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body>
-  <!-- Modal Container -->
-  <div class="modal">
-    <div class="modal-card">
-      <h2 class="modal-title">Activate Your Product</h2>
+<body class="min-h-screen bg-[#0f172a] text-slate-100">
+  <!-- Page shell -->
+  <div class="mx-auto max-w-5xl px-5 py-10">
+    <header class="flex items-center justify-between">
+      <a href="./account.html" class="flex items-center gap-3">
+        <img src="logo.png" alt="Owlnest" class="h-8 w-auto" />
+        <div class="leading-tight">
+          <div class="font-semibold tracking-wide">OWLNEST</div>
+          <div class="text-xs text-slate-300">Product Verification</div>
+        </div>
+      </a>
+      <a href="./account.html"
+         class="rounded-xl border border-slate-700 bg-slate-900/40 px-4 py-2 text-sm text-slate-200 hover:bg-slate-900/70">
+        Back to Account
+      </a>
+    </header>
 
-      <p class="modal-desc">
-        Enter the <strong>activation code</strong> included with your Owlnest product
-        to bind this device to your account.
-      </p>
+    <!-- Main card -->
+    <main class="mt-8">
+      <div class="rounded-3xl border border-slate-700/60 bg-slate-900/35 p-7 shadow-xl">
+        <div class="flex flex-col gap-2">
+          <h1 class="text-2xl font-semibold">Activate a Product</h1>
+          <p class="text-slate-300">
+            Link your Owlnest product to this account using an <span class="font-medium text-slate-100">Activation Token</span>.
+          </p>
+        </div>
 
-      <input
-        type="text"
-        id="product-key-input"
-        placeholder="Enter activation code (e.g. 9ae93da5197a)"
-        class="input"
-      />
+        <div class="mt-6 grid gap-4 sm:grid-cols-2">
+          <button id="openActivateModal"
+                  class="rounded-2xl bg-[#f59e0b] px-5 py-3 font-semibold text-slate-900 hover:brightness-95 active:brightness-90">
+            Activate New
+          </button>
 
-      <p class="modal-hint">
-        The activation code is a short alphanumeric token printed on your product card
-        or packaging.  
-        <br />
-        You do <strong>not</strong> need to enter a long serial number.
-      </p>
+          <a href="./verify.html"
+             class="rounded-2xl border border-slate-700 bg-slate-900/40 px-5 py-3 text-center font-semibold text-slate-100 hover:bg-slate-900/70">
+            Go to Verify
+          </a>
+        </div>
 
-      <div class="modal-actions">
-        <button class="btn-secondary" id="cancel-btn">Cancel</button>
-        <button class="btn-primary" id="confirm-btn">Confirm & Activate</button>
+        <div class="mt-8 rounded-2xl border border-slate-700/60 bg-slate-950/30 p-5">
+          <div class="text-sm font-semibold text-slate-100">Quick notes</div>
+          <ul class="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-300">
+            <li>The Activation Token is provided after purchase (email / order page / card insert).</li>
+            <li>Tokens are meant to be copied and pasted. Avoid typing if you can.</li>
+            <li>If you already activated, your product will show up in <span class="text-slate-100 font-medium">My Products</span>.</li>
+          </ul>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal backdrop -->
+  <div id="activateModal"
+       class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 px-4">
+    <!-- Modal panel -->
+    <div class="w-full max-w-lg rounded-3xl border border-slate-700/70 bg-[#0b1224] p-6 shadow-2xl">
+      <!-- Modal header -->
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <h2 class="text-xl font-semibold">Activate with Token</h2>
+          <p class="mt-1 text-sm text-slate-300">
+            Paste your <span class="font-medium text-slate-100">Activation Token</span> below to link the product to your account.
+          </p>
+        </div>
+        <button id="closeActivateModal"
+                class="rounded-xl border border-slate-700 bg-slate-900/40 px-3 py-2 text-sm text-slate-200 hover:bg-slate-900/70">
+          Close
+        </button>
       </div>
 
-      <p class="modal-footnote">
-        Your activation code is used only once to verify authenticity and ownership.
-        <br />
-        Product details will appear in your account after successful activation.
-      </p>
+      <!-- Modal body (TEXT UPDATED FOR TOKEN) -->
+      <div class="mt-5 space-y-4">
+        <div class="rounded-2xl border border-slate-700/60 bg-slate-950/25 p-4">
+          <div class="text-sm font-semibold text-slate-100">What is an Activation Token?</div>
+          <p class="mt-2 text-sm text-slate-300 leading-relaxed">
+            It’s a one-time code that confirms your purchase and securely binds this product to your account.
+            After activation, we may only show a shortened version for privacy.
+          </p>
+
+          <div class="mt-3 text-sm font-semibold text-slate-100">Token format example</div>
+          <p class="mt-2 text-sm text-slate-300 leading-relaxed">
+            Your token may include letters, numbers, and dashes. Example:
+          </p>
+          <div class="mt-2 rounded-xl border border-slate-700 bg-black/30 px-4 py-3 font-mono text-sm text-slate-100 select-all">
+            OWL-7F3A-9K2M-4D8Q-1X6P
+          </div>
+          <p class="mt-2 text-xs text-slate-400">
+            Tip: Copy and paste to avoid mistakes. Spaces at the beginning/end can cause errors.
+          </p>
+        </div>
+
+        <!-- Input -->
+        <label class="block">
+          <span class="mb-2 block text-sm font-semibold text-slate-100">Activation Token</span>
+          <input id="tokenInput"
+                 type="text"
+                 placeholder="Paste token here (example: OWL-7F3A-9K2M-4D8Q-1X6P)"
+                 class="w-full rounded-2xl border border-slate-700 bg-slate-950/30 px-4 py-3 text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-[#f59e0b]/60" />
+        </label>
+
+        <!-- Privacy line (REPLACED) -->
+        <div class="rounded-2xl border border-slate-700/60 bg-slate-950/25 p-4">
+          <div class="text-sm font-semibold text-slate-100">Privacy & visibility</div>
+          <p class="mt-2 text-sm text-slate-300 leading-relaxed">
+            Your <span class="font-medium text-slate-100">Activation Token</span> is used only to complete activation.
+            For security, the full token is <span class="font-medium text-slate-100">not displayed publicly</span> and
+            <span class="font-medium text-slate-100">won’t appear in your product list</span>.
+            Keep the token in a safe place until activation is complete.
+          </p>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
+          <button id="activateBtn"
+                  class="rounded-2xl bg-[#f59e0b] px-5 py-3 font-semibold text-slate-900 hover:brightness-95 active:brightness-90">
+            Activate
+          </button>
+          <button id="cancelActivateBtn"
+                  class="rounded-2xl border border-slate-700 bg-slate-900/40 px-5 py-3 font-semibold text-slate-100 hover:bg-slate-900/70">
+            Cancel
+          </button>
+        </div>
+
+        <!-- Status -->
+        <div id="statusMsg" class="hidden rounded-2xl border border-slate-700/60 bg-slate-950/25 p-4 text-sm text-slate-200"></div>
+      </div>
     </div>
   </div>
+
+  <!-- Minimal modal JS (keeps layout; only handles open/close + demo activation hook) -->
+  <script>
+    const modal = document.getElementById("activateModal");
+    const openBtn = document.getElementById("openActivateModal");
+    const closeBtn = document.getElementById("closeActivateModal");
+    const cancelBtn = document.getElementById("cancelActivateBtn");
+    const activateBtn = document.getElementById("activateBtn");
+    const tokenInput = document.getElementById("tokenInput");
+    const statusMsg = document.getElementById("statusMsg");
+
+    function openModal() {
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+      statusMsg.classList.add("hidden");
+      statusMsg.textContent = "";
+      setTimeout(() => tokenInput.focus(), 50);
+    }
+
+    function closeModal() {
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+      tokenInput.value = "";
+      statusMsg.classList.add("hidden");
+      statusMsg.textContent = "";
+    }
+
+    openBtn.addEventListener("click", openModal);
+    closeBtn.addEventListener("click", closeModal);
+    cancelBtn.addEventListener("click", closeModal);
+
+    // click outside to close
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    // Demo activation flow:
+    // Replace the fetch URL with your Netlify Function endpoint when ready.
+    activateBtn.addEventListener("click", async () => {
+      const token = (tokenInput.value || "").trim();
+      if (!token) {
+        statusMsg.classList.remove("hidden");
+        statusMsg.textContent = "Please paste your Activation Token.";
+        return;
+      }
+
+      statusMsg.classList.remove("hidden");
+      statusMsg.textContent = "Activating…";
+
+      try {
+        // TODO: update endpoint to your real function:
+        // const res = await fetch("/.netlify/functions/activate", {
+        //   method: "POST",
+        //   headers: { "Content-Type": "application/json" },
+        //   body: JSON.stringify({ token })
+        // });
+        // const data = await res.json();
+        // if (!res.ok) throw new Error(data?.error || "Activation failed");
+
+        // Temporary success message until your function is connected:
+        await new Promise(r => setTimeout(r, 600));
+        statusMsg.textContent = "Activation request sent. If successful, your product will appear in My Products.";
+
+      } catch (err) {
+        statusMsg.textContent = err?.message || "Activation failed. Please double-check your token and try again.";
+      }
+    });
+  </script>
 </body>
 </html>
