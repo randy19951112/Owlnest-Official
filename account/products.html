@@ -168,15 +168,15 @@
     </main>
   </div>
 
-  <!-- ✅ Activate Modal (English + readable) -->
+  <!-- ✅ Activate Modal (Token wording only; UI unchanged) -->
   <div id="activate-modal" class="modal-overlay" aria-hidden="true">
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="activate-title">
       <div class="modal-head">
         <div>
-          <div id="activate-title" class="modal-title">Activate a Product Key</div>
+          <div id="activate-title" class="modal-title">Activate with Token</div>
           <div class="modal-sub">
-            Paste your product key to bind a device to your account.
-            The key is never added to the URL and will not be shown in your product list.
+            Paste your Activation Token to link a product to your account.
+            For security, the full token is not displayed publicly and won’t appear in your product list.
           </div>
         </div>
 
@@ -187,10 +187,10 @@
 
       <div class="modal-body">
         <input id="product-key" class="key-input" type="text"
-               placeholder="Paste product key (e.g. OWL-XXXX-XXXX)"
+               placeholder="Paste Activation Token (e.g. OWL-7F3A-9K2M-4D8Q-1X6P)"
                autocomplete="off" autocapitalize="off" spellcheck="false" />
 
-        <div id="activate-msg" class="modal-msg info">Paste your product key to continue.</div>
+        <div id="activate-msg" class="modal-msg info">Paste your Activation Token to continue.</div>
 
         <div class="modal-actions">
           <button id="cancel-activate" class="btn secondary" type="button">Cancel</button>
@@ -243,7 +243,7 @@
     }
 
     function openModal(){
-      msgEl.textContent = "Paste your product key to continue.";
+      msgEl.textContent = "Paste your Activation Token to continue.";
       msgEl.className = "modal-msg info";
       keyEl.value = "";
       doBtn.disabled = true;
@@ -258,8 +258,8 @@
     }
 
     function setActivateBtnState(){
-      const key = keyEl.value.trim();
-      doBtn.disabled = !key;
+      const token = keyEl.value.trim();
+      doBtn.disabled = !token;
     }
 
     openBtn.addEventListener("click", openModal);
@@ -274,9 +274,9 @@
 
     keyEl.addEventListener("input", setActivateBtnState);
 
-    async function activateKey(){
-      const key = keyEl.value.trim();
-      if (!key) return;
+    async function activateToken(){
+      const activationToken = keyEl.value.trim();
+      if (!activationToken) return;
 
       doBtn.disabled = true;
       doBtn.textContent = "Activating...";
@@ -285,9 +285,9 @@
 
       try {
         const { data: { session } } = await supabase.auth.getSession();
-        const token = session?.access_token;
+        const authToken = session?.access_token;
 
-        if (!token){
+        if (!authToken){
           msgEl.textContent = "Session expired. Please sign in again.";
           msgEl.className = "modal-msg err";
           doBtn.textContent = "Confirm & Activate";
@@ -299,9 +299,10 @@
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
+            "Authorization": `Bearer ${authToken}`
           },
-          body: JSON.stringify({ key, token: key })
+          // Send both fields for backwards compatibility (old backend may still read `key`)
+          body: JSON.stringify({ token: activationToken, key: activationToken })
         });
 
         const data = await res.json().catch(() => ({}));
@@ -316,9 +317,9 @@
 
         const err = data.error || "unknown";
         let text = "Activation failed.";
-        if (err === "already_activated") text = "This key is already activated.";
-        else if (err === "revoked") text = "This key has been revoked.";
-        else if (err === "invalid_code") text = "Invalid key.";
+        if (err === "already_activated") text = "This token is already activated.";
+        else if (err === "revoked") text = "This token has been revoked.";
+        else if (err === "invalid_code") text = "Invalid token.";
         else if (err === "unauthorized") text = "Please sign in again.";
         else text = `Activation failed (${err}).`;
 
@@ -335,9 +336,9 @@
       }
     }
 
-    doBtn.addEventListener("click", activateKey);
+    doBtn.addEventListener("click", activateToken);
     keyEl.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && !doBtn.disabled) activateKey();
+      if (e.key === "Enter" && !doBtn.disabled) activateToken();
     });
 
     async function loadProducts(){
