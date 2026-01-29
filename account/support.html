@@ -23,9 +23,9 @@
       <div class="support-grid">
         <!-- Left: Product List -->
         <div class="min-w-0">
-           <h2 class="text-h2">Your Devices</h2>
-           <div id="msg"></div>
-           <div id="list" class="mt-2"></div>
+          <h2 class="text-h2">Your Devices</h2>
+          <div id="msg"></div>
+          <div id="list" class="mt-2"></div>
         </div>
 
         <!-- Right: FAQ Card -->
@@ -35,8 +35,8 @@
             <div class="text-bold"><i class="fa-solid fa-book-open"></i> User Manual</div>
             <p class="text-sub">Download the latest guide for your sleep lamp.</p>
 
-            <!-- ✅ FIX: 用 <a> 連到 manual.pdf，確保可開啟/下載 -->
-            <a class="btn btn-block" href="manual.pdf" target="_blank" rel="noopener" download>
+            <!-- ✅ FIX: 用 a 連到根目錄的 manual.pdf -->
+            <a class="btn btn-block" href="../manual.pdf" target="_blank" rel="noopener" download>
               Download PDF
             </a>
 
@@ -44,6 +44,7 @@
 
             <div class="text-bold"><i class="fa-solid fa-envelope"></i> Email Us</div>
             <p class="text-sub">owlnestpq2025@gmail.com</p>
+
             <a
               class="btn primary btn-block"
               target="_blank"
@@ -55,7 +56,6 @@
           </div>
         </div>
       </div>
-
     </main>
   </div>
 
@@ -71,16 +71,16 @@
       const name = displayNameFromActivation(item);
       return `
         <div class="list-row mt-2">
-           <div class="flex-grow min-w-0 row-left-sm">
-             <i class="fa-solid fa-shield-halved flex-shrink-0 icon-shield"></i>
-             <div class="min-w-0">
-               <div class="break-word text-bold">${name}</div>
-               <div class="badge active mt-1">Warranty Active</div>
-             </div>
-           </div>
-           <div class="row-right">
-             <a class="btn btn-sm" href="mailto:owlnestpq2025@gmail.com?subject=Support for ${name}">Get Help</a>
-           </div>
+          <div class="flex-grow min-w-0 row-left-sm">
+            <i class="fa-solid fa-shield-halved flex-shrink-0 icon-shield"></i>
+            <div class="min-w-0">
+              <div class="break-word text-bold">${name}</div>
+              <div class="badge active mt-1">Warranty Active</div>
+            </div>
+          </div>
+          <div class="row-right">
+            <a class="btn btn-sm" href="mailto:owlnestpq2025@gmail.com?subject=Support for ${encodeURIComponent(name)}">Get Help</a>
+          </div>
         </div>
       `;
     }
@@ -92,15 +92,20 @@
       const msgEl = document.getElementById("msg");
       msgEl.textContent = "Loading...";
 
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("activations")
         .select("display_token, activated_at")
         .eq("user_id", user.id);
 
+      if (error) {
+        msgEl.textContent = "Failed to load devices.";
+        return;
+      }
+
       const items = data || [];
       if(!items.length) {
-         msgEl.textContent = "No registered devices.";
-         return;
+        msgEl.textContent = "No registered devices.";
+        return;
       }
 
       msgEl.classList.add("hidden");
