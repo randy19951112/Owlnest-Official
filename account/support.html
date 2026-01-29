@@ -47,10 +47,48 @@
 
             <a
   class="btn primary btn-block"
-  href="mailto:owlnestpq2025@gmail.com?subject=Owlnest%20Support&body=Hi%20Owlnest%20team%2C%0A%0A(Please%20describe%20your%20issue%20here)%0A%0AThanks!"
+  href="#"
+  id="support-email-btn"
 >
   Contact Support
 </a>
+
+<script>
+  (function () {
+    const btn = document.getElementById("support-email-btn");
+    if (!btn) return;
+
+    const to = "owlnestpq2025@gmail.com";
+    const subject = "Owlnest Support";
+    const body = "Hi Owlnest team,\n\n(Please describe your issue here)\n\nThanks!";
+
+    // 1) mailto (mobile should jump to mail app)
+    const mailto =
+      "mailto:" + encodeURIComponent(to) +
+      "?subject=" + encodeURIComponent(subject) +
+      "&body=" + encodeURIComponent(body);
+
+    // 2) fallback to Gmail web compose (works even when mailto is blocked)
+    const gmail =
+      "https://mail.google.com/mail/?view=cm&fs=1" +
+      "&to=" + encodeURIComponent(to) +
+      "&su=" + encodeURIComponent(subject) +
+      "&body=" + encodeURIComponent(body);
+
+    btn.addEventListener("click", function (e) {
+      e.preventDefault();
+
+      // try mailto first
+      window.location.href = mailto;
+
+      // fallback after a short delay
+      setTimeout(function () {
+        window.open(gmail, "_blank", "noopener");
+      }, 800);
+    });
+  })();
+</script>
+
 
           </div>
         </div>
