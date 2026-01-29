@@ -889,30 +889,6 @@
 
 <script>
   (function () {
-    const KEY = "owlnest_campaign_entry_modal_v1";
-    const DAYS = 7;
-
-    function now() { return Date.now(); }
-    function msDays(d){ return d * 24 * 60 * 60 * 1000; }
-
-    function shouldShow() {
-      try {
-        const raw = localStorage.getItem(KEY);
-        if (!raw) return true;
-        const parsed = JSON.parse(raw);
-        if (!parsed || !parsed.until) return true;
-        return now() > parsed.until;
-      } catch (e) {
-        return true;
-      }
-    }
-
-    function snooze() {
-      try {
-        localStorage.setItem(KEY, JSON.stringify({ until: now() + msDays(DAYS) }));
-      } catch (e) {}
-    }
-
     function openModal() {
       const modal = document.getElementById("campaign-entry-modal");
       if (!modal) return;
@@ -925,12 +901,10 @@
       if (!modal) return;
       modal.classList.add("hidden");
       document.body.style.overflow = "";
-      snooze();
     }
 
     window.addEventListener("load", function () {
-      if (!shouldShow()) return;
-
+      // ✅ 每次載入都跳（無視 localStorage）
       setTimeout(openModal, 450);
 
       const closeBtn = document.getElementById("campaign-entry-close");
@@ -940,12 +914,14 @@
       if (closeBtn) closeBtn.addEventListener("click", closeModal);
       if (closeX) closeX.addEventListener("click", closeModal);
 
+      // 點背景關閉
       if (modal) {
         modal.addEventListener("click", function (e) {
           if (e.target === modal || e.target.classList.contains("bg-black/60")) closeModal();
         });
       }
 
+      // ESC 關閉
       document.addEventListener("keydown", function (e) {
         if (e.key === "Escape") closeModal();
       });
@@ -953,5 +929,7 @@
   })();
 </script>
 
+
 </body>
 </html>
+
