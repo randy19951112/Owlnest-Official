@@ -16,25 +16,231 @@
       <div class="topbar">
         <div>
           <h1 class="text-h1">Settings</h1>
-          <div class="text-sub">App preferences</div>
+          <div class="text-sub">Manage devices & account</div>
         </div>
       </div>
 
       <div class="std-card content-narrow">
-        <div class="settings-empty">
-           <i class="fa-solid fa-screwdriver-wrench icon-large"></i>
-           <div class="text-bold">Under Construction</div>
-           <div class="text-sub">More settings will be available soon.</div>
+        <div class="text-bold"><i class="fa-solid fa-shield-halved"></i> Devices</div>
+        <p class="text-sub">Manage the devices linked to your account.</p>
+
+        <div id="device-msg" class="mt-2"></div>
+        <div id="device-list" class="mt-2"></div>
+
+        <div class="separator"></div>
+
+        <div class="row-right">
+          <button id="btn-delete-all-devices" class="btn btn-block">
+            Remove all devices
+          </button>
         </div>
       </div>
+
+      <div class="std-card content-narrow mt-3">
+        <div class="text-bold"><i class="fa-solid fa-triangle-exclamation"></i> Danger Zone</div>
+        <p class="text-sub">Permanently delete your account and all associated device records.</p>
+
+        <button id="btn-delete-account" class="btn primary btn-block" style="background:#b91c1c;border-color:#b91c1c;">
+          Delete my account
+        </button>
+
+        <p class="text-sub mt-2" style="opacity:.75;font-size:12px;">
+          This action is irreversible.
+        </p>
+      </div>
+
+      <!-- Simple confirm modal -->
+      <div id="confirm-modal" class="hidden" style="position:fixed;inset:0;z-index:9999;">
+        <div id="confirm-backdrop" style="position:absolute;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);"></div>
+        <div style="position:relative;height:100%;display:flex;align-items:center;justify-content:center;padding:16px;">
+          <div class="std-card" style="max-width:520px;width:100%;">
+            <div class="text-bold" id="confirm-title">Confirm</div>
+            <p class="text-sub" id="confirm-desc" style="margin-top:6px;"></p>
+            <div class="separator"></div>
+            <div style="display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;">
+              <button class="btn" id="confirm-cancel">Cancel</button>
+              <button class="btn primary" id="confirm-ok">Confirm</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </main>
   </div>
 
   <script type="module">
     import { requireUser } from "./js/authGuard.js";
     import { renderNav } from "./js/uiNav.js";
+    import { supabase } from "./js/supabaseClient.js";
+    import { displayNameFromActivation } from "./js/format.js";
+
     renderNav("settings");
-    await requireUser();
+    const user = await requireUser();
+    if (!user) throw new Error("Not logged in");
+
+    const msgEl = document.getElementById("device-msg");
+    const listEl = document.getElementById("device-list");
+
+    const modal = document.getElementById("confirm-modal");
+    const titleEl = document.getElementById("confirm-title");
+    const descEl = document.getElementById("confirm-desc");
+    const okEl = document.getElementById("confirm-ok");
+    const cancelEl = document.getElementById("confirm-cancel");
+    const backdropEl = document.getElementById("confirm-backdrop");
+
+    function openConfirm({ title, desc, okText="Confirm", danger=false, onOk }) {
+      titleEl.textContent = title;
+      descEl.textContent = desc;
+      okEl.textContent = okText;
+
+      okEl.style.background = danger ? "#b91c1c" : "";
+      okEl.style.borderColor = danger ? "#b91c1c" : "";
+
+      modal.classList.remove("hidden");
+      document.body.style.overflow = "hidden";
+
+      const cleanup = () => {
+        modal.classList.add("hidden");
+        document.body.style.overflow = "";
+        okEl.onclick = null;
+      };
+
+      cancelEl.onclick = cleanup;
+      backdropEl.onclick = cleanup;
+
+      okEl.onclick = async () => {
+        okEl.disabled = true;
+        okEl.textContent = "Working...";
+        try {
+          await onOk();
+          cleanup();
+        } catch (e) {
+          alert(e?.message || "Action failed.");
+        } finally {
+          okEl.disabled = false;
+        }
+      };
+    }
+
+    function renderDeviceRow(item){
+      const name = displayNameFromActivation(item);
+      const activatedAt = item.activated_at ? new Date(item.activated_at).toLocaleString() : "";
+
+      return `
+        <div class="list-row mt-2" style="align-items:flex-start;">
+          <div class="flex-grow min-w-0 row-left-sm">
+            <i class="fa-solid fa-microchip flex-shrink-0 icon-shield"></i>
+            <div class="min-w-0">
+              <div class="break-word text-bold">${name}</div>
+              <div class="text-sub" style="margin-top:4px;">Activated: ${activatedAt || "-"}</div>
+            </div>
+          </div>
+          <div class="row-right">
+            <button class="btn btn-sm btn-remove" data-id="${item.id}">Remove</button>
+          </div>
+        </div>
+      `;
+    }
+
+    async function loadDevices(){
+      msgEl.textContent = "Loading...";
+      listEl.innerHTML = "";
+
+      const { data, error } = await supabase
+        .from("activations")
+        .select("id, display_token, activated_at")
+        .eq("user_id", user.id)
+        .order("activated_at", { ascending: false });
+
+      if (error) throw error;
+
+      const items = data || [];
+      if (!items.length) {
+        msgEl.textContent = "No registered devices.";
+        return;
+      }
+
+      msgEl.textContent = "";
+      listEl.innerHTML = items.map(renderDeviceRow).join("");
+
+      // bind remove buttons
+      document.querySelectorAll(".btn-remove").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const id = btn.getAttribute("data-id");
+          openConfirm({
+            title: "Remove device",
+            desc: "This device will be unlinked from your account.",
+            okText: "Remove",
+            danger: true,
+            onOk: async () => {
+              const { error } = await supabase
+                .from("activations")
+                .delete()
+                .eq("id", id)
+                .eq("user_id", user.id);
+
+              if (error) throw error;
+              await loadDevices();
+            }
+          });
+        });
+      });
+    }
+
+    // Remove all devices
+    document.getElementById("btn-delete-all-devices").addEventListener("click", () => {
+      openConfirm({
+        title: "Remove all devices",
+        desc: "This will unlink ALL devices from your account.",
+        okText: "Remove all",
+        danger: true,
+        onOk: async () => {
+          const { error } = await supabase
+            .from("activations")
+            .delete()
+            .eq("user_id", user.id);
+
+          if (error) throw error;
+          await loadDevices();
+        }
+      });
+    });
+
+    // Delete account (calls Netlify Function)
+    document.getElementById("btn-delete-account").addEventListener("click", () => {
+      openConfirm({
+        title: "Delete account",
+        desc: "Permanently delete your account and all device records. This cannot be undone.",
+        okText: "Delete forever",
+        danger: true,
+        onOk: async () => {
+          const { data: sessionData, error: sessionErr } = await supabase.auth.getSession();
+          if (sessionErr) throw sessionErr;
+
+          const token = sessionData?.session?.access_token;
+          if (!token) throw new Error("No session token found.");
+
+          const res = await fetch("/.netlify/functions/delete-account", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + token
+            },
+            body: JSON.stringify({})
+          });
+
+          const out = await res.json().catch(() => ({}));
+          if (!res.ok) throw new Error(out?.error || "Delete failed.");
+
+          // Sign out locally and go to login
+          await supabase.auth.signOut();
+          window.location.href = "member-login.html";
+        }
+      });
+    });
+
+    // init
+    await loadDevices();
   </script>
 </body>
 </html>
