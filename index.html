@@ -548,7 +548,7 @@
                         <p class="flex items-center gap-4 lg:gap-6"><i class="fas fa-map-marker-alt text-brand-gold text-xl lg:text-2xl"></i> 114 Lý Thường Kiệt, Phú Quốc, Vietnam</p>
                         <p class="flex items-center gap-4 lg:gap-6"><i class="fas fa-envelope text-brand-gold text-xl lg:text-2xl"></i> owlnestpq2025@gmail.com</p>
                         
-                        <!-- [新增] Social Icons with correct links & SVG for X -->
+                        <!-- Social Icons -->
                         <div class="flex items-center gap-6 mt-6">
                             <a href="http://facebook.com/owlnestofficial" target="_blank" class="w-10 h-10 rounded-full bg-brand-gold text-brand-dark flex items-center justify-center hover:bg-brand-dark hover:text-brand-gold transition duration-300 shadow-md">
                                 <i class="fab fa-facebook-f text-lg"></i>
@@ -557,12 +557,23 @@
                                 <i class="fab fa-instagram text-lg"></i>
                             </a>
                             <a href="http://x.com/owlnestpq_2025" target="_blank" class="w-10 h-10 rounded-full bg-brand-gold text-brand-dark flex items-center justify-center hover:bg-brand-dark hover:text-brand-gold transition duration-300 shadow-md">
-                                <!-- High-Quality SVG for X Logo -->
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-current" viewBox="0 0 512 512">
                                     <path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z"/>
                                 </svg>
                             </a>
+
+                            <!-- ✅ Discord (NEW) -->
+                            <a href="https://discord.gg/dmPbRMtqRb" target="_blank" rel="noopener"
+                               title="Join Owlnest Discord Community"
+                               class="w-10 h-10 rounded-full bg-[#5865F2] text-white flex items-center justify-center hover:bg-[#4752C4] transition duration-300 shadow-md">
+                                <i class="fab fa-discord text-lg"></i>
+                            </a>
                         </div>
+
+                        <!-- Optional helper line (small, non-pushy) -->
+                        <p class="text-xs text-brand-dark/50 mt-3 tracking-widest uppercase">
+                            Optional community: Join Discord to follow updates & share feedback.
+                        </p>
                     </div>
                     <!-- Google Map -->
                     <div class="w-full h-64 lg:h-80 rounded-lg overflow-hidden border border-brand-dark/10 shadow-lg mb-8 lg:mb-10 bg-gray-200">
@@ -573,6 +584,12 @@
                         <p class="text-xs lg:text-sm text-brand-dark/50 uppercase tracking-widest">&copy; <span id="copyright-year"></span> Owlnest Official.</p>
                         <a href="disclaimer.html" class="text-xs lg:text-sm text-brand-dark/50 hover:text-brand-gold transition uppercase tracking-widest">Disclaimer</a>
                         <a href="manual.pdf" target="_blank" download class="text-xs lg:text-sm text-brand-dark/50 hover:text-brand-gold transition uppercase tracking-widest">User Manual</a>
+
+                        <!-- ✅ Discord text link (NEW) -->
+                        <a href="https://discord.gg/dmPbRMtqRb" target="_blank" rel="noopener"
+                           class="text-xs lg:text-sm text-brand-dark/50 hover:text-brand-gold transition uppercase tracking-widest">
+                           Discord
+                        </a>
                     </div>
                 </div>
                 <div class="bg-white p-6 lg:p-16 shadow-xl rounded-lg reveal-text">
@@ -623,7 +640,6 @@
             };
             img.onerror = () => {
                 if(!imagesFailed) {
-                    // console.warn("Fallback Mode: Image sequence missing.");
                     imagesFailed = true;
                     render();
                 }
@@ -675,56 +691,41 @@
         // [核心函數] 判斷並更新導覽列顏色
         function updateUI() {
             const headerHeight = header.offsetHeight || 80;
-            // 偵測點設為 Header 中心
             const checkY = headerHeight / 2; 
 
-            // 預設為深色背景 (對應淺色 Nav)
             let isBgLight = false; 
 
-            // A. 找出目前導覽列下方的區塊
             let currentSec = null;
             sections.forEach(s => {
                 const rect = s.getBoundingClientRect();
                 if (rect.top <= checkY && rect.bottom > checkY) {
                     currentSec = s;
                 }
-                // (順便觸發 Reveal 動畫)
                 if (rect.top < window.innerHeight * 0.85) {
                     s.querySelectorAll('.reveal-text').forEach(el => el.classList.add('visible'));
                 }
             });
 
             if (currentSec) {
-                // 更新右側導覽點
                 dots.forEach(d => {
                     d.classList.toggle('active', d.getAttribute('href') === `#${currentSec.id}`);
                 });
 
-                // B. 判斷該區塊的「背景亮度」
-                // 特殊情況：Section 3 (互動區)
                 if (currentSec.id === 'section-3') {
                      if (window.innerWidth < 1024) {
-                        // 手機版：檢查是否滑到圖片區域
                         const imgEl = document.getElementById('sec3-image');
                         if (imgEl) {
                             const imgRect = imgEl.getBoundingClientRect();
                             if (imgRect.bottom > checkY) {
-                                // 在圖片上：
-                                // 關燈(白底) -> isBgLight = true
-                                // 開燈(深底) -> isBgLight = false
                                 isBgLight = !isLampOn; 
                             } else {
-                                // 滑過圖片，進入文字區(深底) -> isBgLight = false
                                 isBgLight = false; 
                             }
                         }
                     } else {
-                        // 電腦版：使用 Split View (左深右淺)，這裡主要控制 Logo 顏色
-                        // 我們交給下面的 Split 邏輯處理，這裡先標記為 false
                         isBgLight = false; 
                     }
                 } 
-                // 通用情況：根據 CSS Class 判斷
                 else if (currentSec.classList.contains('bg-brand-cream') || currentSec.classList.contains('bg-white')) {
                     isBgLight = true;
                 } else {
@@ -732,15 +733,12 @@
                 }
             }
 
-            // C. 應用樣式到 Header
             header.classList.remove('nav-dark', 'nav-split');
 
             if (window.innerWidth >= 1024 && currentSec && currentSec.id === 'section-3' && !isLampOn) {
-                // 電腦版 Sec3 且 關燈 -> Split View
                 header.classList.add('nav-split');
                 if (navLogo) navLogo.src = 'logo.png'; 
             } else {
-                // 其他情況 -> 根據 isBgLight 切換深淺
                 if (isBgLight) {
                     header.classList.add('nav-dark');
                     if (navLogo) navLogo.src = 'logo.png';
@@ -750,7 +748,6 @@
             }
         }
 
-        // Hero Scroll Animation Logic
         function updateHeroAnimation() {
             const rect = section1.getBoundingClientRect();
             const sectionHeight = section1.offsetHeight;
@@ -794,7 +791,6 @@
         
         window.addEventListener('resize', render);
 
-        // Mobile Menu Toggle
         function toggleMobileMenu() {
             const menu = document.getElementById('mobile-menu');
             const icon = document.getElementById('mobile-menu-icon');
@@ -808,62 +804,43 @@
             }
         }
 
-        // Lamp Toggle Logic
         const lampImg = document.getElementById('lamp-sequence-img');
-        const lampStatus = document.getElementById('lamp-status-label'); // [修正] ID 更新
+        const lampStatus = document.getElementById('lamp-status-label');
         const lampContainer = document.getElementById('sec3-image');
         
-        // Custom Toggle Elements
         const customToggleBg = document.getElementById('custom-toggle-bg');
         const customToggleCircle = document.getElementById('custom-toggle-circle');
 
         function toggleLamp() {
             if (isLampOn) {
-                // --- 關燈動作 ---
                 lampImg.src = 'lamp-off.jpg';
-                
-                // 更新文字
                 lampStatus.textContent = 'Click to Light Up';
-                
-                // 更新開關樣式 (灰色背景，圓圈歸位)
                 customToggleBg.classList.remove('bg-brand-gold');
                 customToggleBg.classList.add('bg-gray-300');
                 customToggleCircle.classList.remove('translate-x-6');
-                
-                // 背景變白
                 lampContainer.classList.remove('bg-brand-dark');
                 lampContainer.classList.add('bg-white');
-                
                 isLampOn = false;
             } else {
-                // --- 開燈動作 ---
                 lampImg.src = 'lamp-on.jpg';
-                
-                // 更新文字
                 lampStatus.textContent = 'Click to Turn Off';
-                
-                // 更新開關樣式 (金色背景，圓圈移動)
                 customToggleBg.classList.remove('bg-gray-300');
                 customToggleBg.classList.add('bg-brand-gold');
                 customToggleCircle.classList.add('translate-x-6');
-                
-                // 背景變深
                 lampContainer.classList.remove('bg-white');
                 lampContainer.classList.add('bg-brand-dark');
-                
                 isLampOn = true;
             }
-            // 狀態改變後立即更新 UI (Header 顏色)
             updateUI();
         }
         
-        // Snipcart Listener
         document.addEventListener('snipcart.ready', function() {
             Snipcart.events.on('cart.confirmed', function (cartState) {
                 window.location.href = 'thank-you.html';
             });
         });
     </script>
+
 <script src="/js/campaignBanner.js"></script>
 <!-- ✅ Campaign Entry Modal (Website Entrance Popup) -->
 <div id="campaign-entry-modal" class="fixed inset-0 z-[9999] hidden">
@@ -954,7 +931,6 @@
     window.addEventListener("load", function () {
       if (!shouldShow()) return;
 
-      // ✅ 不要一進來就硬打臉，用 450ms 讓頁面先穩穩落地
       setTimeout(openModal, 450);
 
       const closeBtn = document.getElementById("campaign-entry-close");
@@ -964,14 +940,12 @@
       if (closeBtn) closeBtn.addEventListener("click", closeModal);
       if (closeX) closeX.addEventListener("click", closeModal);
 
-      // 點背景關閉
       if (modal) {
         modal.addEventListener("click", function (e) {
           if (e.target === modal || e.target.classList.contains("bg-black/60")) closeModal();
         });
       }
 
-      // ESC 關閉
       document.addEventListener("keydown", function (e) {
         if (e.key === "Escape") closeModal();
       });
