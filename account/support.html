@@ -34,21 +34,24 @@
           <div class="std-card">
             <div class="text-bold"><i class="fa-solid fa-book-open"></i> User Manual</div>
             <p class="text-sub">Download the latest guide for your sleep lamp.</p>
-            <button class="btn btn-block">Download PDF</button>
-            
-            <div class="separator"></div>
-            
-            <div class="text-bold"><i class="fa-solid fa-envelope"></i> Email Us</div>
-<p class="text-sub">owlnestpq2025@gmail.com</p>
-<a
-  class="btn primary btn-block"
-  target="_blank"
-  rel="noopener"
-  href="https://mail.google.com/mail/?view=cm&fs=1&to=owlnestpq2025@gmail.com&su=Owlnest%20Support&body=Hi%20Owlnest%20team%2C%0A%0A(Please%20describe%20your%20issue%20here)%0A%0AThanks!"
->
-  Contact Support
-</a>
 
+            <!-- ✅ FIX: 用 <a> 連到 manual.pdf，確保可開啟/下載 -->
+            <a class="btn btn-block" href="manual.pdf" target="_blank" rel="noopener" download>
+              Download PDF
+            </a>
+
+            <div class="separator"></div>
+
+            <div class="text-bold"><i class="fa-solid fa-envelope"></i> Email Us</div>
+            <p class="text-sub">owlnestpq2025@gmail.com</p>
+            <a
+              class="btn primary btn-block"
+              target="_blank"
+              rel="noopener"
+              href="https://mail.google.com/mail/?view=cm&fs=1&to=owlnestpq2025@gmail.com&su=Owlnest%20Support&body=Hi%20Owlnest%20team%2C%0A%0A(Please%20describe%20your%20issue%20here)%0A%0AThanks!"
+            >
+              Contact Support
+            </a>
           </div>
         </div>
       </div>
@@ -85,21 +88,21 @@
     async function init(){
       const user = await requireUser();
       if (!user) return;
-      
+
       const msgEl = document.getElementById("msg");
       msgEl.textContent = "Loading...";
-      
+
       const { data } = await supabase
         .from("activations")
         .select("display_token, activated_at")
         .eq("user_id", user.id);
-        
+
       const items = data || [];
       if(!items.length) {
          msgEl.textContent = "No registered devices.";
          return;
       }
-      
+
       msgEl.classList.add("hidden");
       document.getElementById("list").innerHTML = items.map(renderItem).join("");
     }
