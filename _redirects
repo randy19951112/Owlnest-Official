@@ -1,0 +1,9 @@
+/activate        /activate.html     200
+/verify          /verify.html       200
+/activate.html   /activate.html     200
+/verify.html     /verify.html       200
+
+/account/activate   /activate.html  200
+/account/verify     /verify.html    200
+
+/*               /index.html        200
