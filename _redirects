@@ -1,9 +1,16 @@
-/activate        /activate.html     200
-/verify          /verify.html       200
-/activate.html   /activate.html     200
-/verify.html     /verify.html       200
+# =========================
+# Owlnest Redirects (Rescue Pack)
+# =========================
 
-/account/activate   /activate.html  200
-/account/verify     /verify.html    200
+# 1) 你的包裝 QR Code（/首頁）
+/首頁                 /                 301!
+/%E9%A6%96%E9%A0%81    /                 301!
 
-/*               /index.html        200
+# 2) 常見舊入口，全部導到你現有頁面（按你的檔名調整）
+/activate             /activate.html     301!
+/verify               /verify.html       301!
+/account/activate     /activate.html     301!
+/account/verify       /verify.html       301!
+
+# 3) 保底：任何未知路徑都回首頁或 index（避免 404）
+/*                    /index.html        200
