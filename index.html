@@ -2,6 +2,15 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
+    <!-- Google Tag Manager -->
+<script>
+(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-PC4ZNPWQ');
+</script>
+<!-- End Google Tag Manager -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Owlnest Official | The Art of Deep Sleep</title>
     <meta name="description" content="Owlnest Sleep Aid Lamp - Simulating natural sunset to help you sleep better. ITRI certified, blue-light free.">
@@ -179,7 +188,10 @@
     </style>
 </head>
 <body class="bg-brand-dark text-white antialiased text-base md:text-lg">
-
+<!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PC4ZNPWQ"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
     <!-- Header / Navbar -->
     <header id="main-header" class="fixed top-0 left-0 w-full z-50 px-4 md:px-8 py-4 md:py-6 flex justify-between items-center bg-transparent transition-all duration-300 text-brand-cream">
         <!-- Logo 區域 -->
@@ -635,7 +647,49 @@
     <!-- Snipcart Script -->
     <script async src="https://cdn.snipcart.com/themes/v3.7.1/default/snipcart.js"></script>
     <div hidden id="snipcart" data-api-key="MmY2MWUwYjMtODI0Mi00NDQ1LTk4YWUtNTQ0NDgwODY5OGM0NjM5MDIzNDE2ODU0NDczMzQz"></div>
+<script>
+  window.dataLayer = window.dataLayer || [];
 
+  document.addEventListener('snipcart.ready', function () {
+    Snipcart.events.on('order.completed', function (order) {
+      try {
+        var transactionId =
+          (order && (order.invoiceNumber || order.token || order.orderToken)) ||
+          ('snip_' + Date.now());
+
+        var currency = (order && order.currency) || 'USD';
+        var value = Number(order.total) || 0;
+
+        var items = [];
+        if (order && order.items && order.items.items) {
+          items = order.items.items.map(function (it) {
+            return {
+              item_id: it.id || it.uniqueId || it.sku || it.name,
+              item_name: it.name || '',
+              price: Number(it.price) || 0,
+              quantity: Number(it.quantity) || 1
+            };
+          });
+        }
+
+        window.dataLayer.push({
+          event: 'purchase',
+          ecommerce: {
+            transaction_id: transactionId,
+            value: value,
+            currency: currency,
+            items: items
+          }
+        });
+
+        window.location.href = 'thank-you.html';
+      } catch (e) {
+        window.dataLayer.push({ event: 'purchase_error' });
+        window.location.href = 'thank-you.html';
+      }
+    });
+  });
+</script>
     <!-- JavaScript -->
     <script>
         // Snipcart Dynamic URL
@@ -860,13 +914,6 @@
             }
             updateUI();
         }
-        
-        document.addEventListener('snipcart.ready', function() {
-            Snipcart.events.on('cart.confirmed', function (cartState) {
-                window.location.href = 'thank-you.html';
-            });
-        });
-    </script>
 
 <script src="/js/campaignBanner.js"></script>
 <!-- ✅ Campaign Entry Modal (Website Entrance Popup) -->
@@ -959,6 +1006,7 @@
 
 </body>
 </html>
+
 
 
 
