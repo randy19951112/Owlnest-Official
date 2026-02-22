@@ -3,8 +3,8 @@
 # =========================
 
 # 1) 你的包裝 QR Code（/首頁）
-/首頁                 /                 301!
-/%E9%A6%96%E9%A0%81    /                 301!
+/首頁                 /?utm_source=qr&utm_medium=offline&utm_campaign=legacy_qr&utm_content=home_cn   302!
+/%E9%A6%96%E9%A0%81    /?utm_source=qr&utm_medium=offline&utm_campaign=legacy_qr&utm_content=home_cn   302!
 
 # 2) 常見舊入口，全部導到你現有頁面（按你的檔名調整）
 /activate             /activate.html     301!
